@@ -1,0 +1,80 @@
+.guider-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.guider-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-xl);
+}
+
+.guider-card-header {
+  position: relative;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.guider-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.guider-category-badge {
+  display: inline-flex;
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid;
+}
+
+.guider-card-body {
+  padding: 0 1.25rem 1rem;
+  flex: 1;
+  text-align: center;
+}
+
+.guider-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 0.4rem;
+}
+
+.guider-field,
+.guider-designation,
+.guider-city {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+  margin-bottom: 0.2rem;
+}
+
+.guider-field {
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.guider-card-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.guider-card-footer .btn {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+}
