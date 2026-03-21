@@ -1,0 +1,43 @@
+const express = require('express');
+const router = express.Router();
+const pool = require('../db');
+const { authMiddleware, adminMiddleware } = require('../middleware/auth');
+
+// GET /notifications (public)
+router.get('/', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM notifications ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /notifications (admin only)
+router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
+  const { title, description, link } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO notifications (title, description, link) VALUES ($1, $2, $3) RETURNING *',
+      [title, description, link]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// DELETE /notifications/:id (admin only)
+router.delete('/:id', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM notifications WHERE id = $1', [req.params.id]);
+    res.json({ message: 'Notification deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+module.exports = router;
