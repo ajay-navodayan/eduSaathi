@@ -20,7 +20,9 @@ export default function Login() {
     try {
       const res = await API.post('/auth/login', form);
       login(res.data.user, res.data.token);
-      if (res.data.user.role === 'guider') {
+      if (res.data.user.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else if (res.data.user.role === 'guider') {
         navigate('/guider-dashboard');
       } else {
         navigate('/');

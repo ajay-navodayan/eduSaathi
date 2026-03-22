@@ -26,6 +26,8 @@ app.use('/notifications', require('./routes/notifications'));
 app.use('/resources', require('./routes/resources'));
 app.use('/tutors', require('./routes/tutors'));
 app.use('/messages', require('./routes/messages'));
+app.use('/admin', require('./routes/admin'));
+app.use('/profile', require('./routes/profile'));
 
 // Health check
 app.get('/', (req, res) => {
