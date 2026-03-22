@@ -29,20 +29,48 @@ router.put('/approve-user/:id', async (req, res) => {
 // Admin forceful profile edit (bypasses one-time rule)
 router.put('/edit-user/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, photo, field, designation, city, overrideLock } = req.body;
+  const { 
+    name, photo, field, designation, city, 
+    tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+    achievements, linkedin, whatsapp, phone, 
+    overrideLock 
+  } = req.body;
   
   try {
-    const userRes = await pool.query('SELECT email FROM users WHERE id = $1', [id]);
+    const userRes = await pool.query('SELECT email, role FROM users WHERE id = $1', [id]);
     if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
-    const userEmail = userRes.rows[0].email;
+    const { email: userEmail, role } = userRes.rows[0];
 
     await pool.query('UPDATE users SET name = $1 WHERE id = $2', [name, id]);
     
-    // Attempt update in Guiders
-    await pool.query(
-      'UPDATE guiders SET name=$1, photo=$2, field=$3, designation=$4, city=$5 WHERE email=$6',
-      [name, photo, field, designation, city, userEmail]
-    );
+    // Update appropriate table based on role
+    if (role === 'guider') {
+      await pool.query(
+        `UPDATE guiders SET 
+          name=$1, photo=$2, field=$3, designation=$4, city=$5, 
+          tenth_marks=$6, tenth_board=$7, twelfth_marks=$8, twelfth_board=$9,
+          achievements=$10, linkedin=$11, whatsapp=$12, phone=$13
+         WHERE email=$14`,
+        [
+          name, photo, field, designation, city, 
+          tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+          achievements, linkedin, whatsapp, phone, userEmail
+        ]
+      );
+    } else if (role === 'tutor') {
+      await pool.query(
+        `UPDATE tutors SET 
+          name=$1, photo=$2, field=$3, designation=$4, city=$5, 
+          tenth_marks=$6, tenth_board=$7, twelfth_marks=$8, twelfth_board=$9,
+          achievements=$10, linkedin=$11, whatsapp=$12, phone=$13
+         WHERE email=$14`,
+        [
+          name, photo, field, designation, city, 
+          tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+          achievements, linkedin, whatsapp, phone, userEmail
+        ]
+      );
+    }
 
     // If admin chooses to unlock the profile for the user
     if (overrideLock) {
@@ -69,7 +97,12 @@ router.get('/users', async (req, res) => {
 
 // Add Tutor
 router.post('/add-tutor', async (req, res) => {
-  const { name, subject, location, contact, experience, email } = req.body;
+  const { 
+    name, photo, field, designation, city,
+    tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+    achievements, linkedin, whatsapp, phone, email 
+  } = req.body;
+  
   const tempPassword = 'welcome123';
   
   try {
@@ -84,8 +117,16 @@ router.post('/add-tutor', async (req, res) => {
 
     // 2. Create Tutor Profile
     const result = await pool.query(
-      'INSERT INTO tutors (name, subject, location, contact, experience) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [name, subject, location, contact, experience]
+      `INSERT INTO tutors (
+        name, photo, field, designation, city, 
+        tenth_marks, tenth_board, twelfth_marks, twelfth_board, 
+        achievements, linkedin, whatsapp, phone, email
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`,
+      [
+        name, photo, field, designation, city, 
+        tenth_marks, tenth_board, twelfth_marks, twelfth_board, 
+        achievements, linkedin, whatsapp, phone, email
+      ]
     );
     res.status(201).json({ 
       message: 'Tutor and User account created successfully', 
