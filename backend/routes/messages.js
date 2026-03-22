@@ -51,4 +51,25 @@ router.post('/', async (req, res) => {
   }
 });
 
+// GET /api/messages/conversations/:userId
+// Fetch distinct contacts a user has messaged
+router.get('/conversations/:userId', async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const query = `
+      SELECT DISTINCT
+        CASE WHEN m.sender_id = $1 THEN m.receiver_id ELSE m.sender_id END as peer_id,
+        u.name, u.role
+      FROM messages m
+      LEFT JOIN users u ON u.id = CASE WHEN m.sender_id = $1 THEN m.receiver_id ELSE m.sender_id END
+      WHERE m.sender_id = $1 OR m.receiver_id = $1
+    `;
+    const result = await pool.query(query, [userId]);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error fetching conversations' });
+  }
+});
+
 module.exports = router;

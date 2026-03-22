@@ -1,47 +1,48 @@
 import { useState, useEffect, useRef } from 'react';
-import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
+import { io } from 'socket.io-client';
 import API from '../api';
 
 const socket = io('http://localhost:5000');
 
-export default function ChatBox({ peerId, peerName }) {
+export default function ChatBox({ peerId }) {
   const { user } = useAuth();
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef(null);
 
+  const myMessagingId = user?.role === 'guider' && user?.guiderId ? user.guiderId : user?.id;
+
   useEffect(() => {
-    if (user) {
-      socket.emit('join_room', user.id);
-    }
+    if (!myMessagingId || !peerId) return;
+
+    // Join room for this specific user pair
+    socket.emit('join_room', myMessagingId);
     
-    // Fetch history
+    // Fetch initial chat history from backend
     const fetchHistory = async () => {
       try {
-        const res = await API.get(`/messages/${peerId}?userId=${user.id}`);
+        const res = await API.get(`/messages/${peerId}?userId=${myMessagingId}`);
         setMessages(res.data);
       } catch (err) {
-        console.error('Failed to fetch messages', err);
+        console.error('Failed to load chat history:', err);
       }
     };
-    if (user && peerId) {
-      fetchHistory();
-    }
+    fetchHistory();
 
-    const receiveMessageHandler = (msgData) => {
-      if ((msgData.sender_id === peerId && msgData.receiver_id === user.id) || 
-          (msgData.sender_id === user.id && msgData.receiver_id === peerId)) {
+    const handleReceiveMessage = (msgData) => {
+      if ((msgData.sender_id === parseInt(peerId) && msgData.receiver_id === parseInt(myMessagingId)) || 
+          (msgData.sender_id === parseInt(myMessagingId) && msgData.receiver_id === parseInt(peerId))) {
         setMessages((prev) => [...prev, msgData]);
       }
     };
 
-    socket.on('receive_message', receiveMessageHandler);
+    socket.on('receive_message', handleReceiveMessage);
 
     return () => {
-      socket.off('receive_message', receiveMessageHandler);
+      socket.off('receive_message', handleReceiveMessage);
     };
-  }, [user, peerId]);
+  }, [myMessagingId, peerId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -49,16 +50,17 @@ export default function ChatBox({ peerId, peerName }) {
 
   const sendMessage = async (e) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || !myMessagingId) return;
 
     const newMsg = {
-      sender_id: user.id,
-      receiver_id: peerId,
-      content: inputValue
+      sender_id: myMessagingId,
+      receiver_id: parseInt(peerId),
+      content: inputValue,
+      created_at: new Date().toISOString()
     };
 
     try {
-      // Save to DB
+      // Save locally
       const res = await API.post('/messages', newMsg);
       const savedMsg = res.data;
       
@@ -73,41 +75,81 @@ export default function ChatBox({ peerId, peerName }) {
     }
   };
 
+  if (!myMessagingId) return <div>Please log in to chat.</div>;
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '400px', border: '1px solid #ccc', borderRadius: '8px', overflow: 'hidden' }}>
-      <div style={{ padding: '10px', backgroundColor: '#f0f0f0', borderBottom: '1px solid #ccc', fontWeight: 'bold' }}>
-        Chat with {peerName || 'User'}
-      </div>
-      <div style={{ flex: 1, overflowY: 'auto', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        {messages.map((m, i) => {
-          const isMine = m.sender_id === user.id;
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', flex: 1, overflow: 'hidden' }}>
+      
+      {/* MESSAGE SCROLL WINDOW */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column' }}>
+        {messages.map((m, idx) => {
+          const isMine = m.sender_id === myMessagingId;
+          
           return (
-            <div key={i} style={{ 
+            <div key={idx} style={{ 
               alignSelf: isMine ? 'flex-end' : 'flex-start',
               backgroundColor: isMine ? '#dcf8c6' : '#fff',
               padding: '8px 12px',
-              borderRadius: '16px',
-              maxWidth: '70%',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+              borderRadius: '8px',
+              borderTopRightRadius: isMine ? '0' : '8px',
+              borderTopLeftRadius: isMine ? '8px' : '0',
+              boxShadow: '0 1px 0.5px rgba(11,20,26,.13)',
+              marginBottom: '8px',
+              maxWidth: '65%',
+              position: 'relative'
             }}>
-              {m.content}
+              <p style={{ margin: 0, fontSize: '0.95rem', color: '#111b21', lineHeight: '19px', wordWrap: 'break-word' }}>
+                {m.content}
+              </p>
+              <span style={{ fontSize: '0.65rem', color: 'rgba(0,0,0,0.45)', float: 'right', margin: '-10px 0 -5px 10px', alignSelf: 'flex-end', paddingTop: '10px' }}>
+                {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
             </div>
           );
         })}
         <div ref={messagesEndRef} />
       </div>
-      <form onSubmit={sendMessage} style={{ display: 'flex', borderTop: '1px solid #ccc' }}>
-        <input 
-          type="text" 
-          value={inputValue} 
-          onChange={(e) => setInputValue(e.target.value)} 
-          placeholder="Type a message..." 
-          style={{ flex: 1, padding: '10px', border: 'none', outline: 'none' }}
-        />
-        <button type="submit" style={{ padding: '0 20px', backgroundColor: '#007bff', color: '#fff', border: 'none', cursor: 'pointer' }}>
-          Send
-        </button>
-      </form>
+
+      {/* BOTTOM INPUT BAR */}
+      <div style={{ backgroundColor: '#f0f2f5', padding: '10px 20px', display: 'flex', alignItems: 'center' }}>
+        <form onSubmit={sendMessage} style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+          <input 
+            type="text" 
+            placeholder="Type a message" 
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            style={{ 
+              flex: 1, 
+              padding: '12px 20px', 
+              borderRadius: '24px', 
+              border: 'none', 
+              outline: 'none', 
+              marginRight: '15px', 
+              fontSize: '0.95rem',
+              backgroundColor: '#fff'
+            }}
+          />
+          <button 
+            type="submit" 
+            style={{ 
+              backgroundColor: '#1a73e8', 
+              color: 'white', 
+              width: '40px', 
+              height: '40px', 
+              borderRadius: '50%', 
+              border: 'none', 
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+            }}
+          >
+            ➤
+          </button>
+        </form>
+      </div>
+      
     </div>
   );
 }
