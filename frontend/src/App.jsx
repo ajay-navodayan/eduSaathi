@@ -13,6 +13,8 @@ import Tutors from './pages/Tutors';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import GuiderDashboard from './pages/GuiderDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -31,9 +33,11 @@ function App() {
               <Route path="/register" element={<Register />} />
               
               <Route element={<ProtectedRoute />}>
+                <Route path="/profile" element={<Profile />} />
                 <Route path="/guiders/:id" element={<GuiderProfile />} />
                 <Route path="/resources" element={<Resources />} />
                 <Route path="/guider-dashboard" element={<GuiderDashboard />} />
+                <Route path="/admin-dashboard" element={<AdminDashboard />} />
               </Route>
             </Routes>
           </main>
