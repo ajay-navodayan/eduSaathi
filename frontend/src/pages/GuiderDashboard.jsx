@@ -12,8 +12,8 @@ export default function GuiderDashboard() {
 
   useEffect(() => {
     if (user?.id) {
-      const messagingId = user.role === 'guider' && user.guiderId ? user.guiderId : user.id;
-      API.get(`/messages/conversations/${messagingId}`)
+      // Use user.id consistently for all messaging features
+      API.get(`/messages/conversations/${user.id}`)
         .then(res => setContacts(res.data))
         .catch(err => console.error("Failed to load contacts", err));
     }

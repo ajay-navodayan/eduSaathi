@@ -29,7 +29,7 @@ router.put('/approve-user/:id', async (req, res) => {
 // Admin forceful profile edit (bypasses one-time rule)
 router.put('/edit-user/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, field, designation, city, overrideLock } = req.body;
+  const { name, photo, field, designation, city, overrideLock } = req.body;
   
   try {
     const userRes = await pool.query('SELECT email FROM users WHERE id = $1', [id]);
@@ -40,8 +40,8 @@ router.put('/edit-user/:id', async (req, res) => {
     
     // Attempt update in Guiders
     await pool.query(
-      'UPDATE guiders SET name=$1, field=$2, designation=$3, city=$4 WHERE email=$5',
-      [name, field, designation, city, userEmail]
+      'UPDATE guiders SET name=$1, photo=$2, field=$3, designation=$4, city=$5 WHERE email=$6',
+      [name, photo, field, designation, city, userEmail]
     );
 
     // If admin chooses to unlock the profile for the user
@@ -69,13 +69,29 @@ router.get('/users', async (req, res) => {
 
 // Add Tutor
 router.post('/add-tutor', async (req, res) => {
-  const { name, subject, location, contact, experience } = req.body;
+  const { name, subject, location, contact, experience, email } = req.body;
+  const tempPassword = 'welcome123';
+  
   try {
+    const bcrypt = require('bcryptjs');
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    
+    // 1. Create User Account
+    await pool.query(
+      'INSERT INTO users (name, email, password, role, status) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (email) DO NOTHING',
+      [name, email, hashedPassword, 'tutor', 'approved']
+    );
+
+    // 2. Create Tutor Profile
     const result = await pool.query(
       'INSERT INTO tutors (name, subject, location, contact, experience) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [name, subject, location, contact, experience]
     );
-    res.status(201).json(result.rows[0]);
+    res.status(201).json({ 
+      message: 'Tutor and User account created successfully', 
+      tutor: result.rows[0],
+      tempPassword 
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error adding tutor' });

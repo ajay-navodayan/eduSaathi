@@ -147,7 +147,13 @@ export default function GuiderProfile() {
 
             {/* Live Chat */}
             <div className="profile-section card" style={{ marginTop: '20px' }}>
-              <ChatBox peerId={guider.id} peerName={guider.name} />
+              {guider.user_id ? (
+                <ChatBox peerId={guider.user_id} peerName={guider.name} />
+              ) : (
+                <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
+                  <p>💬 Chat is unavailable because this Guider hasn't registered a user account yet.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
