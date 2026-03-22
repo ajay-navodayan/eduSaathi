@@ -87,6 +87,21 @@ async function initializeDatabase() {
     await pool.query("ALTER TABLE guiders ADD COLUMN IF NOT EXISTS twelfth_board TEXT");
     await pool.query("ALTER TABLE guiders ADD COLUMN IF NOT EXISTS linkedin TEXT");
 
+    // Tutors Migrations (Matching Guider Format)
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS photo TEXT");
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS field TEXT");
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS designation TEXT");
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS city TEXT");
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS tenth_marks TEXT");
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS tenth_board TEXT");
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS twelfth_marks TEXT");
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS twelfth_board TEXT");
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS achievements TEXT");
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS linkedin TEXT");
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS whatsapp TEXT");
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS email TEXT UNIQUE");
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS phone TEXT");
+
     console.log('✅ Columns checked/added.');
 
     // 3. Clear Dummy Data (Only if requested - let's make it a safe check or comment it)

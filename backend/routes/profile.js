@@ -11,12 +11,15 @@ router.get('/me/:id', async (req, res) => {
     if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     const user = userRes.rows[0];
 
-    let guiderData = {};
+    let profileData = {};
     if (user.role === 'guider') {
-      const gRes = await pool.query('SELECT photo, field, designation, city, category, whatsapp, phone FROM guiders WHERE email = $1', [user.email]);
-      if (gRes.rows.length > 0) guiderData = gRes.rows[0];
+      const gRes = await pool.query('SELECT photo, field, designation, city, category, tenth_marks, tenth_board, twelfth_marks, twelfth_board, achievements, linkedin, whatsapp, phone FROM guiders WHERE email = $1', [user.email]);
+      if (gRes.rows.length > 0) profileData = gRes.rows[0];
+    } else if (user.role === 'tutor') {
+      const tRes = await pool.query('SELECT photo, field, designation, city, tenth_marks, tenth_board, twelfth_marks, twelfth_board, achievements, linkedin, whatsapp, phone FROM tutors WHERE email = $1', [user.email]);
+      if (tRes.rows.length > 0) profileData = tRes.rows[0];
     }
-    res.json({ ...user, ...guiderData });
+    res.json({ ...user, ...profileData });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error fetching profile data' });
@@ -25,37 +28,86 @@ router.get('/me/:id', async (req, res) => {
 
 // Helper to check one-time edit rule
 router.put('/update', async (req, res) => {
-  const { userId, name, photo, field, designation, city, category, whatsapp, phone } = req.body;
+  const { 
+    userId, name, photo, field, designation, city, category, 
+    tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+    achievements, linkedin, whatsapp, phone 
+  } = req.body;
   
   if (!userId) return res.status(400).json({ error: 'Missing userId' });
 
   try {
     // Check if profile was already edited
-    const userRes = await pool.query('SELECT profile_edited, email FROM users WHERE id = $1', [userId]);
+    const userRes = await pool.query('SELECT profile_edited, email, role FROM users WHERE id = $1', [userId]);
     if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     
-    const user = userRes.rows[0];
-    if (user.profile_edited) {
+    const { profile_edited, email: userEmail, role } = userRes.rows[0];
+    if (profile_edited) {
       return res.status(403).json({ error: 'Profile locked. You can only edit your profile once. Contact Admin to make further changes.' });
     }
 
     // Update Users Table
     await pool.query('UPDATE users SET name = $1, profile_edited = true WHERE id = $2', [name, userId]);
 
-    // Upsert into Guiders Table using email for linkage
-    const guiderRes = await pool.query('SELECT id FROM guiders WHERE email = $1', [user.email]);
-    if (guiderRes.rows.length > 0) {
-      // Update existing
-      await pool.query(
-        'UPDATE guiders SET name=$1, photo=$2, field=$3, designation=$4, city=$5, category=$6, whatsapp=$7, phone=$8 WHERE email=$9',
-        [name, photo, field, designation, city, category, whatsapp, phone, user.email]
-      );
-    } else {
-      // Insert new guider profile
-      await pool.query(
-        'INSERT INTO guiders (name, email, photo, field, designation, city, category, whatsapp, phone) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-        [name, user.email, photo, field, designation, city, category, whatsapp, phone]
-      );
+    // Upsert into Guiders or Tutors Table
+    if (role === 'guider') {
+      const guiderRes = await pool.query('SELECT id FROM guiders WHERE email = $1', [userEmail]);
+      if (guiderRes.rows.length > 0) {
+        await pool.query(
+          `UPDATE guiders SET 
+            name=$1, photo=$2, field=$3, designation=$4, city=$5, category=$6, 
+            tenth_marks=$7, tenth_board=$8, twelfth_marks=$9, twelfth_board=$10,
+            achievements=$11, linkedin=$12, whatsapp=$13, phone=$14 
+           WHERE email=$15`,
+          [
+            name, photo, field, designation, city, category, 
+            tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+            achievements, linkedin, whatsapp, phone, userEmail
+          ]
+        );
+      } else {
+        await pool.query(
+          `INSERT INTO guiders (
+            name, email, photo, field, designation, city, category, 
+            tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+            achievements, linkedin, whatsapp, phone
+          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
+          [
+            name, userEmail, photo, field, designation, city, category, 
+            tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+            achievements, linkedin, whatsapp, phone
+          ]
+        );
+      }
+    } else if (role === 'tutor') {
+      const tutorRes = await pool.query('SELECT id FROM tutors WHERE email = $1', [userEmail]);
+      if (tutorRes.rows.length > 0) {
+        await pool.query(
+          `UPDATE tutors SET 
+            name=$1, photo=$2, field=$3, designation=$4, city=$5, 
+            tenth_marks=$6, tenth_board=$7, twelfth_marks=$8, twelfth_board=$9,
+            achievements=$10, linkedin=$11, whatsapp=$12, phone=$13 
+           WHERE email=$14`,
+          [
+            name, photo, field, designation, city, 
+            tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+            achievements, linkedin, whatsapp, phone, userEmail
+          ]
+        );
+      } else {
+        await pool.query(
+          `INSERT INTO tutors (
+            name, email, photo, field, designation, city, 
+            tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+            achievements, linkedin, whatsapp, phone
+          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+          [
+            name, userEmail, photo, field, designation, city, 
+            tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+            achievements, linkedin, whatsapp, phone
+          ]
+        );
+      }
     }
 
     res.json({ message: 'Profile updated and locked successfully.' });
