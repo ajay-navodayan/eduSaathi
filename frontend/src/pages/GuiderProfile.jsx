@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import API from '../api';
+import ChatBox from '../components/ChatBox';
 import './GuiderProfile.css';
 
 export default function GuiderProfile() {
@@ -142,6 +143,11 @@ export default function GuiderProfile() {
                 <span>🔑</span>
                 <span>Contact them via WhatsApp or Email for the fastest response.</span>
               </div>
+            </div>
+
+            {/* Live Chat */}
+            <div className="profile-section card" style={{ marginTop: '20px' }}>
+              <ChatBox peerId={guider.id} peerName={guider.name} />
             </div>
           </div>
         </div>
