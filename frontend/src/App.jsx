@@ -12,6 +12,8 @@ import Resources from './pages/Resources';
 import Tutors from './pages/Tutors';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import GuiderDashboard from './pages/GuiderDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -23,12 +25,16 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/guiders" element={<Guiders />} />
-              <Route path="/guiders/:id" element={<GuiderProfile />} />
               <Route path="/notifications" element={<Notifications />} />
-              <Route path="/resources" element={<Resources />} />
               <Route path="/tutors" element={<Tutors />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              
+              <Route element={<ProtectedRoute />}>
+                <Route path="/guiders/:id" element={<GuiderProfile />} />
+                <Route path="/resources" element={<Resources />} />
+                <Route path="/guider-dashboard" element={<GuiderDashboard />} />
+              </Route>
             </Routes>
           </main>
           <Footer />

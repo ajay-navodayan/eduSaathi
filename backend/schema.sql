@@ -106,3 +106,12 @@ ON CONFLICT DO NOTHING;
 INSERT INTO users (name, email, password, role) VALUES
 ('Admin', 'admin@edusaathi.com', '$2a$10$rQnlT0gCDzNt7NJkuJp5ouge1mU6YTfALOYj5K0.X0.eLe28QREG6', 'admin')
 ON CONFLICT DO NOTHING;
+
+-- Messages table
+CREATE TABLE IF NOT EXISTS messages (
+    id SERIAL PRIMARY KEY,
+    sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
