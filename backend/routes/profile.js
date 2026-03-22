@@ -13,7 +13,7 @@ router.get('/me/:id', async (req, res) => {
 
     let guiderData = {};
     if (user.role === 'guider') {
-      const gRes = await pool.query('SELECT field, designation, city, category, whatsapp, phone FROM guiders WHERE email = $1', [user.email]);
+      const gRes = await pool.query('SELECT photo, field, designation, city, category, whatsapp, phone FROM guiders WHERE email = $1', [user.email]);
       if (gRes.rows.length > 0) guiderData = gRes.rows[0];
     }
     res.json({ ...user, ...guiderData });
@@ -25,7 +25,7 @@ router.get('/me/:id', async (req, res) => {
 
 // Helper to check one-time edit rule
 router.put('/update', async (req, res) => {
-  const { userId, name, field, designation, city, category, whatsapp, phone } = req.body;
+  const { userId, name, photo, field, designation, city, category, whatsapp, phone } = req.body;
   
   if (!userId) return res.status(400).json({ error: 'Missing userId' });
 
@@ -47,14 +47,14 @@ router.put('/update', async (req, res) => {
     if (guiderRes.rows.length > 0) {
       // Update existing
       await pool.query(
-        'UPDATE guiders SET name=$1, field=$2, designation=$3, city=$4, category=$5, whatsapp=$6, phone=$7 WHERE email=$8',
-        [name, field, designation, city, category, whatsapp, phone, user.email]
+        'UPDATE guiders SET name=$1, photo=$2, field=$3, designation=$4, city=$5, category=$6, whatsapp=$7, phone=$8 WHERE email=$9',
+        [name, photo, field, designation, city, category, whatsapp, phone, user.email]
       );
     } else {
       // Insert new guider profile
       await pool.query(
-        'INSERT INTO guiders (name, email, field, designation, city, category, whatsapp, phone) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-        [name, user.email, field, designation, city, category, whatsapp, phone]
+        'INSERT INTO guiders (name, email, photo, field, designation, city, category, whatsapp, phone) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+        [name, user.email, photo, field, designation, city, category, whatsapp, phone]
       );
     }
 

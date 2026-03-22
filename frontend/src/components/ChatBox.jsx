@@ -11,15 +11,15 @@ export default function ChatBox({ peerId }) {
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef(null);
 
-  const myMessagingId = user?.role === 'guider' && user?.guiderId ? user.guiderId : user?.id;
+  const myMessagingId = user?.id;
 
   useEffect(() => {
     if (!myMessagingId || !peerId) return;
 
-    // Join room for this specific user pair
-    socket.emit('join_room', myMessagingId);
+    // Join room for this specific user - important to use user.id
+    socket.emit('join_room', String(myMessagingId));
     
-    // Fetch initial chat history from backend
+    // Fetch initial chat history
     const fetchHistory = async () => {
       try {
         const res = await API.get(`/messages/${peerId}?userId=${myMessagingId}`);
@@ -31,8 +31,14 @@ export default function ChatBox({ peerId }) {
     fetchHistory();
 
     const handleReceiveMessage = (msgData) => {
-      if ((msgData.sender_id === parseInt(peerId) && msgData.receiver_id === parseInt(myMessagingId)) || 
-          (msgData.sender_id === parseInt(myMessagingId) && msgData.receiver_id === parseInt(peerId))) {
+      const incomingSender = Number(msgData.sender_id);
+      const incomingReceiver = Number(msgData.receiver_id);
+      const currentPeer = Number(peerId);
+      const currentMe = Number(myMessagingId);
+
+      // Filter to only show messages for the current open chat
+      if ((incomingSender === currentPeer && incomingReceiver === currentMe) || 
+          (incomingSender === currentMe && incomingReceiver === currentPeer)) {
         setMessages((prev) => [...prev, msgData]);
       }
     };
@@ -54,20 +60,18 @@ export default function ChatBox({ peerId }) {
 
     const newMsg = {
       sender_id: myMessagingId,
-      receiver_id: parseInt(peerId),
+      receiver_id: Number(peerId),
       content: inputValue,
       created_at: new Date().toISOString()
     };
 
     try {
-      // Save locally
       const res = await API.post('/messages', newMsg);
       const savedMsg = res.data;
       
-      // Emit via socket
+      // Emit via socket - ensure it goes to the correct room string
       socket.emit('send_message', savedMsg);
       
-      // Update local UI
       setMessages((prev) => [...prev, savedMsg]);
       setInputValue('');
     } catch (err) {
