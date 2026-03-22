@@ -4,11 +4,12 @@ import API from '../api';
 import GuiderCard from '../components/GuiderCard';
 import './Home.css';
 
-const CATEGORIES = ['IIT', 'NEET', 'UPSC', 'Army', 'Railway', 'Matric', 'Intermediate'];
+const CATEGORIES = ['Doctor', 'Engineer', 'Defence', 'SSC', 'Railway', 'Post Office', 'CA', 'Bsc nursing', 'UPSC'];
 
 const CATEGORY_ICONS = {
-  'IIT': '🔬', 'NEET': '🩺', 'UPSC': '🏛️',
-  'Army': '⚔️', 'Railway': '🚂', 'Matric': '📚', 'Intermediate': '📖'
+  'Doctor': '🩺', 'Engineer': '🏗️', 'Defence': '🎖️', 'SSC': '📝',
+  'Railway': '🚂', 'Post Office': '📮', 'CA': '📊', 'Bsc nursing': '👩‍⚕️',
+  'UPSC': '🏛️'
 };
 
 export default function Home() {
@@ -63,7 +64,7 @@ export default function Home() {
             <span className="hero-title-accent">Real Mentors</span>
           </h1>
           <p className="hero-subtitle fade-in-up">
-            Find expert guiders for IIT, NEET, UPSC, Army & more. Your success journey starts here!
+            Find expert guiders for Doctor, Engineer, Defence, SSC & more. Your success journey starts here!
           </p>
           <div className="hero-actions fade-in-up">
             <Link to="/guiders" className="btn btn-accent btn-lg">Find Guider 🎓</Link>

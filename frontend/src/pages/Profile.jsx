@@ -8,7 +8,11 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
 
   // Forms
-  const [profileForm, setProfileForm] = useState({ name: user?.name, field: '', designation: '', city: '', category: '', whatsapp: '', phone: '' });
+  const [profileForm, setProfileForm] = useState({ 
+    name: user?.name, photo: '', field: '', designation: '', city: '', category: '', 
+    tenth_marks: '', tenth_board: '', twelfth_marks: '', twelfth_board: '',
+    achievements: '', linkedin: '', whatsapp: '', phone: '' 
+  });
   const [pwdForm, setPwdForm] = useState({ currentPassword: '', newPassword: '' });
   
   const [profileMsg, setProfileMsg] = useState('');
@@ -23,8 +27,20 @@ export default function Profile() {
       setProfileData(res.data);
       if (!res.data.profile_edited) {
         setProfileForm({ 
-          name: res.data.name || '', field: res.data.field || '', designation: res.data.designation || '', 
-          city: res.data.city || '', category: res.data.category || '', whatsapp: res.data.whatsapp || '', phone: res.data.phone || '' 
+          name: res.data.name || '', 
+          photo: res.data.photo || '',
+          field: res.data.field || '', 
+          designation: res.data.designation || '', 
+          city: res.data.city || '', 
+          category: res.data.category || '', 
+          tenth_marks: res.data.tenth_marks || '',
+          tenth_board: res.data.tenth_board || '',
+          twelfth_marks: res.data.twelfth_marks || '',
+          twelfth_board: res.data.twelfth_board || '',
+          achievements: res.data.achievements || '',
+          linkedin: res.data.linkedin || '',
+          whatsapp: res.data.whatsapp || '', 
+          phone: res.data.phone || '' 
         });
       }
     } catch (err) {
@@ -79,12 +95,20 @@ export default function Profile() {
             <p><strong>Name:</strong> {profileData.name}</p>
             <p><strong>Email:</strong> {profileData.email}</p>
             <p><strong>Role:</strong> {profileData.role}</p>
-            {profileData.role === 'guider' && (
+            {(profileData.role === 'guider' || profileData.role === 'tutor') && (
               <>
                 <p><strong>Field:</strong> {profileData.field || 'N/A'}</p>
                 <p><strong>Designation:</strong> {profileData.designation || 'N/A'}</p>
                 <p><strong>Location:</strong> {profileData.city || 'N/A'}</p>
-                <p><strong>Category:</strong> {profileData.category || 'N/A'}</p>
+                {profileData.role === 'guider' && <p><strong>Category:</strong> {profileData.category || 'N/A'}</p>}
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '10px' }}>
+                  <p><strong>10th:</strong> {profileData.tenth_marks || 'N/A'}% {profileData.tenth_board && `(${profileData.tenth_board})`}</p>
+                  <p><strong>12th:</strong> {profileData.twelfth_marks || 'N/A'}% {profileData.twelfth_board && `(${profileData.twelfth_board})`}</p>
+                </div>
+                
+                <p><strong>Achievements:</strong> {profileData.achievements || 'N/A'}</p>
+                <p><strong>LinkedIn:</strong> {profileData.linkedin || 'N/A'}</p>
                 <p><strong>Phone:</strong> {profileData.phone || 'N/A'}</p>
                 <p><strong>WhatsApp:</strong> {profileData.whatsapp || 'N/A'}</p>
               </>
@@ -101,17 +125,65 @@ export default function Profile() {
             {profileMsg && <div style={{ padding: '10px', backgroundColor: '#e2e3e5', marginBottom: '1rem', borderRadius: '4px' }}>{profileMsg}</div>}
             
             <form onSubmit={submitProfile} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-              <input type="text" name="name" placeholder="Name" value={profileForm.name} onChange={handleProfileChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-              {user.role === 'guider' && (
-                <>
-                  <input type="text" name="field" placeholder="Field (e.g. UPSC)" value={profileForm.field} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                  <input type="text" name="designation" placeholder="Designation" value={profileForm.designation} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                  <input type="text" name="city" placeholder="City" value={profileForm.city} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                  <input type="text" name="category" placeholder="Category" value={profileForm.category} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                  <input type="text" name="whatsapp" placeholder="WhatsApp Number" value={profileForm.whatsapp} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                  <input type="text" name="phone" placeholder="Phone Number" value={profileForm.phone} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                </>
-              )}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="Name" value={profileForm.name} onChange={handleProfileChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+                <label>Photo URL</label>
+                <input type="text" name="photo" placeholder="Photo URL" value={profileForm.photo} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+                <label>Field/Subject</label>
+                <input type="text" name="field" placeholder="Field (e.g. UPSC)" value={profileForm.field} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+                <label>Designation</label>
+                <input type="text" name="designation" placeholder="Designation" value={profileForm.designation} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+                <label>City</label>
+                <input type="text" name="city" placeholder="City" value={profileForm.city} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+                {user.role === 'guider' && (
+                  <>
+                    <label>Category</label>
+                    <select 
+                      name="category" 
+                      value={profileForm.category} 
+                      onChange={handleProfileChange} 
+                      style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc', backgroundColor: '#fff' }}
+                    >
+                      <option value="">Select Category</option>
+                      {['Doctor', 'Engineer', 'Defence', 'SSC', 'Railway', 'Post Office', 'CA', 'Bsc nursing', 'UPSC'].map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
+                  </>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <div style={{ flex: 1 }}>
+                    <label>10th %</label>
+                    <input type="text" name="tenth_marks" placeholder="10th %" value={profileForm.tenth_marks} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc', width: '100%' }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label>10th Board</label>
+                    <input type="text" name="tenth_board" placeholder="Board" value={profileForm.tenth_board} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc', width: '100%' }} />
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <div style={{ flex: 1 }}>
+                    <label>12th %</label>
+                    <input type="text" name="twelfth_marks" placeholder="12th %" value={profileForm.twelfth_marks} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc', width: '100%' }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label>12th Board</label>
+                    <input type="text" name="twelfth_board" placeholder="Board" value={profileForm.twelfth_board} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc', width: '100%' }} />
+                  </div>
+                </div>
+                <label>Achievements</label>
+                <textarea name="achievements" placeholder="Achievements (comma separated)" value={profileForm.achievements} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc', height: '60px' }} />
+                <label>LinkedIn ID</label>
+                <input type="text" name="linkedin" placeholder="LinkedIn Profile Link" value={profileForm.linkedin} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+                <label>WhatsApp Number</label>
+                <input type="text" name="whatsapp" placeholder="WhatsApp Number" value={profileForm.whatsapp} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+                <label>Phone Number</label>
+                <input type="text" name="phone" placeholder="Phone Number" value={profileForm.phone} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+              </div>
               <div style={{ gridColumn: '1 / -1', marginTop: '10px' }}>
                 <button type="submit" style={{ padding: '12px 24px', backgroundColor: '#1a73e8', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>Save Profile Details Permanently</button>
               </div>
