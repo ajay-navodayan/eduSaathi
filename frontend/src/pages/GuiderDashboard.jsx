@@ -1,54 +1,107 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import ChatBox from '../components/ChatBox';
+import API from '../api';
+import './ChatApp.css';
 
 export default function GuiderDashboard() {
   const { user } = useAuth();
-  const [studentIdToChat, setStudentIdToChat] = useState('');
-  const [activeChatId, setActiveChatId] = useState(null);
+  const [contacts, setContacts] = useState([]);
+  const [activeChat, setActiveChat] = useState(null); // stores { peer_id, name, role }
+  const [newChatId, setNewChatId] = useState('');
 
-  const startChat = (e) => {
+  useEffect(() => {
+    if (user?.id) {
+      const messagingId = user.role === 'guider' && user.guiderId ? user.guiderId : user.id;
+      API.get(`/messages/conversations/${messagingId}`)
+        .then(res => setContacts(res.data))
+        .catch(err => console.error("Failed to load contacts", err));
+    }
+  }, [user]);
+
+  const handleStartManualChat = (e) => {
     e.preventDefault();
-    if (studentIdToChat) {
-      setActiveChatId(parseInt(studentIdToChat, 10));
+    if (newChatId.trim()) {
+      setActiveChat({ peer_id: parseInt(newChatId), name: `User ${newChatId}`, role: 'Unknown' });
+      setNewChatId('');
     }
   };
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1>Guider Dashboard</h1>
-      <p>Welcome, {user?.name}!</p>
+    <div className="chat-layout">
       
-      <div style={{ display: 'flex', gap: '2rem', marginTop: '2rem' }}>
-        <div style={{ flex: 1, backgroundColor: '#f9f9f9', padding: '1.5rem', borderRadius: '8px' }}>
-          <h2>Your Profile</h2>
-          <p><strong>Name:</strong> {user?.name}</p>
-          <p><strong>Email:</strong> {user?.email}</p>
-          <p><strong>Role:</strong> {user?.role}</p>
+      {/* LEFT PANE: CONTACTS */}
+      <div className="chat-sidebar">
+        <div className="chat-sidebar-header">
+          <span>Chats</span>
         </div>
         
-        <div style={{ flex: 2, backgroundColor: '#f9f9f9', padding: '1.5rem', borderRadius: '8px' }}>
-          <h2>Messages</h2>
-          <form onSubmit={startChat} style={{ marginBottom: '1rem', display: 'flex', gap: '10px' }}>
-            <input 
-              type="number" 
-              placeholder="Enter Student ID to chat with..." 
-              value={studentIdToChat}
-              onChange={(e) => setStudentIdToChat(e.target.value)}
-              style={{ padding: '8px', flex: 1 }}
-            />
-            <button type="submit" style={{ padding: '8px 16px', backgroundColor: '#1a73e8', color: '#fff', border: 'none', borderRadius: '4px' }}>
-              Start Chat
-            </button>
+        <div className="contact-list">
+          {/* Manual New Chat Form hidden beautifully */}
+          <form style={{ padding: '10px 15px', borderBottom: '1px solid #ddd' }} onSubmit={handleStartManualChat}>
+             <input 
+               type="number" 
+               placeholder="Search or start new chat by ID..." 
+               value={newChatId}
+               onChange={(e) => setNewChatId(e.target.value)}
+               style={{ width: '100%', padding: '10px 15px', borderRadius: '8px', border: 'none', backgroundColor: '#f0f2f5', outline: 'none' }}
+             />
           </form>
-          
-          {activeChatId ? (
-            <ChatBox peerId={activeChatId} peerName={`Student #${activeChatId}`} />
+
+          {contacts.length === 0 ? (
+             <p style={{ padding: '20px', textAlign: 'center', color: '#666' }}>No recent chats found.</p>
           ) : (
-            <p>Select a student to start chatting.</p>
+             contacts.map(c => {
+               // Generate random appealing color for dummy avatar
+               const avatarColors = ['#1a73e8', '#34a853', '#fbbc05', '#ea4335', '#ff6d00', '#9c27b0'];
+               const color = avatarColors[c.peer_id % avatarColors.length];
+               const isActive = activeChat?.peer_id === c.peer_id;
+
+               return (
+                 <div 
+                   key={c.peer_id} 
+                   className={`contact-item ${isActive ? 'active' : ''}`}
+                   onClick={() => setActiveChat(c)}
+                 >
+                   <div className="contact-avatar" style={{ backgroundColor: color }}>
+                     {c.name ? c.name.charAt(0).toUpperCase() : 'U'}
+                   </div>
+                   <div className="contact-info">
+                     <div className="contact-name">{c.name || `User ${c.peer_id}`}</div>
+                     <div className="contact-role" style={{ textTransform: 'capitalize' }}>{c.role || 'New User'}</div>
+                   </div>
+                 </div>
+               )
+             })
           )}
         </div>
       </div>
+
+      {/* RIGHT PANE: CHATBOX */}
+      <div className="chat-main">
+        {activeChat ? (
+          <>
+            <div className="chat-header">
+               <div className="contact-avatar" style={{ width: '40px', height: '40px', backgroundColor: '#9c27b0' }}>
+                 {activeChat.name ? activeChat.name.charAt(0).toUpperCase() : 'U'}
+               </div>
+               <div className="contact-info">
+                 <div className="contact-name" style={{ marginBottom: '0' }}>{activeChat.name || `User ${activeChat.peer_id}`}</div>
+               </div>
+            </div>
+            
+            {/* The actual real-time chat window */}
+            <ChatBox peerId={activeChat.peer_id} />
+          </>
+        ) : (
+          <div className="empty-chat">
+            <h2 style={{ fontWeight: '300', color: '#41525d', marginBottom: '10px' }}>EduSaathi Web Connect</h2>
+            <p>Send and receive messages without keeping your phone online.</p>
+            <p style={{ fontSize: '0.9rem', marginTop: '5px' }}>Select a chat from the left menu to start messaging.</p>
+          </div>
+        )}
+      </div>
+
     </div>
   );
 }
