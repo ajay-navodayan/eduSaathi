@@ -9,7 +9,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
 
   // Forms
-  const [profileForm, setProfileForm] = useState({ name: user?.name, photo: '', field: '', designation: '', city: '', category: '', whatsapp: '', phone: '' });
+  const [profileForm, setProfileForm] = useState({ name: user?.name, photo: '', field: '', designation: '', city: '', category: '', whatsapp: '', phone: '', mentor_type: 'mentor_only' });
   const [pwdForm, setPwdForm] = useState({ currentPassword: '', newPassword: '' });
   
   const [profileMsg, setProfileMsg] = useState('');
@@ -27,7 +27,8 @@ export default function Profile() {
           name: res.data.name || '', photo: res.data.photo || '',
           field: res.data.field || '', designation: res.data.designation || '', 
           city: res.data.city || '', category: res.data.category || '',
-          whatsapp: res.data.whatsapp || '', phone: res.data.phone || '' 
+          whatsapp: res.data.whatsapp || '', phone: res.data.phone || '',
+          mentor_type: res.data.mentor_type || 'mentor_only'
         });
       }
     } catch (err) {
@@ -103,6 +104,7 @@ export default function Profile() {
                 <p><strong>Designation:</strong> {profileData.designation || 'N/A'}</p>
                 <p><strong>Location:</strong> {profileData.city || 'N/A'}</p>
                 <p><strong>Category:</strong> {profileData.category || 'N/A'}</p>
+                <p><strong>Mentor Type:</strong> {profileData.mentor_type === 'tutor_mentor' ? 'Tutor + Mentor' : 'Mentor Only'}</p>
                 <p><strong>Phone:</strong> {profileData.phone || 'N/A'}</p>
                 <p><strong>WhatsApp:</strong> {profileData.whatsapp || 'N/A'}</p>
               </>
@@ -136,6 +138,10 @@ export default function Profile() {
                   <input type="text" name="designation" placeholder="Designation" value={profileForm.designation} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
                   <input type="text" name="city" placeholder="City" value={profileForm.city} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
                   <input type="text" name="category" placeholder="Category" value={profileForm.category} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+                  <select name="mentor_type" value={profileForm.mentor_type} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}>
+                    <option value="mentor_only">Mentor Only</option>
+                    <option value="tutor_mentor">Tutor + Mentor</option>
+                  </select>
                   <input type="text" name="whatsapp" placeholder="WhatsApp Number" value={profileForm.whatsapp} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
                   <input type="text" name="phone" placeholder="Phone Number" value={profileForm.phone} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
                 </>

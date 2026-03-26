@@ -1,16 +1,61 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api';
+import PhotoUpload from '../components/PhotoUpload';
 import './Auth.css';
+
+const initialMentorForm = {
+  photo: '',
+  field: '',
+  designation: '',
+  city: '',
+  category: '',
+  tenth_marks: '',
+  tenth_board: '',
+  twelfth_marks: '',
+  twelfth_board: '',
+  achievements: '',
+  linkedin: '',
+  whatsapp: '',
+  phone: '',
+  mentor_type: 'mentor_only'
+};
 
 export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '', role: 'student' });
+  const [mentorForm, setMentorForm] = useState(initialMentorForm);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1);
   const navigate = useNavigate();
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    if (name === 'role' && value !== 'guider') {
+      setStep(1);
+      setMentorForm(initialMentorForm);
+    }
+  };
+  const handleMentorChange = (e) => setMentorForm({ ...mentorForm, [e.target.name]: e.target.value });
+
+  const goToStepTwo = () => {
+    setError('');
+    if (!form.name.trim() || !form.email.trim() || !form.password || !form.confirm) {
+      setError('Please fill all basic details before continuing.');
+      return;
+    }
+    if (form.password !== form.confirm) {
+      setError('Passwords do not match');
+      return;
+    }
+    if (form.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    setStep(2);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,8 +68,14 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      await API.post('/auth/register', { name: form.name, email: form.email, password: form.password, role: form.role });
-      setSuccess('Account created! Redirecting to login...');
+      await API.post('/auth/register', {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: form.role,
+        ...(form.role === 'guider' ? mentorForm : {})
+      });
+      setSuccess(form.role === 'guider' ? 'Mentor profile submitted! Redirecting to login...' : 'Account created! Redirecting to login...');
       setTimeout(() => navigate('/login'), 1800);
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed. Please try again.');
@@ -114,27 +165,94 @@ export default function Register() {
               />
             </div>
 
-            <div className="form-group" style={{ marginBottom: '20px' }}>
+            <div className="form-group register-role-group">
               <label className="form-label">I am registering as a:</label>
-              <div style={{ display: 'flex', gap: '20px' }}>
-                <label style={{ display: 'flex', gap: '8px', alignItems: 'center', cursor: 'pointer' }}>
+              <div className="register-role-options">
+                <label className="register-role-option">
                   <input type="radio" name="role" value="student" checked={form.role === 'student'} onChange={handleChange} />
                   Student
                 </label>
-                <label style={{ display: 'flex', gap: '8px', alignItems: 'center', cursor: 'pointer' }}>
+                <label className="register-role-option">
                   <input type="radio" name="role" value="guider" checked={form.role === 'guider'} onChange={handleChange} />
                   Guider/Mentor
                 </label>
               </div>
             </div>
 
-            <button
-              type="submit"
-              className="btn btn-accent btn-lg w-full"
-              disabled={loading}
-            >
-              {loading ? 'Creating Account...' : 'Register Free →'}
-            </button>
+            {form.role === 'guider' ? (
+              step === 1 ? (
+                <button
+                  type="button"
+                  className="btn btn-accent btn-lg w-full"
+                  onClick={goToStepTwo}
+                >
+                  Continue to Mentor Form →
+                </button>
+              ) : (
+                <>
+                  <div className="mentor-step-header">
+                    <h3>Mentor Profile Details</h3>
+                    <p>Add your professional details exactly as they should appear publicly.</p>
+                  </div>
+
+                  <div className="mentor-register-grid">
+                    <div className="mentor-photo-wrap">
+                      <PhotoUpload
+                        value={mentorForm.photo}
+                        onChange={(url) => setMentorForm({ ...mentorForm, photo: url })}
+                        name={form.name}
+                      />
+                    </div>
+
+                    <input type="text" name="field" className="form-input" placeholder="Field (e.g. UPSC, JEE)" value={mentorForm.field} onChange={handleMentorChange} required />
+                    <input type="text" name="designation" className="form-input" placeholder="Designation" value={mentorForm.designation} onChange={handleMentorChange} />
+                    <input type="text" name="city" className="form-input" placeholder="Current City" value={mentorForm.city} onChange={handleMentorChange} />
+                    <input type="text" name="category" className="form-input" placeholder="Category (e.g. UPSC/NEET)" value={mentorForm.category} onChange={handleMentorChange} />
+                    <input type="text" name="tenth_marks" className="form-input" placeholder="10th Percentage" value={mentorForm.tenth_marks} onChange={handleMentorChange} />
+                    <input type="text" name="tenth_board" className="form-input" placeholder="10th Board" value={mentorForm.tenth_board} onChange={handleMentorChange} />
+                    <input type="text" name="twelfth_marks" className="form-input" placeholder="12th Percentage" value={mentorForm.twelfth_marks} onChange={handleMentorChange} />
+                    <input type="text" name="twelfth_board" className="form-input" placeholder="12th Board" value={mentorForm.twelfth_board} onChange={handleMentorChange} />
+                    <input type="text" name="linkedin" className="form-input" placeholder="LinkedIn URL" value={mentorForm.linkedin} onChange={handleMentorChange} />
+                    <input type="text" name="phone" className="form-input" placeholder="Phone Number" value={mentorForm.phone} onChange={handleMentorChange} />
+                    <input type="text" name="whatsapp" className="form-input" placeholder="WhatsApp Number" value={mentorForm.whatsapp} onChange={handleMentorChange} />
+                    <textarea name="achievements" className="form-input mentor-achievements" placeholder="Achievements (comma separated)" value={mentorForm.achievements} onChange={handleMentorChange} />
+
+                    <div className="mentor-type-group">
+                      <label className="form-label">Mentor Type</label>
+                      <div className="register-role-options">
+                        <label className="register-role-option">
+                          <input type="radio" name="mentor_type" value="mentor_only" checked={mentorForm.mentor_type === 'mentor_only'} onChange={handleMentorChange} />
+                          Mentor Only
+                        </label>
+                        <label className="register-role-option">
+                          <input type="radio" name="mentor_type" value="tutor_mentor" checked={mentorForm.mentor_type === 'tutor_mentor'} onChange={handleMentorChange} />
+                          Tutor + Mentor
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mentor-register-actions">
+                    <button type="button" className="btn btn-outline" onClick={() => setStep(1)} disabled={loading}>← Back</button>
+                    <button
+                      type="submit"
+                      className="btn btn-accent btn-lg"
+                      disabled={loading}
+                    >
+                      {loading ? 'Submitting Mentor Profile...' : 'Submit Mentor Registration →'}
+                    </button>
+                  </div>
+                </>
+              )
+            ) : (
+              <button
+                type="submit"
+                className="btn btn-accent btn-lg w-full"
+                disabled={loading}
+              >
+                {loading ? 'Creating Account...' : 'Register Free →'}
+              </button>
+            )}
           </form>
 
           <p className="auth-switch mt-2">
