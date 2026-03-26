@@ -29,15 +29,20 @@ export default function Navbar() {
         <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
           <NavLink to="/" end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={() => setMenuOpen(false)}>Home</NavLink>
           <NavLink to="/guiders" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={() => setMenuOpen(false)}>Guiders</NavLink>
-          <NavLink to="/notifications" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={() => setMenuOpen(false)}>Notifications</NavLink>
-          <NavLink to="/resources" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={() => setMenuOpen(false)}>Resources</NavLink>
           <NavLink to="/tutors" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={() => setMenuOpen(false)}>Tutors</NavLink>
+          <NavLink to="/resources" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={() => setMenuOpen(false)}>Resources</NavLink>
+          <NavLink to="/notifications" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={() => setMenuOpen(false)}>Notifications</NavLink>
 
           {user ? (
             <div className="nav-user">
-              <span className="nav-username">👋 {user.name}</span>
+              <NavLink to="/profile" className="nav-username" onClick={() => setMenuOpen(false)} style={{ textDecoration: 'none', color: '#1a73e8', fontWeight: 'bold', marginRight: '10px' }}>
+                👤 {user.name}
+              </NavLink>
               {user.role === 'admin' && (
-                <NavLink to="/admin" className="btn btn-sm btn-outline" onClick={() => setMenuOpen(false)}>Admin</NavLink>
+                <NavLink to="/admin-dashboard" className="btn btn-sm btn-outline" onClick={() => setMenuOpen(false)}>Admin</NavLink>
+              )}
+              {user.role === 'guider' && (
+                <NavLink to="/guider-dashboard" className="btn btn-sm btn-outline" onClick={() => setMenuOpen(false)} style={{ marginRight: '10px' }}>Chat Dashboard</NavLink>
               )}
               <button className="btn btn-sm btn-accent" onClick={handleLogout}>Logout</button>
             </div>

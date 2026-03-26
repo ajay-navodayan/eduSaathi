@@ -20,7 +20,13 @@ export default function Login() {
     try {
       const res = await API.post('/auth/login', form);
       login(res.data.user, res.data.token);
-      navigate('/');
+      if (res.data.user.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else if (res.data.user.role === 'guider') {
+        navigate('/guider-dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed. Please try again.');
     } finally {

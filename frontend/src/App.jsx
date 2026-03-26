@@ -12,15 +12,6 @@ import Resources from './pages/Resources';
 import Tutors from './pages/Tutors';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import AdminDashboard from './pages/AdminDashboard';
-
-// Protected Admin Route wrapper
-const AdminRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-  if (loading) return <div>Loading...</div>;
-  if (!user || user.role !== 'admin') return <Navigate to="/" replace />;
-  return children;
-};
 
 function App() {
   return (
@@ -32,22 +23,10 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/guiders" element={<Guiders />} />
-              <Route path="/guiders/:id" element={<GuiderProfile />} />
               <Route path="/notifications" element={<Notifications />} />
-              <Route path="/resources" element={<Resources />} />
               <Route path="/tutors" element={<Tutors />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              
-              {/* Admin Panel */}
-              <Route 
-                path="/admin" 
-                element={
-                  <AdminRoute>
-                    <AdminDashboard />
-                  </AdminRoute>
-                } 
-              />
             </Routes>
           </main>
           <Footer />

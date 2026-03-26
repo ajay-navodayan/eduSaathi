@@ -4,7 +4,7 @@ import API from '../api';
 import './Auth.css';
 
 export default function Register() {
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '', role: 'student' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,7 +23,7 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      await API.post('/auth/register', { name: form.name, email: form.email, password: form.password });
+      await API.post('/auth/register', { name: form.name, email: form.email, password: form.password, role: form.role });
       setSuccess('Account created! Redirecting to login...');
       setTimeout(() => navigate('/login'), 1800);
     } catch (err) {
@@ -112,6 +112,20 @@ export default function Register() {
                 onChange={handleChange}
                 required
               />
+            </div>
+
+            <div className="form-group" style={{ marginBottom: '20px' }}>
+              <label className="form-label">I am registering as a:</label>
+              <div style={{ display: 'flex', gap: '20px' }}>
+                <label style={{ display: 'flex', gap: '8px', alignItems: 'center', cursor: 'pointer' }}>
+                  <input type="radio" name="role" value="student" checked={form.role === 'student'} onChange={handleChange} />
+                  Student
+                </label>
+                <label style={{ display: 'flex', gap: '8px', alignItems: 'center', cursor: 'pointer' }}>
+                  <input type="radio" name="role" value="guider" checked={form.role === 'guider'} onChange={handleChange} />
+                  Guider/Mentor
+                </label>
+              </div>
             </div>
 
             <button
