@@ -1,5 +1,5 @@
 .navbar {
-  background: rgba(255, 255, 255, 0.97);
+  background: var(--bg-card);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
@@ -83,6 +83,37 @@
   white-space: nowrap;
 }
 
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.theme-toggle-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.theme-toggle.dark {
+  background: rgba(90, 156, 245, 0.12);
+  border-color: rgba(90, 156, 245, 0.3);
+}
+
 /* Hamburger */
 .hamburger {
   display: none;
@@ -128,7 +159,7 @@
     top: 68px;
     left: 0;
     right: 0;
-    background: white;
+    background: var(--bg-card);
     flex-direction: column;
     align-items: stretch;
     padding: 1.5rem;
@@ -156,6 +187,11 @@
     padding: 1rem 0 0;
     margin: 0.5rem 0 0;
     flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .theme-toggle {
+    width: 110px;
     justify-content: center;
   }
 }

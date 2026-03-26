@@ -70,12 +70,12 @@ export default function Profile() {
     <div style={{ maxWidth: '800px', margin: '2rem auto', padding: '0 1rem' }}>
       <h1 style={{ marginBottom: '2rem' }}>Account Settings</h1>
       
-      <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', marginBottom: '2rem' }}>
+      <div style={{ backgroundColor: 'var(--bg-card)', padding: '2rem', borderRadius: '12px', boxShadow: 'var(--shadow-sm)', marginBottom: '2rem', border: '1px solid var(--border)' }}>
         <h2>User Profile</h2>
-        <p style={{ color: '#666', marginBottom: '1.5rem' }}>View and manage your personal demographics.</p>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>View and manage your personal demographics.</p>
         
         {profileData?.profile_edited ? (
-          <div style={{ padding: '1.5rem', backgroundColor: '#f8f9fa', border: '1px solid #e9ecef', borderRadius: '8px' }}>
+          <div style={{ padding: '1.5rem', backgroundColor: 'var(--gray-50)', border: '1px solid var(--border)', borderRadius: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ margin: 0, color: '#1a73e8' }}>Profile Secured ✅</h3>
               <span style={{ fontSize: '0.8rem', backgroundColor: '#e6f4ea', color: '#1e8e3e', padding: '4px 8px', borderRadius: '12px' }}>Locked (Read-Only)</span>
@@ -91,7 +91,7 @@ export default function Profile() {
                 />
                 <div>
                   <p style={{ fontWeight: 'bold', fontSize: '1.1rem', margin: 0 }}>{profileData.name}</p>
-                  <p style={{ margin: '4px 0 0', color: '#555' }}>{profileData.role}</p>
+                  <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)' }}>{profileData.role}</p>
                 </div>
               </div>
             )}
@@ -109,7 +109,7 @@ export default function Profile() {
                 <p><strong>WhatsApp:</strong> {profileData.whatsapp || 'N/A'}</p>
               </>
             )}
-            <p style={{ marginTop: '1rem', fontSize: '0.9em', color: '#666' }}>
+            <p style={{ marginTop: '1rem', fontSize: '0.9em', color: 'var(--text-secondary)' }}>
               * To change any of your locked demographic data, please contact the Administration.
             </p>
           </div>
@@ -118,7 +118,7 @@ export default function Profile() {
             <div style={{ padding: '10px', backgroundColor: '#fff3cd', color: '#856404', borderRadius: '4px', marginBottom: '1rem' }}>
               <strong>Notice:</strong> You can only edit your profile details <b>once</b>. Please make sure the data is accurate before saving.
             </div>
-            {profileMsg && <div style={{ padding: '10px', backgroundColor: '#e2e3e5', marginBottom: '1rem', borderRadius: '4px' }}>{profileMsg}</div>}
+            {profileMsg && <div style={{ padding: '10px', backgroundColor: 'var(--gray-100)', marginBottom: '1rem', borderRadius: '4px', border: '1px solid var(--border)' }}>{profileMsg}</div>}
             
             <form onSubmit={submitProfile} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
               {/* Photo upload — spans full width, centered */}
@@ -131,19 +131,19 @@ export default function Profile() {
                   />
                 </div>
               )}
-              <input type="text" name="name" placeholder="Name" value={profileForm.name} onChange={handleProfileChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+              <input type="text" name="name" placeholder="Name" value={profileForm.name} onChange={handleProfileChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
               {user.role === 'guider' && (
                 <>
-                  <input type="text" name="field" placeholder="Field (e.g. UPSC)" value={profileForm.field} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                  <input type="text" name="designation" placeholder="Designation" value={profileForm.designation} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                  <input type="text" name="city" placeholder="City" value={profileForm.city} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                  <input type="text" name="category" placeholder="Category" value={profileForm.category} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                  <select name="mentor_type" value={profileForm.mentor_type} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}>
+                  <input type="text" name="field" placeholder="Field (e.g. UPSC)" value={profileForm.field} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
+                  <input type="text" name="designation" placeholder="Designation" value={profileForm.designation} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
+                  <input type="text" name="city" placeholder="City" value={profileForm.city} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
+                  <input type="text" name="category" placeholder="Category" value={profileForm.category} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
+                  <select name="mentor_type" value={profileForm.mentor_type} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }}>
                     <option value="mentor_only">Mentor Only</option>
                     <option value="tutor_mentor">Tutor + Mentor</option>
                   </select>
-                  <input type="text" name="whatsapp" placeholder="WhatsApp Number" value={profileForm.whatsapp} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                  <input type="text" name="phone" placeholder="Phone Number" value={profileForm.phone} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+                  <input type="text" name="whatsapp" placeholder="WhatsApp Number" value={profileForm.whatsapp} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
+                  <input type="text" name="phone" placeholder="Phone Number" value={profileForm.phone} onChange={handleProfileChange} style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
                 </>
               )}
               <div style={{ gridColumn: '1 / -1', marginTop: '10px' }}>
@@ -154,15 +154,15 @@ export default function Profile() {
         )}
       </div>
 
-      <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+      <div style={{ backgroundColor: 'var(--bg-card)', padding: '2rem', borderRadius: '12px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
         <h2>Security Settings</h2>
-        <p style={{ color: '#666', marginBottom: '1.5rem' }}>Update your password to keep your account secure.</p>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Update your password to keep your account secure.</p>
         
-        {pwdMsg && <div style={{ padding: '10px', backgroundColor: '#e2e3e5', marginBottom: '1rem', borderRadius: '4px' }}>{pwdMsg}</div>}
+        {pwdMsg && <div style={{ padding: '10px', backgroundColor: 'var(--gray-100)', marginBottom: '1rem', borderRadius: '4px', border: '1px solid var(--border)' }}>{pwdMsg}</div>}
         
         <form onSubmit={submitPwd} style={{ display: 'flex', flexDirection: 'column', gap: '15px', maxWidth: '400px' }}>
-          <input type="password" name="currentPassword" placeholder="Current Password" value={pwdForm.currentPassword} onChange={handlePwdChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
-          <input type="password" name="newPassword" placeholder="New Password" value={pwdForm.newPassword} onChange={handlePwdChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+          <input type="password" name="currentPassword" placeholder="Current Password" value={pwdForm.currentPassword} onChange={handlePwdChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
+          <input type="password" name="newPassword" placeholder="New Password" value={pwdForm.newPassword} onChange={handlePwdChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
           <button type="submit" style={{ padding: '12px 24px', backgroundColor: '#34a853', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>Change Password</button>
         </form>
       </div>
