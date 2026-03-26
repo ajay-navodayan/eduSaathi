@@ -20,6 +20,8 @@ export default function AdminDashboard() {
   const [tutorMsg, setTutorMsg] = useState('');
 
   const [editingUserId, setEditingUserId] = useState(null);
+  const [selectedPendingUser, setSelectedPendingUser] = useState(null);
+  const [rejectReason, setRejectReason] = useState('');
   const [editForm, setEditForm] = useState({ 
     name: '', photo: '', field: '', designation: '', city: '', 
     tenth_marks: '', tenth_board: '', twelfth_marks: '', twelfth_board: '',
@@ -67,6 +69,24 @@ export default function AdminDashboard() {
     }
   };
 
+  const rejectUser = async (id) => {
+    try {
+      const reason = rejectReason.trim();
+      if (!reason) {
+        alert('Please enter rejection reason.');
+        return;
+      }
+      await API.put(`/admin/reject-user/${id}`, { reason });
+      setRejectReason('');
+      setSelectedPendingUser(null);
+      fetchData();
+      alert('User rejected with reason.');
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to reject user');
+      console.error(err);
+    }
+  };
+
   const handleTutorSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -102,6 +122,12 @@ export default function AdminDashboard() {
     borderRadius: '4px 4px 0 0'
   });
 
+  const mentorTypeLabel = (type) => {
+    if (type === 'tutor_mentor') return 'Tutor + Mentor';
+    if (type === 'mentor_only') return 'Mentor Only';
+    return '-';
+  };
+
   return (
     <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
       <h1>Admin Dashboard</h1>
@@ -120,32 +146,173 @@ export default function AdminDashboard() {
           <div>
             <h2>Pending Approvals</h2>
             {loading ? <p>Loading...</p> : pendingUsers.length === 0 ? <p>No users waiting for approval.</p> : (
-              <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem', backgroundColor: '#fff' }}>
-                <thead>
-                  <tr style={{ backgroundColor: '#f0f0f0', textAlign: 'left' }}>
-                    <th style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>Name</th>
-                    <th style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>Email</th>
-                    <th style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>Role</th>
-                    <th style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pendingUsers.map(u => (
-                    <tr key={u.id}>
-                      <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>{u.name}</td>
-                      <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>{u.email}</td>
-                      <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                        <span style={{ padding: '4px 8px', backgroundColor: '#fce8e6', borderRadius: '12px', fontSize: '0.9em' }}>{u.role}</span>
-                      </td>
-                      <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-                        <button onClick={() => approveUser(u.id)} style={{ padding: '6px 12px', backgroundColor: '#34a853', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+              <div style={{ display: 'grid', gap: '16px', marginTop: '1rem' }}>
+                {pendingUsers.map(u => (
+                  <div key={u.id} style={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '10px', padding: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap', marginBottom: '14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <img
+                          src={u.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=1a73e8&color=fff&size=120`}
+                          alt={u.name}
+                          style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #1a73e8' }}
+                        />
+                        <div>
+                          <div style={{ fontWeight: 'bold', fontSize: '1rem' }}>{u.name}</div>
+                          <div style={{ fontSize: '0.9rem', color: '#555' }}>{u.email}</div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ padding: '4px 10px', backgroundColor: '#fce8e6', borderRadius: '12px', fontSize: '0.85rem' }}>{u.role}</span>
+                        <button
+                          onClick={() => {
+                            setSelectedPendingUser(u);
+                            setRejectReason('');
+                          }}
+                          style={{ padding: '7px 14px', backgroundColor: '#1a73e8', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 600 }}
+                        >
+                          View Full Profile
+                        </button>
+                        <button onClick={() => approveUser(u.id)} style={{ padding: '7px 14px', backgroundColor: '#34a853', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 600 }}>
                           Approve
                         </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px', fontSize: '0.9rem' }}>
+                      <div><strong>Field:</strong> {u.field || '-'}</div>
+                      <div><strong>Designation:</strong> {u.designation || '-'}</div>
+                      <div><strong>City:</strong> {u.city || '-'}</div>
+                      <div><strong>Category:</strong> {u.category || '-'}</div>
+                      <div><strong>Mentor Type:</strong> {mentorTypeLabel(u.mentor_type)}</div>
+                      <div><strong>Phone:</strong> {u.phone || '-'}</div>
+                      <div><strong>WhatsApp:</strong> {u.whatsapp || '-'}</div>
+                      <div><strong>LinkedIn:</strong> {u.linkedin || '-'}</div>
+                      <div><strong>10th %:</strong> {u.tenth_marks || '-'}</div>
+                      <div><strong>10th Board:</strong> {u.tenth_board || '-'}</div>
+                      <div><strong>12th %:</strong> {u.twelfth_marks || '-'}</div>
+                      <div><strong>12th Board:</strong> {u.twelfth_board || '-'}</div>
+                    </div>
+
+                    <div style={{ marginTop: '10px', fontSize: '0.9rem' }}>
+                      <strong>Achievements:</strong> {u.achievements || '-'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {selectedPendingUser && (
+              <div
+                onClick={() => setSelectedPendingUser(null)}
+                style={{
+                  position: 'fixed',
+                  inset: 0,
+                  backgroundColor: 'rgba(0,0,0,0.45)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 1000,
+                  padding: '20px'
+                }}
+              >
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    width: 'min(860px, 100%)',
+                    maxHeight: '90vh',
+                    overflowY: 'auto',
+                    backgroundColor: '#fff',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    boxShadow: '0 15px 40px rgba(0,0,0,0.2)'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                    <h3 style={{ margin: 0 }}>Pending Profile Review</h3>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPendingUser(null)}
+                      style={{ border: 'none', background: 'transparent', fontSize: '1.3rem', cursor: 'pointer', color: '#666' }}
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+                    <img
+                      src={selectedPendingUser.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedPendingUser.name)}&background=1a73e8&color=fff&size=160`}
+                      alt={selectedPendingUser.name}
+                      style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover', border: '3px solid #1a73e8' }}
+                    />
+                    <div>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>{selectedPendingUser.name}</div>
+                      <div style={{ color: '#555' }}>{selectedPendingUser.email}</div>
+                      <div style={{ marginTop: '5px' }}>
+                        <span style={{ padding: '4px 10px', backgroundColor: '#fce8e6', borderRadius: '12px', fontSize: '0.8rem' }}>
+                          {selectedPendingUser.role}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '10px', fontSize: '0.95rem' }}>
+                    <div><strong>Field:</strong> {selectedPendingUser.field || '-'}</div>
+                    <div><strong>Designation:</strong> {selectedPendingUser.designation || '-'}</div>
+                    <div><strong>City:</strong> {selectedPendingUser.city || '-'}</div>
+                    <div><strong>Category:</strong> {selectedPendingUser.category || '-'}</div>
+                    <div><strong>Mentor Type:</strong> {mentorTypeLabel(selectedPendingUser.mentor_type)}</div>
+                    <div><strong>Phone:</strong> {selectedPendingUser.phone || '-'}</div>
+                    <div><strong>WhatsApp:</strong> {selectedPendingUser.whatsapp || '-'}</div>
+                    <div><strong>LinkedIn:</strong> {selectedPendingUser.linkedin || '-'}</div>
+                    <div><strong>10th %:</strong> {selectedPendingUser.tenth_marks || '-'}</div>
+                    <div><strong>10th Board:</strong> {selectedPendingUser.tenth_board || '-'}</div>
+                    <div><strong>12th %:</strong> {selectedPendingUser.twelfth_marks || '-'}</div>
+                    <div><strong>12th Board:</strong> {selectedPendingUser.twelfth_board || '-'}</div>
+                  </div>
+
+                  <div style={{ marginTop: '12px', fontSize: '0.95rem' }}>
+                    <strong>Achievements:</strong> {selectedPendingUser.achievements || '-'}
+                  </div>
+
+                  <div style={{ marginTop: '14px' }}>
+                    <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}>Rejection Reason (if rejecting)</label>
+                    <textarea
+                      value={rejectReason}
+                      onChange={(e) => setRejectReason(e.target.value)}
+                      placeholder="Write clear reason so user can correct and reapply."
+                      style={{ width: '100%', minHeight: '84px', padding: '10px', border: '1px solid #d0d0d0', borderRadius: '6px', resize: 'vertical' }}
+                    />
+                  </div>
+
+                  <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPendingUser(null)}
+                      style={{ padding: '8px 14px', border: '1px solid #ccc', backgroundColor: '#fff', borderRadius: '6px', cursor: 'pointer' }}
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        approveUser(selectedPendingUser.id);
+                        setSelectedPendingUser(null);
+                        setRejectReason('');
+                      }}
+                      style={{ padding: '8px 14px', border: 'none', backgroundColor: '#34a853', color: '#fff', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+                    >
+                      Approve User
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => rejectUser(selectedPendingUser.id)}
+                      style={{ padding: '8px 14px', border: 'none', backgroundColor: '#ea4335', color: '#fff', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+                    >
+                      Reject User
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         )}

@@ -152,6 +152,63 @@
   font-weight: 600;
 }
 
+.register-role-group {
+  margin-bottom: 20px;
+}
+
+.register-role-options {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.register-role-option {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.mentor-step-header {
+  margin: 8px 0 14px;
+}
+
+.mentor-step-header h3 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+  color: var(--gray-900);
+}
+
+.mentor-step-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.mentor-register-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.mentor-photo-wrap,
+.mentor-achievements,
+.mentor-type-group {
+  grid-column: 1 / -1;
+}
+
+.mentor-achievements {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.mentor-register-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 @media (max-width: 900px) {
   .auth-page {
     flex-direction: column;
@@ -167,4 +224,10 @@
   }
   .auth-logo { font-size: 2.5rem; }
   .auth-hero-content h2 { font-size: 1.5rem; }
+  .mentor-register-grid {
+    grid-template-columns: 1fr;
+  }
+  .mentor-register-actions {
+    flex-direction: column;
+  }
 }

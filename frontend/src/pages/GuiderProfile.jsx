@@ -63,6 +63,9 @@ export default function GuiderProfile() {
               <p className="profile-field">🎯 {guider.field}</p>
               {guider.designation && <p className="profile-designation">🏛️ {guider.designation}</p>}
               {guider.city && <p className="profile-city">📍 {guider.city}</p>}
+              {guider.mentor_type && (
+                <p className="profile-city">🧩 {guider.mentor_type === 'tutor_mentor' ? 'Tutor + Mentor' : 'Mentor Only'}</p>
+              )}
 
               {/* Contact Buttons */}
               <div className="contact-buttons">

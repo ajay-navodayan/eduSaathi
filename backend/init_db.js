@@ -14,6 +14,7 @@ async function initializeDatabase() {
         password TEXT NOT NULL,
         role TEXT DEFAULT 'student',
         status TEXT DEFAULT 'approved',
+        rejection_reason TEXT,
         profile_edited BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
@@ -35,6 +36,7 @@ async function initializeDatabase() {
         whatsapp TEXT,
         email TEXT UNIQUE,
         phone TEXT,
+        mentor_type TEXT DEFAULT 'mentor_only',
         contact TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
@@ -79,6 +81,7 @@ async function initializeDatabase() {
     // 2. Apply Migrations (Add missing columns dynamically)
     // Add 'status' if missing
     await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'approved'");
+    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS rejection_reason TEXT");
     // Add 'profile_edited' if missing
     await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_edited BOOLEAN DEFAULT false");
     
@@ -86,6 +89,7 @@ async function initializeDatabase() {
     await pool.query("ALTER TABLE guiders ADD COLUMN IF NOT EXISTS tenth_board TEXT");
     await pool.query("ALTER TABLE guiders ADD COLUMN IF NOT EXISTS twelfth_board TEXT");
     await pool.query("ALTER TABLE guiders ADD COLUMN IF NOT EXISTS linkedin TEXT");
+    await pool.query("ALTER TABLE guiders ADD COLUMN IF NOT EXISTS mentor_type TEXT DEFAULT 'mentor_only'");
 
     // Tutors Migrations (Matching Guider Format)
     await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS photo TEXT");
