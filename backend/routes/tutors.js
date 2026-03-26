@@ -14,6 +14,21 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /tutors/:id
+router.get('/:id', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT t.*, u.id as user_id FROM tutors t LEFT JOIN users u ON u.email = t.email WHERE t.id = $1', 
+      [req.params.id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Tutor not found' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // POST /tutors (admin only)
 router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
   const { name, subject, location, contact, experience } = req.body;

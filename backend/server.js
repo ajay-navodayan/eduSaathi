@@ -59,6 +59,12 @@ io.on('connection', (socket) => {
     io.to(data.receiver_id.toString()).emit('receive_message', data);
   });
 
+  socket.on('message_read', (data) => {
+    // data: { sender_id, receiver_id }
+    // Notify the original sender that their message was read
+    io.to(data.sender_id.toString()).emit('message_read', data);
+  });
+
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });

@@ -10,6 +10,7 @@ import GuiderProfile from './pages/GuiderProfile';
 import Notifications from './pages/Notifications';
 import Resources from './pages/Resources';
 import Tutors from './pages/Tutors';
+import TutorProfile from './pages/TutorProfile';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import GuiderDashboard from './pages/GuiderDashboard';
@@ -35,6 +36,7 @@ function App() {
               <Route element={<ProtectedRoute />}>
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/guiders/:id" element={<GuiderProfile />} />
+                <Route path="/tutors/:id" element={<TutorProfile />} />
                 <Route path="/resources" element={<Resources />} />
                 <Route path="/guider-dashboard" element={<GuiderDashboard />} />
                 <Route path="/admin-dashboard" element={<AdminDashboard />} />

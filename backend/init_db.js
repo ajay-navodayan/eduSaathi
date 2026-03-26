@@ -1,9 +1,43 @@
+const { Client } = require('pg');
 const pool = require('./db');
 const bcrypt = require('bcryptjs');
 
 async function initializeDatabase() {
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl) {
+    console.error('❌ DATABASE_URL is not defined in .env');
+    return;
+  }
+
+  // Parse DB Name from URL
+  // Format: postgresql://user:pass@host:port/dbname
+  const dbName = dbUrl.split('/').pop().split('?')[0];
+  const baseUrl = dbUrl.substring(0, dbUrl.lastIndexOf('/') + 1);
+
+  console.log(`--- 🛠️  Ensuring Database "${dbName}" exists ---`);
+
+  // 0. Connect to 'postgres' default database to check/create the target database
+  const client = new Client({ connectionString: baseUrl + 'postgres' });
   try {
-    console.log('--- 🛠️  Starting Database Initialization ---');
+    await client.connect();
+    const res = await client.query('SELECT 1 FROM pg_database WHERE datname = $1', [dbName]);
+    
+    if (res.rowCount === 0) {
+      console.log(`📡 Database "${dbName}" not found. Creating...`);
+      await client.query(`CREATE DATABASE "${dbName}"`);
+      console.log(`✅ Database "${dbName}" created successfully.`);
+    } else {
+      console.log(`✅ Database "${dbName}" already exists.`);
+    }
+  } catch (err) {
+    console.error('❌ Error checking/creating database:', err.message);
+    // If we can't connect to 'postgres', we'll just try connecting to the target DB directly (maybe it exists)
+  } finally {
+    await client.end();
+  }
+
+  try {
+    console.log('--- 🛠️  Starting Schema Initialization ---');
 
     // 1. Create Tables
     await pool.query(`
@@ -78,12 +112,10 @@ async function initializeDatabase() {
     `);
     console.log('✅ Tables checked/created.');
 
-    // 2. Apply Migrations (Add missing columns dynamically)
-    // Add 'status' if missing
-    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'approved'");
-    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS rejection_reason TEXT");
-    // Add 'profile_edited' if missing
-    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_edited BOOLEAN DEFAULT false");
+// 2. Apply Migrations (Add missing columns dynamically)
+await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'approved'");
+await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS rejection_reason TEXT");
+await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_edited BOOLEAN DEFAULT false");
     
     // Guiders Migrations
     await pool.query("ALTER TABLE guiders ADD COLUMN IF NOT EXISTS tenth_board TEXT");
@@ -91,7 +123,7 @@ async function initializeDatabase() {
     await pool.query("ALTER TABLE guiders ADD COLUMN IF NOT EXISTS linkedin TEXT");
     await pool.query("ALTER TABLE guiders ADD COLUMN IF NOT EXISTS mentor_type TEXT DEFAULT 'mentor_only'");
 
-    // Tutors Migrations (Matching Guider Format)
+    // Tutors Migrations
     await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS photo TEXT");
     await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS field TEXT");
     await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS designation TEXT");
@@ -106,16 +138,13 @@ async function initializeDatabase() {
     await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS email TEXT UNIQUE");
     await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS phone TEXT");
 
+    // Message Read Receipts
+    await pool.query("ALTER TABLE messages ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT false");
+
     console.log('✅ Columns checked/added.');
 
-    // 3. Clear Dummy Data (Only if requested - let's make it a safe check or comment it)
-    // The user explicitly asked to "remove dummy data", so we can truncate these tables if headers match.
-    // For this one-time task, I will clear them if they contain specific placeholder emails or just truncate.
-    // await pool.query('TRUNCATE guiders, tutors, notifications, resources RESTART IDENTITY CASCADE');
-    
-    // 4. Seed Default Admin
+    // 3. Seed Default Admin
     const adminEmail = 'admin@edusaathi.com';
-
     const adminPassword = 'admin123';
     const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
@@ -132,7 +161,7 @@ async function initializeDatabase() {
     console.log('--- 🏗️  Database and Migrations Ready ---');
   } catch (err) {
     console.error('❌ Error during database initialization:', err);
-    throw err; // Fail startup if DB cannot be initialized
+    throw err;
   }
 }
 

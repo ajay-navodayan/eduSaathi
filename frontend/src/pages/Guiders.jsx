@@ -4,7 +4,7 @@ import API from '../api';
 import GuiderCard from '../components/GuiderCard';
 import './Guiders.css';
 
-const CATEGORIES = ['All', 'Matric', 'Intermediate', 'NEET', 'IIT', 'Railway', 'Army', 'UPSC'];
+const CATEGORIES = ['All', 'Doctor', 'Engineer', 'Defence', 'SSC', 'Railway', 'Post Office', 'CA', 'Bsc nursing', 'UPSC'];
 
 export default function Guiders() {
   const [guiders, setGuiders] = useState([]);

@@ -98,7 +98,7 @@ export default function Profile() {
             <p><strong>Name:</strong> {profileData.name}</p>
             <p><strong>Email:</strong> {profileData.email}</p>
             <p><strong>Role:</strong> {profileData.role}</p>
-            {profileData.role === 'guider' && (
+            {(profileData.role === 'guider' || profileData.role === 'tutor') && (
               <>
                 <p><strong>Field:</strong> {profileData.field || 'N/A'}</p>
                 <p><strong>Designation:</strong> {profileData.designation || 'N/A'}</p>

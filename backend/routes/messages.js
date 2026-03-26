@@ -72,4 +72,24 @@ router.get('/conversations/:userId', async (req, res) => {
   }
 });
 
+// PUT /api/messages/mark-read
+// Mark all messages from a specific sender as read by the recipient
+router.put('/mark-read', async (req, res) => {
+  const { sender_id, receiver_id } = req.body;
+  if (!sender_id || !receiver_id) {
+    return res.status(400).json({ error: 'Missing sender_id or receiver_id' });
+  }
+
+  try {
+    await pool.query(
+      'UPDATE messages SET is_read = true WHERE sender_id = $1 AND receiver_id = $2 AND is_read = false',
+      [sender_id, receiver_id]
+    );
+    res.json({ message: 'Messages marked as read' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error marking messages as read' });
+  }
+});
+
 module.exports = router;

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import API from '../api';
 import './Tutors.css';
 
@@ -55,18 +56,24 @@ export default function Tutors() {
                   )}
                 </div>
                 {tutor.contact && (
-                  <div className="tutor-footer">
-                    <a href={`tel:${tutor.contact}`} className="btn btn-primary btn-sm">
-                      📞 Contact
-                    </a>
-                    <a
-                      href={`https://wa.me/${tutor.contact.replace(/\D/g, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-sm whatsapp-green"
-                    >
-                      💬 WhatsApp
-                    </a>
+                  <div className="tutor-footer" style={{ flexDirection: 'column', gap: '8px' }}>
+                    <Link to={`/tutors/${tutor.id}`} className="btn btn-primary btn-sm w-full" style={{ textAlign: 'center' }}>
+                      View Profile →
+                    </Link>
+                    <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+                      <a href={`tel:${tutor.contact}`} className="btn btn-outline btn-sm" style={{ flex: 1, padding: '5px' }}>
+                        📞 Call
+                      </a>
+                      <a
+                        href={`https://wa.me/${tutor.contact.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-sm whatsapp-green"
+                        style={{ flex: 1, padding: '5px' }}
+                      >
+                        💬 WhatsApp
+                      </a>
+                    </div>
                   </div>
                 )}
               </div>

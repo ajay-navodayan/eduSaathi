@@ -34,27 +34,41 @@ export default function GuiderProfile() {
 
   return (
     <div className="profile-page">
-      <div className="page-hero">
-        <div className="container page-hero-content">
-          <Link to="/guiders" className="back-link">← Back to Guiders</Link>
-          <h1>Guider Profile</h1>
+      <div className="profile-hero">
+        <div className="container">
+          <Link to="/guiders" className="back-link">
+            <span>←</span> Back to all Guiders
+          </Link>
+          <div className="hero-content">
+            <h1 className="hero-title">Mentor Profile</h1>
+            <p className="hero-subtitle">Get specialized guidance from an expert in {guider.field}</p>
+          </div>
         </div>
       </div>
 
-      <div className="container profile-container">
-        <div className="profile-layout">
-          {/* Left Panel */}
-          <div className="profile-left">
-            <div className="profile-card card">
-              <div className="profile-avatar-wrapper">
+      <div className="container profile-main">
+        <div className="profile-grid">
+          {/* Sidebar */}
+          <aside className="profile-sidebar">
+            <div className="glass-card profile-info-card">
+              <div className="avatar-container">
                 <img
                   src={guider.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(guider.name)}&background=1a73e8&color=fff&size=300`}
                   alt={guider.name}
-                  className="profile-avatar"
+                  className="main-avatar"
                   onError={(e) => {
                     e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(guider.name)}&background=1a73e8&color=fff&size=300`;
                   }}
                 />
+                {guider.status === 'online' && <span className="online-indicator"></span>}
+              </div>
+              <h2 className="display-name">{guider.name}</h2>
+              <div className="category-pill">{guider.category || 'Expert'}</div>
+              
+              <div className="quick-meta">
+                <div className="meta-item">🎯 {guider.field}</div>
+                {guider.designation && <div className="meta-item">🏛️ {guider.designation}</div>}
+                {guider.city && <div className="meta-item">📍 {guider.city}</div>}
               </div>
               <h2 className="profile-name">{guider.name}</h2>
               {guider.category && (
@@ -67,98 +81,79 @@ export default function GuiderProfile() {
                 <p className="profile-city">🧩 {guider.mentor_type === 'tutor_mentor' ? 'Tutor + Mentor' : 'Mentor Only'}</p>
               )}
 
-              {/* Contact Buttons */}
-              <div className="contact-buttons">
+              <div className="action-buttons">
                 {guider.whatsapp && (
-                  <a
-                    href={`https://wa.me/${guider.whatsapp.replace(/\D/g, '')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="contact-btn whatsapp-btn"
-                  >
-                    💬 WhatsApp
+                  <a href={`https://wa.me/${guider.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="action-btn wa-btn">
+                    WhatsApp
                   </a>
                 )}
                 {guider.email && (
-                  <a
-                    href={`mailto:${guider.email}`}
-                    className="contact-btn email-btn"
-                  >
-                    ✉️ Email
-                  </a>
-                )}
-                {guider.phone && (
-                  <a
-                    href={`tel:${guider.phone}`}
-                    className="contact-btn phone-btn"
-                  >
-                    📞 Call
+                  <a href={`mailto:${guider.email}`} className="action-btn email-btn">
+                    Send Email
                   </a>
                 )}
               </div>
             </div>
-          </div>
+          </aside>
 
-          {/* Right Panel */}
-          <div className="profile-right">
-            {/* Academic Details */}
-            <div className="profile-section card">
-              <h3>📚 Academic Details</h3>
-              <div className="academic-grid">
+          {/* Content Area */}
+          <main className="profile-content">
+            {/* Academic Section */}
+            <section className="glass-card content-section">
+              <h3 className="section-title">📚 Academic Background</h3>
+              <div className="stats-row">
                 {guider.tenth_marks && (
-                  <div className="academic-item">
-                    <span className="academic-label">10th Marks</span>
-                    <span className="academic-value">{guider.tenth_marks}</span>
+                  <div className="stat-card">
+                    <span className="stat-label">10th Grade {guider.tenth_board && `(${guider.tenth_board})`}</span>
+                    <span className="stat-value">{guider.tenth_marks}</span>
                   </div>
                 )}
                 {guider.twelfth_marks && (
-                  <div className="academic-item">
-                    <span className="academic-label">12th Marks</span>
-                    <span className="academic-value">{guider.twelfth_marks}</span>
+                  <div className="stat-card">
+                    <span className="stat-label">12th Grade {guider.twelfth_board && `(${guider.twelfth_board})`}</span>
+                    <span className="stat-value">{guider.twelfth_marks}</span>
                   </div>
                 )}
               </div>
-            </div>
+            </section>
 
-            {/* Achievements */}
+            {/* Achievements Section */}
             {guider.achievements && (
-              <div className="profile-section card">
-                <h3>🏆 Achievements</h3>
-                <div className="achievements-list">
+              <section className="glass-card content-section">
+                <h3 className="section-title">🏆 Key Achievements</h3>
+                <div className="pills-container">
                   {guider.achievements.split(',').map((ach, i) => (
-                    <div key={i} className="achievement-item">
-                      <span className="achievement-bullet">★</span>
-                      <span>{ach.trim()}</span>
+                    <div key={i} className="achievement-pill">
+                      {ach.trim()}
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
 
-            {/* Exam Tips */}
-            <div className="profile-section card inspiration-card">
-              <h3>💡 For Students</h3>
+            {/* Motivation Section */}
+            <section className="glass-card content-section highlight-section">
+              <h3 className="section-title">💡 Guidance Focus</h3>
               <p>
-                Reach out to <strong>{guider.name}</strong> for guidance on {guider.field}.
-                They have first-hand experience and can help you plan your preparation strategy.
+                Connect with {guider.name} to accelerate your journey in <strong>{guider.field}</strong>. 
+                Benefit from real-world insights and proven strategies.
               </p>
-              <div className="inspiration-note">
-                <span>🔑</span>
-                <span>Contact them via WhatsApp or Email for the fastest response.</span>
-              </div>
-            </div>
+            </section>
 
-            {/* Live Chat */}
-            <div className="profile-section card" style={{ marginTop: '20px' }}>
-              {guider.user_id ? (
-                <ChatBox peerId={guider.user_id} peerName={guider.name} />
-              ) : (
-                <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-                  <p>💬 Chat is unavailable because this Guider hasn't registered a user account yet.</p>
-                </div>
-              )}
-            </div>
-          </div>
+            {/* Chat Section */}
+            <section className="glass-card chat-section">
+              <h3 className="section-title">💬 Live Consultation</h3>
+              <div className="chat-wrapper">
+                {guider.user_id ? (
+                  <ChatBox peerId={guider.user_id} peerName={guider.name} />
+                ) : (
+                  <div className="chat-placeholder">
+                    <p>Direct chat is currently unavailable for this profile.</p>
+                  </div>
+                )}
+              </div>
+            </section>
+          </main>
         </div>
       </div>
     </div>
