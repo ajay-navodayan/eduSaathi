@@ -72,11 +72,11 @@ export default function PhotoUpload({ value, onChange, name = '' }) {
       <div style={{
         width: '120px', height: '120px', borderRadius: '50%',
         overflow: 'hidden', border: '3px solid #1a73e8',
-        backgroundColor: '#f0f0f0', position: 'relative',
+        backgroundColor: 'var(--gray-100)', position: 'relative',
         display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
         {uploading ? (
-          <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#555' }}>
+          <div style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
             <div style={{
               width: '36px', height: '36px', border: '4px solid #e0e0e0',
               borderTop: '4px solid #1a73e8', borderRadius: '50%',
@@ -97,7 +97,7 @@ export default function PhotoUpload({ value, onChange, name = '' }) {
       {/* Upload button */}
       <label style={{
         display: 'inline-block', padding: '8px 18px',
-        backgroundColor: uploading ? '#ccc' : '#1a73e8',
+        backgroundColor: uploading ? 'var(--gray-400)' : '#1a73e8',
         color: 'white', borderRadius: '6px', cursor: uploading ? 'not-allowed' : 'pointer',
         fontSize: '0.875rem', fontWeight: '600', transition: 'background 0.2s'
       }}>

@@ -115,8 +115,8 @@ export default function AdminDashboard() {
   const tabStyle = (tabId) => ({
     padding: '10px 20px',
     cursor: 'pointer',
-    backgroundColor: activeTab === tabId ? '#1a73e8' : '#f0f0f0',
-    color: activeTab === tabId ? '#fff' : '#333',
+    backgroundColor: activeTab === tabId ? '#1a73e8' : 'var(--gray-100)',
+    color: activeTab === tabId ? '#fff' : 'var(--text-primary)',
     border: 'none',
     fontWeight: 'bold',
     borderRadius: '4px 4px 0 0'
@@ -139,7 +139,7 @@ export default function AdminDashboard() {
         <button style={tabStyle('tutor')} onClick={() => setActiveTab('tutor')}>Add Tutor</button>
       </div>
 
-      <div style={{ padding: '20px', backgroundColor: '#f9f9f9', border: '1px solid #ddd', borderTop: 'none' }}>
+      <div style={{ padding: '20px', backgroundColor: 'var(--gray-50)', border: '1px solid var(--border)', borderTop: 'none' }}>
         
         {/* PENDING APPROVALS TAB */}
         {activeTab === 'pending' && (
@@ -148,7 +148,7 @@ export default function AdminDashboard() {
             {loading ? <p>Loading...</p> : pendingUsers.length === 0 ? <p>No users waiting for approval.</p> : (
               <div style={{ display: 'grid', gap: '16px', marginTop: '1rem' }}>
                 {pendingUsers.map(u => (
-                  <div key={u.id} style={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '10px', padding: '16px' }}>
+                  <div key={u.id} style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap', marginBottom: '14px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <img
@@ -158,7 +158,7 @@ export default function AdminDashboard() {
                         />
                         <div>
                           <div style={{ fontWeight: 'bold', fontSize: '1rem' }}>{u.name}</div>
-                          <div style={{ fontSize: '0.9rem', color: '#555' }}>{u.email}</div>
+                          <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{u.email}</div>
                         </div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -221,7 +221,7 @@ export default function AdminDashboard() {
                     width: 'min(860px, 100%)',
                     maxHeight: '90vh',
                     overflowY: 'auto',
-                    backgroundColor: '#fff',
+                    backgroundColor: 'var(--bg-card)',
                     borderRadius: '12px',
                     padding: '20px',
                     boxShadow: '0 15px 40px rgba(0,0,0,0.2)'
@@ -232,7 +232,7 @@ export default function AdminDashboard() {
                     <button
                       type="button"
                       onClick={() => setSelectedPendingUser(null)}
-                      style={{ border: 'none', background: 'transparent', fontSize: '1.3rem', cursor: 'pointer', color: '#666' }}
+                      style={{ border: 'none', background: 'transparent', fontSize: '1.3rem', cursor: 'pointer', color: 'var(--text-secondary)' }}
                     >
                       ×
                     </button>
@@ -246,7 +246,7 @@ export default function AdminDashboard() {
                     />
                     <div>
                       <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>{selectedPendingUser.name}</div>
-                      <div style={{ color: '#555' }}>{selectedPendingUser.email}</div>
+                      <div style={{ color: 'var(--text-secondary)' }}>{selectedPendingUser.email}</div>
                       <div style={{ marginTop: '5px' }}>
                         <span style={{ padding: '4px 10px', backgroundColor: '#fce8e6', borderRadius: '12px', fontSize: '0.8rem' }}>
                           {selectedPendingUser.role}
@@ -280,7 +280,7 @@ export default function AdminDashboard() {
                       value={rejectReason}
                       onChange={(e) => setRejectReason(e.target.value)}
                       placeholder="Write clear reason so user can correct and reapply."
-                      style={{ width: '100%', minHeight: '84px', padding: '10px', border: '1px solid #d0d0d0', borderRadius: '6px', resize: 'vertical' }}
+                      style={{ width: '100%', minHeight: '84px', padding: '10px', border: '1px solid var(--border)', borderRadius: '6px', resize: 'vertical', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }}
                     />
                   </div>
 
@@ -288,7 +288,7 @@ export default function AdminDashboard() {
                     <button
                       type="button"
                       onClick={() => setSelectedPendingUser(null)}
-                      style={{ padding: '8px 14px', border: '1px solid #ccc', backgroundColor: '#fff', borderRadius: '6px', cursor: 'pointer' }}
+                      style={{ padding: '8px 14px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', borderRadius: '6px', cursor: 'pointer' }}
                     >
                       Close
                     </button>
@@ -324,12 +324,12 @@ export default function AdminDashboard() {
             {editMsg && <div style={{ padding: '10px', backgroundColor: '#e2e3e5', marginBottom: '10px' }}>{editMsg}</div>}
             
             {editingUserId ? (
-              <div style={{ backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc', marginBottom: '20px' }}>
+              <div style={{ backgroundColor: 'var(--bg-card)', padding: '20px', border: '1px solid var(--border)', marginBottom: '20px' }}>
                 <h3>Force Edit User Profile</h3>
                 <form onSubmit={handleEditSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <label>Full Name</label>
-                    <input type="text" value={editForm.name} onChange={(e) => setEditForm({...editForm, name: e.target.value})} style={{ padding: '8px' }} required />
+                    <input type="text" value={editForm.name} onChange={(e) => setEditForm({...editForm, name: e.target.value})} style={{ padding: '8px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} required />
                     <label>Profile Photo</label>
                     <PhotoUpload
                       value={editForm.photo}
@@ -337,41 +337,41 @@ export default function AdminDashboard() {
                       name={editForm.name}
                     />
                     <label>Field/Subject</label>
-                    <input type="text" value={editForm.field} onChange={(e) => setEditForm({...editForm, field: e.target.value})} style={{ padding: '8px' }} />
+                    <input type="text" value={editForm.field} onChange={(e) => setEditForm({...editForm, field: e.target.value})} style={{ padding: '8px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} />
                     <label>Designation</label>
-                    <input type="text" value={editForm.designation} onChange={(e) => setEditForm({...editForm, designation: e.target.value})} style={{ padding: '8px' }} />
+                    <input type="text" value={editForm.designation} onChange={(e) => setEditForm({...editForm, designation: e.target.value})} style={{ padding: '8px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} />
                     <label>City</label>
-                    <input type="text" value={editForm.city} onChange={(e) => setEditForm({...editForm, city: e.target.value})} style={{ padding: '8px' }} />
+                    <input type="text" value={editForm.city} onChange={(e) => setEditForm({...editForm, city: e.target.value})} style={{ padding: '8px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} />
                   </div>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div style={{ display: 'flex', gap: '10px' }}>
                       <div style={{ flex: 1 }}>
                         <label>10th %</label>
-                        <input type="text" value={editForm.tenth_marks} onChange={(e) => setEditForm({...editForm, tenth_marks: e.target.value})} style={{ padding: '8px', width: '100%' }} />
+                        <input type="text" value={editForm.tenth_marks} onChange={(e) => setEditForm({...editForm, tenth_marks: e.target.value})} style={{ padding: '8px', width: '100%', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} />
                       </div>
                       <div style={{ flex: 1 }}>
                         <label>10th Board</label>
-                        <input type="text" value={editForm.tenth_board} onChange={(e) => setEditForm({...editForm, tenth_board: e.target.value})} style={{ padding: '8px', width: '100%' }} />
+                        <input type="text" value={editForm.tenth_board} onChange={(e) => setEditForm({...editForm, tenth_board: e.target.value})} style={{ padding: '8px', width: '100%', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} />
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '10px' }}>
                       <div style={{ flex: 1 }}>
                         <label>12th %</label>
-                        <input type="text" value={editForm.twelfth_marks} onChange={(e) => setEditForm({...editForm, twelfth_marks: e.target.value})} style={{ padding: '8px', width: '100%' }} />
+                        <input type="text" value={editForm.twelfth_marks} onChange={(e) => setEditForm({...editForm, twelfth_marks: e.target.value})} style={{ padding: '8px', width: '100%', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} />
                       </div>
                       <div style={{ flex: 1 }}>
                         <label>12th Board</label>
-                        <input type="text" value={editForm.twelfth_board} onChange={(e) => setEditForm({...editForm, twelfth_board: e.target.value})} style={{ padding: '8px', width: '100%' }} />
+                        <input type="text" value={editForm.twelfth_board} onChange={(e) => setEditForm({...editForm, twelfth_board: e.target.value})} style={{ padding: '8px', width: '100%', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} />
                       </div>
                     </div>
                     <label>Achievements</label>
-                    <textarea value={editForm.achievements} onChange={(e) => setEditForm({...editForm, achievements: e.target.value})} style={{ padding: '8px', height: '60px' }} />
+                    <textarea value={editForm.achievements} onChange={(e) => setEditForm({...editForm, achievements: e.target.value})} style={{ padding: '8px', height: '60px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} />
                     <label>LinkedIn ID</label>
-                    <input type="text" value={editForm.linkedin} onChange={(e) => setEditForm({...editForm, linkedin: e.target.value})} style={{ padding: '8px' }} />
+                    <input type="text" value={editForm.linkedin} onChange={(e) => setEditForm({...editForm, linkedin: e.target.value})} style={{ padding: '8px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} />
                     <div style={{ display: 'flex', gap: '10px' }}>
-                       <input type="text" placeholder="Phone" value={editForm.phone} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} style={{ padding: '8px', flex: 1 }} />
-                       <input type="text" placeholder="WhatsApp" value={editForm.whatsapp} onChange={(e) => setEditForm({...editForm, whatsapp: e.target.value})} style={{ padding: '8px', flex: 1 }} />
+                       <input type="text" placeholder="Phone" value={editForm.phone} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} style={{ padding: '8px', flex: 1, backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} />
+                       <input type="text" placeholder="WhatsApp" value={editForm.whatsapp} onChange={(e) => setEditForm({...editForm, whatsapp: e.target.value})} style={{ padding: '8px', flex: 1, backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border)' }} />
                     </div>
                   </div>
 
@@ -382,16 +382,16 @@ export default function AdminDashboard() {
                     </label>
                     <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
                       <button type="submit" style={{ padding: '10px 20px', backgroundColor: '#ea4335', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Force Update Profile</button>
-                      <button type="button" onClick={() => setEditingUserId(null)} style={{ padding: '10px 20px', backgroundColor: '#ccc', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
+                      <button type="button" onClick={() => setEditingUserId(null)} style={{ padding: '10px 20px', backgroundColor: 'var(--gray-200)', color: 'var(--text-primary)', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
                     </div>
                   </div>
                 </form>
               </div>
             ) : (
               <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff', fontSize: '0.9rem' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'var(--bg-card)', fontSize: '0.9rem' }}>
                   <thead>
-                    <tr style={{ backgroundColor: '#f0f0f0', textAlign: 'left' }}>
+                    <tr style={{ backgroundColor: 'var(--gray-100)', textAlign: 'left' }}>
                       <th style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>User</th>
                       <th style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>Role</th>
                       <th style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>Field/City</th>
@@ -405,14 +405,14 @@ export default function AdminDashboard() {
                       <tr key={u.id}>
                         <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
                           <div style={{ fontWeight: 'bold' }}>{u.name}</div>
-                          <div style={{ fontSize: '0.8rem', color: '#666' }}>{u.email}</div>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{u.email}</div>
                         </td>
                         <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
                           <span style={{ padding: '2px 8px', backgroundColor: u.role === 'guider' ? '#e8f0fe' : u.role === 'admin' ? '#feefe3' : '#e6fffa', borderRadius: '12px', fontSize: '0.8rem' }}>{u.role}</span>
                         </td>
                         <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
                           <div>{u.field || '-'}</div>
-                          <div style={{ fontSize: '0.8rem', color: '#666' }}>{u.city || '-'}</div>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{u.city || '-'}</div>
                         </td>
                         <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
                           <div style={{ fontSize: '0.8rem' }}>📞 {u.phone || '-'}</div>
