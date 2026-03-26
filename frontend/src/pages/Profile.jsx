@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../api';
+import PhotoUpload from '../components/PhotoUpload';
 
 export default function Profile() {
   const { user } = useAuth();
@@ -8,7 +9,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
 
   // Forms
-  const [profileForm, setProfileForm] = useState({ name: user?.name, field: '', designation: '', city: '', category: '', whatsapp: '', phone: '' });
+  const [profileForm, setProfileForm] = useState({ name: user?.name, photo: '', field: '', designation: '', city: '', category: '', whatsapp: '', phone: '' });
   const [pwdForm, setPwdForm] = useState({ currentPassword: '', newPassword: '' });
   
   const [profileMsg, setProfileMsg] = useState('');
@@ -23,8 +24,10 @@ export default function Profile() {
       setProfileData(res.data);
       if (!res.data.profile_edited) {
         setProfileForm({ 
-          name: res.data.name || '', field: res.data.field || '', designation: res.data.designation || '', 
-          city: res.data.city || '', category: res.data.category || '', whatsapp: res.data.whatsapp || '', phone: res.data.phone || '' 
+          name: res.data.name || '', photo: res.data.photo || '',
+          field: res.data.field || '', designation: res.data.designation || '', 
+          city: res.data.city || '', category: res.data.category || '',
+          whatsapp: res.data.whatsapp || '', phone: res.data.phone || '' 
         });
       }
     } catch (err) {
@@ -76,6 +79,21 @@ export default function Profile() {
               <h3 style={{ margin: 0, color: '#1a73e8' }}>Profile Secured ✅</h3>
               <span style={{ fontSize: '0.8rem', backgroundColor: '#e6f4ea', color: '#1e8e3e', padding: '4px 8px', borderRadius: '12px' }}>Locked (Read-Only)</span>
             </div>
+            {/* Photo display in locked view */}
+            {(profileData.role === 'guider' || profileData.role === 'tutor') && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '1.5rem' }}>
+                <img
+                  src={profileData.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.name)}&background=1a73e8&color=fff&size=150`}
+                  alt={profileData.name}
+                  style={{ width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', border: '3px solid #1a73e8' }}
+                  onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.name)}&background=1a73e8&color=fff&size=150`; }}
+                />
+                <div>
+                  <p style={{ fontWeight: 'bold', fontSize: '1.1rem', margin: 0 }}>{profileData.name}</p>
+                  <p style={{ margin: '4px 0 0', color: '#555' }}>{profileData.role}</p>
+                </div>
+              </div>
+            )}
             <p><strong>Name:</strong> {profileData.name}</p>
             <p><strong>Email:</strong> {profileData.email}</p>
             <p><strong>Role:</strong> {profileData.role}</p>
@@ -101,6 +119,16 @@ export default function Profile() {
             {profileMsg && <div style={{ padding: '10px', backgroundColor: '#e2e3e5', marginBottom: '1rem', borderRadius: '4px' }}>{profileMsg}</div>}
             
             <form onSubmit={submitProfile} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+              {/* Photo upload — spans full width, centered */}
+              {(user.role === 'guider' || user.role === 'tutor') && (
+                <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                  <PhotoUpload
+                    value={profileForm.photo}
+                    onChange={(url) => setProfileForm({ ...profileForm, photo: url })}
+                    name={profileForm.name}
+                  />
+                </div>
+              )}
               <input type="text" name="name" placeholder="Name" value={profileForm.name} onChange={handleProfileChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
               {user.role === 'guider' && (
                 <>
