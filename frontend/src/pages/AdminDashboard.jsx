@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import API from '../api';
+import PhotoUpload from '../components/PhotoUpload';
 
 export default function AdminDashboard() {
   const { user, isAdmin } = useAuth();
@@ -162,8 +163,12 @@ export default function AdminDashboard() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <label>Full Name</label>
                     <input type="text" value={editForm.name} onChange={(e) => setEditForm({...editForm, name: e.target.value})} style={{ padding: '8px' }} required />
-                    <label>Photo URL</label>
-                    <input type="text" value={editForm.photo} onChange={(e) => setEditForm({...editForm, photo: e.target.value})} style={{ padding: '8px' }} />
+                    <label>Profile Photo</label>
+                    <PhotoUpload
+                      value={editForm.photo}
+                      onChange={(url) => setEditForm({ ...editForm, photo: url })}
+                      name={editForm.name}
+                    />
                     <label>Field/Subject</label>
                     <input type="text" value={editForm.field} onChange={(e) => setEditForm({...editForm, field: e.target.value})} style={{ padding: '8px' }} />
                     <label>Designation</label>
@@ -288,8 +293,12 @@ export default function AdminDashboard() {
                 <input type="text" placeholder="e.g. Rahul Sharma" value={tutorForm.name} onChange={(e) => setTutorForm({...tutorForm, name: e.target.value})} required style={{ padding: '8px' }} />
                 <label>Email Address</label>
                 <input type="email" placeholder="e.g. rahul@example.com" value={tutorForm.email} onChange={(e) => setTutorForm({...tutorForm, email: e.target.value})} required style={{ padding: '8px' }} />
-                <label>Photo URL (Direct Drive Link)</label>
-                <input type="text" placeholder="https://..." value={tutorForm.photo} onChange={(e) => setTutorForm({...tutorForm, photo: e.target.value})} style={{ padding: '8px' }} />
+                <label>Profile Photo</label>
+                <PhotoUpload
+                  value={tutorForm.photo}
+                  onChange={(url) => setTutorForm({ ...tutorForm, photo: url })}
+                  name={tutorForm.name}
+                />
                 <label>Subject/Field</label>
                 <input type="text" placeholder="e.g. Mathematics / IIT JEE" value={tutorForm.field} onChange={(e) => setTutorForm({...tutorForm, field: e.target.value})} style={{ padding: '8px' }} />
                 <label>Designation/Education</label>
