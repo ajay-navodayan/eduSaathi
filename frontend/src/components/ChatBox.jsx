@@ -92,7 +92,7 @@ export default function ChatBox({ peerId }) {
           return (
             <div key={idx} style={{ 
               alignSelf: isMine ? 'flex-end' : 'flex-start',
-              backgroundColor: isMine ? '#dcf8c6' : '#fff',
+              backgroundColor: isMine ? 'var(--blue-50)' : 'var(--bg-card)',
               padding: '8px 12px',
               borderRadius: '8px',
               borderTopRightRadius: isMine ? '0' : '8px',
@@ -102,7 +102,7 @@ export default function ChatBox({ peerId }) {
               maxWidth: '65%',
               position: 'relative'
             }}>
-              <p style={{ margin: 0, fontSize: '0.95rem', color: '#111b21', lineHeight: '19px', wordWrap: 'break-word' }}>
+              <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-primary)', lineHeight: '19px', wordWrap: 'break-word' }}>
                 {m.content}
               </p>
               <span style={{ fontSize: '0.65rem', color: 'rgba(0,0,0,0.45)', float: 'right', margin: '-10px 0 -5px 10px', alignSelf: 'flex-end', paddingTop: '10px' }}>
@@ -115,7 +115,7 @@ export default function ChatBox({ peerId }) {
       </div>
 
       {/* BOTTOM INPUT BAR */}
-      <div style={{ backgroundColor: '#f0f2f5', padding: '10px 20px', display: 'flex', alignItems: 'center' }}>
+      <div style={{ backgroundColor: 'var(--gray-100)', borderTop: '1px solid var(--border)', padding: '10px 20px', display: 'flex', alignItems: 'center' }}>
         <form onSubmit={sendMessage} style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
           <input 
             type="text" 
@@ -126,11 +126,12 @@ export default function ChatBox({ peerId }) {
               flex: 1, 
               padding: '12px 20px', 
               borderRadius: '24px', 
-              border: 'none', 
               outline: 'none', 
               marginRight: '15px', 
               fontSize: '0.95rem',
-              backgroundColor: '#fff'
+              backgroundColor: 'var(--bg-card)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border)'
             }}
           />
           <button 

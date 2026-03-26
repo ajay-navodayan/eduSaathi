@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
@@ -7,6 +7,22 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState('light');
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const preferredDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (preferredDark ? 'dark' : 'light');
+    setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    document.documentElement.setAttribute('data-theme', nextTheme);
+    localStorage.setItem('theme', nextTheme);
+  };
 
   const handleLogout = () => {
     logout();
@@ -35,6 +51,16 @@ export default function Navbar() {
 
           {user ? (
             <div className="nav-user">
+              <button
+                type="button"
+                className={`theme-toggle ${theme === 'dark' ? 'dark' : ''}`}
+                onClick={toggleTheme}
+                title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              >
+                <span className="theme-toggle-icon">{theme === 'light' ? '🌙' : '☀️'}</span>
+                <span>{theme === 'light' ? 'Dark' : 'Light'}</span>
+              </button>
               <NavLink to="/profile" className="nav-username" onClick={() => setMenuOpen(false)} style={{ textDecoration: 'none', color: '#1a73e8', fontWeight: 'bold', marginRight: '10px' }}>
                 👤 {user.name}
               </NavLink>
@@ -48,6 +74,16 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="nav-auth">
+              <button
+                type="button"
+                className={`theme-toggle ${theme === 'dark' ? 'dark' : ''}`}
+                onClick={toggleTheme}
+                title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              >
+                <span className="theme-toggle-icon">{theme === 'light' ? '🌙' : '☀️'}</span>
+                <span>{theme === 'light' ? 'Dark' : 'Light'}</span>
+              </button>
               <NavLink to="/login" className="btn btn-sm btn-outline" onClick={() => setMenuOpen(false)}>Login</NavLink>
               <NavLink to="/register" className="btn btn-sm btn-primary" onClick={() => setMenuOpen(false)}>Register</NavLink>
             </div>

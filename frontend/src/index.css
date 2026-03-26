@@ -76,6 +76,24 @@
   --font-body: 'Inter', sans-serif;
 }
 
+html[data-theme='dark'] {
+  --text-primary: #e7eefc;
+  --text-secondary: #bdcae3;
+  --text-muted: #8ea2c7;
+  --bg-page: #0c1220;
+  --bg-card: #141d31;
+  --border: #24324f;
+  --gray-900: #eef3ff;
+  --gray-800: #d5def2;
+  --gray-700: #b9c7e4;
+  --gray-600: #96a9cf;
+  --gray-50: #121a2b;
+  --blue-50: #1c2943;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.36);
+}
+
 html {
   font-size: 16px;
   scroll-behavior: smooth;
@@ -87,6 +105,7 @@ body {
   background-color: var(--bg-page);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* ---- Typography ---- */
@@ -286,7 +305,7 @@ a:hover { color: var(--primary-dark); }
   font-family: var(--font-body);
   font-size: 0.95rem;
   color: var(--text-primary);
-  background: white;
+  background: var(--bg-card);
   transition: var(--transition-fast);
   width: 100%;
   outline: none;
