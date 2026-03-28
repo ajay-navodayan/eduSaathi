@@ -38,7 +38,7 @@ export default function Resources() {
       <div className="page-hero">
         <div className="container page-hero-content">
           <h1>📚 Study Resources</h1>
-          <p>Download free study materials for all major competitive exams</p>
+          <p>All your study material, free in one place.</p>
         </div>
       </div>
 
