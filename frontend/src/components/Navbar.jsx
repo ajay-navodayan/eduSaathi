@@ -35,10 +35,7 @@ export default function Navbar() {
       <div className="container navbar-inner">
         {/* Logo */}
         <Link to="/" className="navbar-logo" onClick={() => setMenuOpen(false)}>
-          <span className="logo-icon">🎓</span>
-          <span className="logo-text">
-            Edu<span className="logo-accent">Saathi</span>
-          </span>
+          <img src="/sathsikho-logo.png" alt="SathSikho" className="navbar-logo-img" />
         </Link>
 
         {/* Desktop Nav */}

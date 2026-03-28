@@ -13,7 +13,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 68px;
+  height: 80px;
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 /* Logo */
@@ -27,6 +29,17 @@
   font-size: 1.4rem;
   color: var(--blue-700);
   letter-spacing: -0.02em;
+}
+
+.navbar-logo-img {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.navbar-logo-img:hover {
+  transform: scale(1.02);
 }
 
 .logo-icon {
@@ -156,7 +169,7 @@
 
   .navbar-links {
     position: fixed;
-    top: 68px;
+    top: 80px;
     left: 0;
     right: 0;
     background: var(--bg-card);
