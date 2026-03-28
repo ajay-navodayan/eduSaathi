@@ -199,9 +199,9 @@ export default function Home() {
         <div className="container">
           <div className="cta-card">
             <h2>Ready to Start Your Journey?</h2>
-            <p>One platform, endless opportunities—start your journey with SathSikho</p>
+            <p>One platform, endless opportunities start your journey with <b>SathSikho</b></p>
             <div className="flex-center gap-2 mt-3">
-              <Link to="/register" className="btn btn-accent btn-lg">Register Now — It's Free!</Link>
+              <Link to="/register" className="btn btn-accent btn-lg">Register Now</Link>
               <Link to="/guiders" className="btn btn-outline-white btn-lg">Browse Guiders</Link>
             </div>
           </div>
