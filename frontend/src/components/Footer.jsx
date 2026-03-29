@@ -14,18 +14,11 @@ export default function Footer() {
           </div>
 
           {/* Contact & Support */}
-          <div className="footer-col">
+          <div className="footer-col" style={{ minWidth: '350px' }}>
             <h4>Contact & Support</h4>
             
-            <div className="footer-contact-person">
-              <div className="person-avatar">N</div>
-              <div className="person-info">
-                <span className="person-name">Nikhil Raj Soni</span>
-                <span className="person-role">Platform Admin</span>
-              </div>
-            </div>
-
-            <ul>
+            <div className="footer-contact-flex">
+              <ul>
               <li>
                 <a href="mailto:sathsikho@gmail.com">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,6 +54,18 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
+
+            <div className="footer-contact-person footer-contact-person-right">
+              <div className="person-avatar large-avatar">
+                <img src="/admin-avatar.jpg" alt="Nikhil Raj Soni" />
+              </div>
+              <div className="person-info">
+                <span className="person-name">Nikhil Raj Soni</span>
+                <span className="person-role">Platform Admin</span>
+              </div>
+            </div>
+            
+            </div>
           </div>
         </div>
 

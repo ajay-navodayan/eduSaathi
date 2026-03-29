@@ -1,6 +1,10 @@
 /* Hero Section */
 .hero-section {
-  background: linear-gradient(135deg, var(--blue-900) 0%, var(--blue-700) 50%, #2979ff 100%);
+  background-image:
+    linear-gradient(135deg, rgba(8, 25, 75, 0.88) 0%, rgba(20, 90, 200, 0.85) 100%),
+    url('/home-hero-bg.png');
+  background-size: cover;
+  background-position: center 50%;
   color: white;
   padding: 5rem 0 4rem;
   position: relative;
@@ -26,7 +30,7 @@
   height: 450px;
   top: -150px;
   right: -100px;
-  background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.07) 0%, transparent 70%);
 }
 
 .shape-2 {
@@ -34,7 +38,7 @@
   height: 300px;
   bottom: -100px;
   left: -50px;
-  background: radial-gradient(circle, rgba(255,109,0,0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 109, 0, 0.15) 0%, transparent 70%);
 }
 
 .shape-3 {
@@ -42,7 +46,7 @@
   height: 200px;
   top: 30%;
   left: 35%;
-  background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
 }
 
 .hero-content {
@@ -56,12 +60,12 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.45rem 1.1rem;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-full);
   font-size: 0.85rem;
   font-weight: 600;
-  color: rgba(255,255,255,0.9);
+  color: rgba(255, 255, 255, 0.9);
   margin-bottom: 1.5rem;
   backdrop-filter: blur(8px);
 }
@@ -84,7 +88,7 @@
 
 .hero-subtitle {
   font-size: 1.15rem;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
   max-width: 540px;
   margin: 0 auto 2rem;
   line-height: 1.7;
@@ -103,9 +107,9 @@
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-xl);
   padding: 1.25rem 2.5rem;
   display: inline-flex;
@@ -127,7 +131,7 @@
 
 .stat-label {
   font-size: 0.78rem;
-  color: rgba(255,255,255,0.65);
+  color: rgba(255, 255, 255, 0.65);
   font-weight: 500;
   margin-top: 0.2rem;
   text-transform: uppercase;
@@ -137,7 +141,7 @@
 .stat-divider {
   width: 1px;
   height: 36px;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Search Section */
@@ -162,7 +166,9 @@
   font-size: 1.5rem;
 }
 
-.search-form { margin-bottom: 1.5rem; }
+.search-form {
+  margin-bottom: 1.5rem;
+}
 
 .search-inputs {
   display: flex;
@@ -170,8 +176,15 @@
   flex-wrap: wrap;
 }
 
-.search-input { flex: 2; min-width: 200px; }
-.search-select { flex: 1; min-width: 150px; }
+.search-input {
+  flex: 2;
+  min-width: 200px;
+}
+
+.search-select {
+  flex: 1;
+  min-width: 150px;
+}
 
 .category-quick-links {
   display: flex;
@@ -300,7 +313,7 @@
   right: -10%;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
   border-radius: 50%;
 }
 
@@ -311,17 +324,37 @@
 }
 
 .cta-card p {
-  color: rgba(255,255,255,0.75);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 1.05rem;
   max-width: 500px;
   margin: 0 auto;
 }
 
 @media (max-width: 768px) {
-  .hero-section { padding: 3.5rem 0 3rem; min-height: auto; }
-  .hero-stats { padding: 1rem 1.5rem; gap: 1.25rem; }
-  .search-inputs { flex-direction: column; }
-  .search-card { padding: 1.5rem; }
-  .featured-section { margin: 0; border-radius: 0; }
-  .cta-card { padding: 2.5rem 1.5rem; }
+  .hero-section {
+    padding: 3.5rem 0 3rem;
+    min-height: auto;
+  }
+
+  .hero-stats {
+    padding: 1rem 1.5rem;
+    gap: 1.25rem;
+  }
+
+  .search-inputs {
+    flex-direction: column;
+  }
+
+  .search-card {
+    padding: 1.5rem;
+  }
+
+  .featured-section {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .cta-card {
+    padding: 2.5rem 1.5rem;
+  }
 }
