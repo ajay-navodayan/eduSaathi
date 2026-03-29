@@ -1,10 +1,12 @@
 import { useState, useRef } from 'react';
+import ImageCropper from './ImageCropper';
+import './ImageCropper.css';
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 /**
- * PhotoUpload — uploads a photo to Cloudinary (unsigned) and returns the URL.
+ * PhotoUpload — select a photo → adjust/crop in a modal → upload to Cloudinary.
  * Props:
  *   value    {string}   current photo URL (to show preview)
  *   onChange {function} called with new Cloudinary URL after successful upload
@@ -13,9 +15,11 @@ const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 export default function PhotoUpload({ value, onChange, name = '' }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+  const [rawImageSrc, setRawImageSrc] = useState(null); // Object URL for cropper
   const inputRef = useRef(null);
 
-  const handleFileChange = async (e) => {
+  // Step 1: User picks a file → show cropper
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -24,22 +28,35 @@ export default function PhotoUpload({ value, onChange, name = '' }) {
       setError('Please select an image file (JPG, PNG, etc.)');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Image must be smaller than 5 MB');
+    if (file.size > 10 * 1024 * 1024) {
+      setError('Image must be smaller than 10 MB');
       return;
     }
+
+    setError('');
+    // Create object URL and open cropper
+    const objectUrl = URL.createObjectURL(file);
+    setRawImageSrc(objectUrl);
+
+    // Reset file input so same file can be re-selected
+    if (inputRef.current) inputRef.current.value = '';
+  };
+
+  // Step 2: Cropper gives us a blob → upload to Cloudinary
+  const handleCrop = async (blob) => {
+    setRawImageSrc(null); // close cropper
 
     if (!CLOUD_NAME || !UPLOAD_PRESET) {
       setError('Cloudinary not configured. Add VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET to your .env file.');
       return;
     }
 
-    setError('');
     setUploading(true);
+    setError('');
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', blob, 'profile-photo.jpg');
       formData.append('upload_preset', UPLOAD_PRESET);
       formData.append('folder', 'edusaathi/mentors');
 
@@ -59,9 +76,12 @@ export default function PhotoUpload({ value, onChange, name = '' }) {
       setError(err.message || 'Upload failed. Please try again.');
     } finally {
       setUploading(false);
-      // reset file input so same file can be re-selected if needed
-      if (inputRef.current) inputRef.current.value = '';
     }
+  };
+
+  const handleCancelCrop = () => {
+    if (rawImageSrc) URL.revokeObjectURL(rawImageSrc);
+    setRawImageSrc(null);
   };
 
   const avatarFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=1a73e8&color=fff&size=150`;
@@ -118,6 +138,15 @@ export default function PhotoUpload({ value, onChange, name = '' }) {
 
       {error && (
         <p style={{ fontSize: '0.8rem', color: '#ea4335', margin: 0, textAlign: 'center' }}>{error}</p>
+      )}
+
+      {/* Image Cropper Modal */}
+      {rawImageSrc && (
+        <ImageCropper
+          imageSrc={rawImageSrc}
+          onCrop={handleCrop}
+          onCancel={handleCancelCrop}
+        />
       )}
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
