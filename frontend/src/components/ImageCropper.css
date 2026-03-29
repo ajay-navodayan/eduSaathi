@@ -1,0 +1,232 @@
+/* ═══════════════════════════════════════════════════
+   Image Cropper — Premium Glassmorphism Modal
+   ═══════════════════════════════════════════════════ */
+
+.cropper-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: cropperFadeIn 0.25s ease;
+}
+
+.cropper-modal {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 28px 32px 24px;
+  max-width: 380px;
+  width: 92vw;
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  animation: cropperSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cropper-title {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+.cropper-subtitle {
+  margin: 0 0 18px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  text-align: center;
+}
+
+/* Canvas Area */
+.cropper-canvas-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.cropper-canvas-wrap canvas {
+  border-radius: 14px;
+  background: #0f172a;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Controls */
+.cropper-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.cropper-control-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cropper-label {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  min-width: 64px;
+  white-space: nowrap;
+}
+
+.cropper-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #334155, #475569);
+  outline: none;
+  transition: background 0.2s;
+}
+
+.cropper-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+  border: 2px solid #1e3a5f;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cropper-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 12px rgba(59, 130, 246, 0.6);
+}
+
+.cropper-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+  border: 2px solid #1e3a5f;
+}
+
+.cropper-value {
+  font-size: 0.78rem;
+  color: #64748b;
+  min-width: 42px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Quick Action Buttons */
+.cropper-quick-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.cropper-quick-btn {
+  padding: 5px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cropper-quick-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Action Buttons */
+.cropper-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.cropper-btn {
+  padding: 10px 22px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cropper-btn-cancel {
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cropper-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+.cropper-btn-confirm {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+}
+
+.cropper-btn-confirm:hover {
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+  transform: translateY(-1px);
+}
+
+.cropper-btn-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Animations */
+@keyframes cropperFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes cropperSlideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Mobile responsive */
+@media (max-width: 420px) {
+  .cropper-modal {
+    padding: 20px 16px 18px;
+    border-radius: 16px;
+  }
+
+  .cropper-canvas-wrap canvas {
+    width: 240px !important;
+    height: 240px !important;
+  }
+
+  .cropper-actions {
+    flex-direction: column;
+  }
+
+  .cropper-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
