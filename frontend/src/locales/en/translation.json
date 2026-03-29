@@ -275,6 +275,9 @@
     "type_mentor_only": "Mentor Only",
     "phone_label": "Phone:",
     "whatsapp_label": "WhatsApp:",
+    "class_label": "Class:",
+    "school_label": "School/College:",
+    "bio_label": "Bio:",
     "locked_notice": "* To change any of your locked demographic data, please contact the Administration.",
     "edit_warning": "Notice: You can only edit your profile details once. Please make sure the data is accurate before saving.",
     "placeholders": {
@@ -284,7 +287,10 @@
       "city": "City",
       "category": "Category",
       "whatsapp": "WhatsApp Number",
-      "phone": "Phone Number"
+      "phone": "Phone Number",
+      "class_level": "Class (e.g. 10th, 12th, B.Tech)",
+      "school": "School/College Name",
+      "bio": "Tell us about yourself..."
     },
     "save_btn": "Save Profile Details Permanently",
     "security": {

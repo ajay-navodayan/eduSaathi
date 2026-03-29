@@ -99,8 +99,12 @@ async function initializeDatabase() {
     // Add 'status' if missing
     await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'approved'");
     await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS rejection_reason TEXT");
-    // Add 'profile_edited' if missing
-    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_edited BOOLEAN DEFAULT false");
+    // User Profile Migrations
+    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS photo TEXT");
+    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS class_level TEXT");
+    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS school TEXT");
+    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS bio TEXT");
+    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone TEXT");
 
     // Guiders Migrations
     await pool.query("ALTER TABLE guiders ADD COLUMN IF NOT EXISTS tenth_board TEXT");
