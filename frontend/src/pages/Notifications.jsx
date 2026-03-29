@@ -4,7 +4,7 @@ import API from '../api';
 import './Notifications.css';
 
 const TABS_KEYS = [
-  'pinned', 'govt', 'jee', 'neet', 'railway', 'ssc', 'navodaya', 'neterhat', 'scholarship'
+  'pinned', 'govt', 'jee', 'neet', 'railway', 'ssc', 'navodaya', 'netarhat', 'scholarship'
 ];
 
 export default function Notifications() {

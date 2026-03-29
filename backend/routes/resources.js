@@ -11,8 +11,14 @@ router.get('/', async (req, res) => {
     const params = [];
 
     if (category && category !== 'All') {
-      params.push(category);
-      query += ` AND category ILIKE $${params.length}`;
+      if (category.startsWith('Class ')) {
+        const level = parseInt(category.split(' ')[1]);
+        params.push(level);
+        query += ` AND class_level = $${params.length}`;
+      } else {
+        params.push(category);
+        query += ` AND category ILIKE $${params.length}`;
+      }
     }
 
     if (class_level) {

@@ -6,25 +6,22 @@ import API from '../api';
 import './ChatApp.css';
 
 export default function GuiderDashboard() {
-  const { t } = useTranslation();
   const { user } = useAuth();
-  const [contacts, setContacts] = useState([]);
-  const [activeChat, setActiveChat] = useState(null); // stores { peer_id, name, role }
-  const [newChatId, setNewChatId] = useState('');
+  const myMessagingId = user?.id_auth || user?.id;
 
   useEffect(() => {
-    if (user?.id) {
-      // Use user.id consistently for all messaging features
-      API.get(`/messages/conversations/${user.id}`)
+    if (myMessagingId) {
+      // Use the UUID/id_auth consistently for all messaging features
+      API.get(`/messages/conversations/${myMessagingId}`)
         .then(res => setContacts(res.data))
         .catch(err => console.error("Failed to load contacts", err));
     }
-  }, [user]);
+  }, [myMessagingId]);
 
   const handleStartManualChat = (e) => {
     e.preventDefault();
     if (newChatId.trim()) {
-      setActiveChat({ peer_id: parseInt(newChatId), name: `User ${newChatId}`, role: 'Unknown' });
+      setActiveChat({ peer_id: newChatId, name: `User ${newChatId.substring(0, 8)}`, role: 'Unknown' });
       setNewChatId('');
     }
   };
@@ -39,10 +36,10 @@ export default function GuiderDashboard() {
         </div>
         
         <div className="contact-list">
-          {/* Manual New Chat Form hidden beautifully */}
+          {/* Manual New Chat Form */}
           <form style={{ padding: '10px 15px', borderBottom: '1px solid #ddd' }} onSubmit={handleStartManualChat}>
              <input 
-               type="number" 
+               type="text" 
                placeholder={t('chat.search')} 
                value={newChatId}
                onChange={(e) => setNewChatId(e.target.value)}
@@ -54,10 +51,11 @@ export default function GuiderDashboard() {
              <p style={{ padding: '20px', textAlign: 'center', color: '#666' }}>{t('chat.no_chats')}</p>
           ) : (
              contacts.map(c => {
-               // Generate random appealing color for dummy avatar
+               // Generate random appealing color for dummy avatar based on string ID
                const avatarColors = ['#1a73e8', '#34a853', '#fbbc05', '#ea4335', '#ff6d00', '#9c27b0'];
-               const color = avatarColors[c.peer_id % avatarColors.length];
-               const isActive = activeChat?.peer_id === c.peer_id;
+               const idHash = String(c.peer_id).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+               const color = avatarColors[idHash % avatarColors.length];
+               const isActive = String(activeChat?.peer_id) === String(c.peer_id);
 
                return (
                  <div 
@@ -69,7 +67,7 @@ export default function GuiderDashboard() {
                      {c.name ? c.name.charAt(0).toUpperCase() : 'U'}
                    </div>
                    <div className="contact-info">
-                     <div className="contact-name">{c.name || `User ${c.peer_id}`}</div>
+                     <div className="contact-name">{c.name || `User ${String(c.peer_id).substring(0, 8)}`}</div>
                      <div className="contact-role" style={{ textTransform: 'capitalize' }}>{c.role || t('chat.new_user')}</div>
                    </div>
                  </div>

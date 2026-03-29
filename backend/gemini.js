@@ -15,7 +15,7 @@ const CATEGORY_CONTEXT = {
   railway:     'Indian Railway recruitment (RRB NTPC, Group D, ALP, JE, RPF)',
   ssc:         'SSC CGL, SSC CHSL, SSC MTS, SSC GD, SSC JE — Staff Selection Commission exams',
   navodaya:    'Jawahar Navodaya Vidyalaya Selection Test (JNVST) — Class 6 and Class 9 entrance exam',
-  neterhat:    'Neterhat Vidyalaya (Jharkhand) entrance exam for Class 6 admission',
+  netarhat:    'Netarhat Vidyalaya (Jharkhand) entrance exam for Class 6 admission',
   scholarship: 'Indian scholarship notifications — NSP, state scholarships, merit cum means, minority scholarships',
 };
 

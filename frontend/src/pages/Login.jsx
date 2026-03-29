@@ -1,16 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import API from '../api';
+import { supabase } from '../supabaseClient';
 import { useAuth } from '../context/AuthContext';
-import './Auth.css';
 
 export default function Login() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,19 +19,42 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      const res = await API.post('/auth/login', form);
-      login(res.data.user, res.data.token);
-      if (res.data.user.role === 'admin') {
-        navigate('/admin-dashboard');
-      } else if (res.data.user.role === 'guider') {
-        navigate('/guider-dashboard');
-      } else {
-        navigate('/');
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: form.email,
+        password: form.password,
+      });
+
+      if (authError) throw authError;
+      
+      if (!data || !data.user || !data.user.id) {
+        throw new Error('No user data returned from authentication. Please verify your email.');
       }
+
+      // Manually fetch the user's role here so we don't depend on Context timing
+      const { data: profile, error: profileError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id_auth', data.user.id)
+        .maybeSingle(); 
+
+      const redirectRole = profileError || !profile ? 'student' : profile.role;
+      
+      // Perform a hard redirect to forcefully load the dashboard.
+      // This wipes out any React state "hanging" bugs and initializes the session securely.
+      if (redirectRole === 'admin') {
+        window.location.href = '/admin-dashboard';
+      } else if (redirectRole === 'guider') {
+        window.location.href = '/guider-dashboard';
+      } else {
+        window.location.href = '/';
+      }
+      
     } catch (err) {
-      setError(err.response?.data?.error || t('login.form.error_default'));
-    } finally {
-      setLoading(false);
+      console.error('Login error:', err);
+      const msg = err.message || t('login.form.error_default') || String(err);
+      setError(msg);
+      alert('LOGIN HALTED: ' + msg); // Aggressive user-facing debug
+      setLoading(false); 
     }
   };
 
@@ -98,6 +120,12 @@ export default function Login() {
               {loading ? t('login.form.btn_loading') : t('login.form.btn_default')}
             </button>
           </form>
+
+          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <Link to="/forgot-password" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+              Forgot Password?
+            </Link>
+          </div>
 
           <div className="auth-divider"><span>{t('login.form.or')}</span></div>
 

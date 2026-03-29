@@ -44,15 +44,19 @@ export default function Resources() {
     return () => clearTimeout(delayDebounceFn);
   }, [activeCategory, classLevel, searchTerm]);
 
+  // Split resources into NCERT and non-NCERT
+  const ncertResources = resources.filter(r => r.category === 'NCERT');
+  const otherResources = resources.filter(r => r.category !== 'NCERT');
+
   // Grouping logic for NCERT table
-  const renderNcertTable = () => {
+  const renderNcertTable = (ncertList) => {
     // Group by class_level
-    const classes = [...new Set(resources.map(r => r.class_level))].filter(Boolean).sort((a, b) => b - a);
+    const classes = [...new Set(ncertList.map(r => r.class_level))].filter(Boolean).sort((a, b) => b - a);
 
     if (classes.length === 0) return null;
 
     return classes.map(cls => {
-      const classResources = resources.filter(r => r.class_level === cls);
+      const classResources = ncertList.filter(r => r.class_level === cls);
       // Group by subject (extracted from description or title)
       const subjects = [...new Set(classResources.map(r => r.description))];
 
@@ -104,6 +108,10 @@ export default function Resources() {
     });
   };
 
+  const hasResults = resources.length > 0;
+  const hasNcert = ncertResources.length > 0;
+  const hasOther = otherResources.length > 0;
+
   return (
     <div className="resources-page">
       <div className="page-hero">
@@ -136,7 +144,7 @@ export default function Resources() {
                 className="resource-select"
               >
                 <option value="All">{t('resources.filters.all_categories')}</option>
-                {CATEGORIES.filter(c => c !== 'All' && c !== 'Class 10' && c !== 'Class 12').map(cat => (
+                {CATEGORIES.filter(c => c !== 'All').map(cat => (
                   <option key={cat} value={cat}>{t(`guiders.categories.${cat}`)}</option>
                 ))}
               </select>
@@ -160,54 +168,72 @@ export default function Resources() {
 
         {loading ? (
           <div className="spinner-container"><div className="spinner"></div></div>
-        ) : resources.length > 0 ? (
-          activeCategory === 'NCERT' ? (
-            <div className="ncert-container">
-              {renderNcertTable() || (
-                <div className="empty-state">
-                  <span className="empty-state-icon">📂</span>
-                  <h3>{t('resources.empty.title')}</h3>
-                  <p>{t('resources.empty.subtitle')}</p>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="resources-grid">
-              {resources.map((res, i) => (
-                <div
-                  key={res.id}
-                  className="resource-card card fade-in-up"
-                  style={{ animationDelay: `${i * 0.05}s` }}
-                >
-                  <div className="resource-icon">
-                    {CATEGORY_ICONS[res.category] || '📄'}
-                  </div>
-                  <div className="resource-body">
-                    <span className="badge badge-blue resource-cat-badge">{res.category}</span>
-                    <h3 className="resource-title">{res.title}</h3>
-                    {res.description && <p className="resource-desc">{res.description}</p>}
-                    {res.class_level && <span className="resource-class-tag">Class {res.class_level}</span>}
-                  </div>
-                  <div className="resource-footer">
-                    <a
-                      href={res.drive_link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-primary btn-sm"
-                    >
-                      {t('resources.card.download')}
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )
-        ) : (
+        ) : !hasResults ? (
           <div className="empty-state">
             <span className="empty-state-icon">📂</span>
             <h3>{t('resources.empty.title')}</h3>
             <p>{t('resources.empty.subtitle')}</p>
           </div>
+        ) : (
+          <>
+            {/* NCERT Section — always shown as grouped table when NCERT books are present */}
+            {hasNcert && (
+              <div className="ncert-container">
+                {activeCategory === 'All' && (
+                  <h2 className="section-heading">
+                    <span>📚</span> NCERT Textbooks
+                  </h2>
+                )}
+                {renderNcertTable(ncertResources) || (
+                  <div className="empty-state">
+                    <span className="empty-state-icon">📂</span>
+                    <h3>{t('resources.empty.title')}</h3>
+                    <p>{t('resources.empty.subtitle')}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Other Categories — shown as cards */}
+            {hasOther && (
+              <div style={{ marginTop: hasNcert ? '4rem' : '0' }}>
+                {activeCategory === 'All' && (
+                  <h2 className="section-heading">
+                    <span>📋</span> Other Study Materials
+                  </h2>
+                )}
+                <div className="resources-grid">
+                  {otherResources.map((res, i) => (
+                    <div
+                      key={res.id}
+                      className="resource-card card fade-in-up"
+                      style={{ animationDelay: `${i * 0.05}s` }}
+                    >
+                      <div className="resource-icon">
+                        {CATEGORY_ICONS[res.category] || '📄'}
+                      </div>
+                      <div className="resource-body">
+                        <span className="badge badge-blue resource-cat-badge">{res.category}</span>
+                        <h3 className="resource-title">{res.title}</h3>
+                        {res.description && <p className="resource-desc">{res.description}</p>}
+                        {res.class_level && <span className="resource-class-tag">Class {res.class_level}</span>}
+                      </div>
+                      <div className="resource-footer">
+                        <a
+                          href={res.drive_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-primary btn-sm"
+                        >
+                          {t('resources.card.download')}
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

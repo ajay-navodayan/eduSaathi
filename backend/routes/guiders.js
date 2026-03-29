@@ -34,7 +34,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT g.*, u.id as user_id FROM guiders g LEFT JOIN users u ON u.email = g.email WHERE g.id = $1', 
+      'SELECT g.*, u.id_auth as user_id FROM guiders g LEFT JOIN users u ON u.email = g.email WHERE g.id = $1', 
       [req.params.id]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Guider not found' });

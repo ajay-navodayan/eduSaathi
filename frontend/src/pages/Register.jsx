@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import API from '../api';
+import { supabase } from '../supabaseClient';
 import PhotoUpload from '../components/PhotoUpload';
 import './Auth.css';
 
@@ -69,18 +69,41 @@ export default function Register() {
       return setError(t('register.form.error_password_length'));
     }
     setLoading(true);
+
     try {
-      await API.post('/auth/register', {
-        name: form.name,
+      // 1. Create User in Supabase Auth
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
-        role: form.role,
-        ...(form.role === 'guider' ? mentorForm : {})
+        options: {
+          data: {
+            full_name: form.name,
+            role: form.role,
+          }
+        }
       });
+
+      if (signUpError) throw signUpError;
+
+      const userId = data.user.id;
+
+      // 2. If Guider, insert into guiders table as well
+      if (form.role === 'guider') {
+        const { error: guiderError } = await supabase
+          .from('guiders')
+          .insert({
+            ...mentorForm,
+            name: form.name,
+            email: form.email,
+          });
+        
+        if (guiderError) throw guiderError;
+      }
+
       setSuccess(form.role === 'guider' ? t('register.form.success_mentor') : t('register.form.success_student'));
       setTimeout(() => navigate('/login'), 1800);
     } catch (err) {
-      setError(err.response?.data?.error || t('register.form.error_default'));
+      setError(err.message || t('register.form.error_default'));
     } finally {
       setLoading(false);
     }

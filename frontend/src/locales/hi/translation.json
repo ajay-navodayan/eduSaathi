@@ -205,7 +205,7 @@
       "railway": "🚂 रेलवे",
       "ssc": "📝 SSC",
       "navodaya": "🏫 नवोदय",
-      "neterhat": "🏔️ नेतरहाट",
+      "netarhat": "🏔️ नेतरहाट",
       "scholarship": "🎓 छात्रवृत्ति"
     },
     "meta": {
@@ -443,6 +443,9 @@
       "medium_hi": "हिन्दी",
       "medium_en": "अंग्रेजी",
       "bulk_mode": "बल्क (Bulk) मोड",
+      "bulk_title": "बल्क शीट अपलोड (Sheet Upload)",
+      "bulk_mode_manual": "मैन्युअल बल्क प्रविष्टि (पाठ)",
+      "bulk_success": "संसाधन सफलतापूर्वक अपलोड किए गए!",
       "bulk_placeholder": "किताब का नाम, लिंक (एक पंक्ति में एक)\nउदाहरण:\nPhysics Ch 1, https://drive.google.com/...\nChemistry Ch 1, https://drive.google.com/...",
       "bulk_count": "{{count}} किताबें खोजी गईं",
       "view_file": "फ़ाइल देखें 🔗",

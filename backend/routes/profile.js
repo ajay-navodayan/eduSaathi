@@ -3,11 +3,11 @@ const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcryptjs');
 
-// GET /me/:id
+// GET /me/:id (where :id is the Supabase UUID)
 router.get('/me/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const userRes = await pool.query('SELECT id, name, email, role, profile_edited FROM users WHERE id = $1', [id]);
+    const userRes = await pool.query('SELECT id, name, email, role, profile_edited FROM users WHERE id_auth = $1', [id]);
     if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     const user = userRes.rows[0];
 
@@ -38,7 +38,7 @@ router.put('/update', async (req, res) => {
 
   try {
     // Check if profile was already edited
-    const userRes = await pool.query('SELECT profile_edited, email, role FROM users WHERE id = $1', [userId]);
+    const userRes = await pool.query('SELECT profile_edited, email, role FROM users WHERE id_auth = $1', [userId]);
     if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     
     const { profile_edited, email: userEmail, role } = userRes.rows[0];
@@ -47,7 +47,7 @@ router.put('/update', async (req, res) => {
     }
 
     // Update Users Table
-    await pool.query('UPDATE users SET name = $1, profile_edited = true WHERE id = $2', [name, userId]);
+    await pool.query('UPDATE users SET name = $1, profile_edited = true WHERE id_auth = $2', [name, userId]);
 
     // Upsert into Guiders or Tutors Table
     if (role === 'guider') {

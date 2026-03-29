@@ -11,12 +11,12 @@ export default function ChatBox({ peerId }) {
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef(null);
 
-  const myMessagingId = user?.id;
+  const myMessagingId = user?.id_auth || user?.id; // Use UUID if available, fallback to legacy ID
 
   useEffect(() => {
     if (!myMessagingId || !peerId) return;
 
-    // Join room for this specific user - important to use user.id
+    // Join room for this specific user - important to use UUID string
     socket.emit('join_room', String(myMessagingId));
     
     // Fetch initial chat history
@@ -31,10 +31,10 @@ export default function ChatBox({ peerId }) {
     fetchHistory();
 
     const handleReceiveMessage = (msgData) => {
-      const incomingSender = Number(msgData.sender_id);
-      const incomingReceiver = Number(msgData.receiver_id);
-      const currentPeer = Number(peerId);
-      const currentMe = Number(myMessagingId);
+      const incomingSender = String(msgData.sender_id);
+      const incomingReceiver = String(msgData.receiver_id);
+      const currentPeer = String(peerId);
+      const currentMe = String(myMessagingId);
 
       // Filter to only show messages for the current open chat
       if ((incomingSender === currentPeer && incomingReceiver === currentMe) || 
@@ -60,7 +60,7 @@ export default function ChatBox({ peerId }) {
 
     const newMsg = {
       sender_id: myMessagingId,
-      receiver_id: Number(peerId),
+      receiver_id: peerId, // No more Number() cast
       content: inputValue,
       created_at: new Date().toISOString()
     };
@@ -87,7 +87,7 @@ export default function ChatBox({ peerId }) {
       {/* MESSAGE SCROLL WINDOW */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column' }}>
         {messages.map((m, idx) => {
-          const isMine = m.sender_id === myMessagingId;
+          const isMine = String(m.sender_id) === String(myMessagingId);
           
           return (
             <div key={idx} style={{ 

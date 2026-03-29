@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
 import { Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
@@ -31,6 +32,9 @@ export default function AdminDashboard() {
   const [resources, setResources] = useState([]);
   const [resourceForm, setResourceForm] = useState({ title: '', category: 'NCERT', drive_link: '', description: '', class_level: '', medium: 'hindi' });
   const [resourceMsg, setResourceMsg] = useState('');
+  const [bulkResources, setBulkResources] = useState('');
+  const [sheetData, setSheetData] = useState([]);
+  const [uploadLoading, setUploadLoading] = useState(false);
   const [bulkMode, setBulkMode] = useState(false);
   const [bulkText, setBulkText] = useState('');
 
@@ -185,6 +189,49 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleSheetUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const bstr = evt.target.result;
+      const wb = XLSX.read(bstr, { type: 'binary' });
+      const wsname = wb.SheetNames[0];
+      const ws = wb.Sheets[wsname];
+      const data = XLSX.utils.sheet_to_json(ws);
+      
+      // Map columns intelligently
+      const mapped = data.map(row => ({
+        title: row.Title || row.title || row.Name || '',
+        category: row.Category || row.category || 'NCERT',
+        drive_link: row.Link || row.link || row.DriveLink || '',
+        description: row.Description || row.description || '',
+        class_level: row.Class || row.class || row.Level || null,
+        medium: (row.Medium || row.medium || 'hindi').toLowerCase()
+      }));
+
+      setSheetData(mapped);
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  const submitSheetResources = () => {
+    if (sheetData.length === 0) return;
+    setUploadLoading(true);
+    API.post('/resources/bulk', { resources: sheetData })
+      .then(() => {
+        alert(t('admin.resources.bulk_success'));
+        setSheetData([]);
+        fetchData();
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Failed to upload resources');
+      })
+      .finally(() => setUploadLoading(false));
+  };
+
   const handleResourceSubmit = async (e) => {
     e.preventDefault();
     setResourceMsg('');
@@ -232,8 +279,8 @@ export default function AdminDashboard() {
   const tabStyle = (tabId) => ({
     padding: '10px 15px',
     cursor: 'pointer',
-    backgroundColor: activeTab === tabId ? '#1a73e8' : '#e8eaed',
-    color: activeTab === tabId ? 'white' : '#202124',
+    backgroundColor: activeTab === tabId ? '#1a73e8' : 'var(--gray-200)',
+    color: activeTab === tabId ? 'white' : 'var(--text-primary)',
     border: 'none',
     borderTopLeftRadius: '8px',
     borderTopRightRadius: '8px',
@@ -257,7 +304,7 @@ export default function AdminDashboard() {
         <button style={tabStyle('resources')} onClick={() => setActiveTab('resources')}>{t('admin.tabs.resources')}</button>
       </div>
 
-      <div style={{ padding: '20px', backgroundColor: 'var(--gray-50)', border: '1px solid var(--border)', borderTop: 'none' }}>
+      <div style={{ padding: '20px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderTop: 'none' }}>
         
         {/* PENDING APPROVALS TAB */}
         {activeTab === 'pending' && (
@@ -266,7 +313,7 @@ export default function AdminDashboard() {
             {loading ? <p>{t('admin.pending.loading')}</p> : pendingUsers.length === 0 ? <p>{t('admin.pending.empty')}</p> : (
               <div style={{ display: 'grid', gap: '15px' }}>
                 {pendingUsers.map(u => (
-                  <div key={u.id} style={{ backgroundColor: 'var(--bg-card)', padding: '15px', borderRadius: '8px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div key={u.id} style={{ backgroundColor: 'var(--gray-50)', padding: '15px', borderRadius: '8px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                       <strong>{u.name}</strong> ({u.email})
                       <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Role: {u.role}</div>
@@ -350,7 +397,7 @@ export default function AdminDashboard() {
             
             {/* Inline Editing Form */}
             {editingUserId && (
-              <div style={{ marginBottom: '20px', padding: '20px', border: '1px solid #1a73e8', borderRadius: '8px', backgroundColor: '#e8f0fe' }}>
+              <div style={{ marginBottom: '20px', padding: '20px', border: '1px solid var(--primary)', borderRadius: '8px', backgroundColor: 'var(--blue-50)' }}>
                 <h3 style={{ marginTop: 0 }}>{t('admin.users.force_edit')} (ID: {editingUserId})</h3>
                 {editMsg && <div style={{ color: editMsg.includes('Error') ? 'red' : 'green', marginBottom: '10px' }}>{editMsg}</div>}
                 <form onSubmit={handleEditSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
@@ -666,7 +713,73 @@ export default function AdminDashboard() {
             <h2>{t('admin.resources.title')}</h2>
             <p>{t('admin.resources.subtitle')}</p>
             {resourceMsg && <div style={{ padding: '10px', backgroundColor: resourceMsg.includes('Failed') ? '#fce8e6' : '#d4edda', color: resourceMsg.includes('Failed') ? '#d93025' : '#155724', borderRadius: '4px', marginBottom: '15px' }}>{resourceMsg}</div>}
-            
+
+            {/* Bulk Sheet Upload Section */}
+            <div style={{ backgroundColor: 'var(--gray-50)', padding: '20px', borderRadius: '8px', border: '2px dashed var(--border)', marginBottom: '30px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                <h3 style={{ margin: 0 }}>📊 {t('admin.resources.bulk_title') || 'Bulk Sheet Upload'}</h3>
+                <button 
+                  onClick={() => {
+                    const ws = XLSX.utils.json_to_sheet([{ Title: '', Category: 'NCERT', Link: '', Class: '', Medium: 'hindi', Description: '' }]);
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "Template");
+                    XLSX.writeFile(wb, "Study_Materials_Template.xlsx");
+                  }}
+                  style={{ padding: '8px 16px', backgroundColor: 'var(--gray-600)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}
+                >
+                  📥 Download Template
+                </button>
+              </div>
+              
+              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                <input 
+                  type="file" 
+                  accept=".xlsx, .xls, .csv" 
+                  onChange={handleSheetUpload}
+                  style={{ flex: 1, padding: '10px', border: '1px solid var(--border)', borderRadius: '4px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }}
+                />
+                {sheetData.length > 0 && (
+                  <button 
+                    onClick={submitSheetResources}
+                    disabled={uploadLoading}
+                    style={{ padding: '12px 24px', backgroundColor: 'var(--primary)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                  >
+                    {uploadLoading ? 'Uploading...' : `Upload ${sheetData.length} Items`}
+                  </button>
+                )}
+              </div>
+
+              {sheetData.length > 0 && (
+                <div style={{ marginTop: '15px', backgroundColor: 'var(--bg-card)', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)' }}>
+                  <h4 style={{ marginTop: 0, fontSize: '0.9rem' }}>Preview (First 5 items):</h4>
+                  <table style={{ width: '100%', fontSize: '0.8rem', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--border)' }}>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Class</th>
+                        <th>Medium</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sheetData.slice(0, 5).map((row, i) => (
+                        <tr key={i} style={{ borderBottom: '1px solid var(--gray-50)' }}>
+                          <td>{row.title}</td>
+                          <td>{row.category}</td>
+                          <td>{row.class_level || '-'}</td>
+                          <td>{row.medium}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {sheetData.length > 5 && <p style={{ margin: '5px 0 0', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>...and {sheetData.length - 5} more rows.</p>}
+                  <button onClick={() => setSheetData([])} style={{ marginTop: '10px', color: '#ea4335', border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.8rem', padding: 0 }}>Clear Selection</button>
+                </div>
+              )}
+            </div>
+
+            <hr style={{ margin: '30px 0' }} />
+
             <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <input 
                 type="checkbox" 
@@ -676,7 +789,7 @@ export default function AdminDashboard() {
                 style={{ width: '20px', height: '20px' }}
               />
               <label htmlFor="bulkMode" style={{ fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer' }}>
-                🚀 {t('admin.resources.bulk_mode')}
+                ✍️ {t('admin.resources.bulk_mode_manual') || 'Manual Bulk Entry (Text)'}
               </label>
             </div>
 
@@ -728,13 +841,13 @@ export default function AdminDashboard() {
                 <div>
                   <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>{t('admin.resources.bulk_mode')}</label>
                   <textarea 
-                    placeholder={t('admin.resources.bulk_placeholder')}
+                    placeholder={t('admin.resources.bulk_placeholder') || 'Title, Link (comma separated, one per line)'}
                     value={bulkText}
                     onChange={(e) => setBulkText(e.target.value)}
                     style={{ width: '100%', minHeight: '150px', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)', fontFamily: 'monospace' }}
                   />
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '5px' }}>
-                    {t('admin.resources.bulk_count', { count: bulkText.split('\n').filter(l => l.trim().includes(',')).length })}
+                    Items found: {bulkText.split('\n').filter(l => l.trim().includes(',')).length}
                   </p>
                 </div>
               ) : (
@@ -752,7 +865,7 @@ export default function AdminDashboard() {
 
               <div style={{ textAlign: 'right', marginTop: '20px' }}>
                 <button type="submit" style={{ padding: '12px 30px', backgroundColor: '#1a73e8', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 600, fontSize: '1rem' }}>
-                  {bulkMode ? t('admin.broadcast.btn_save') : t('admin.resources.save')}
+                  {bulkMode ? 'Add All' : t('admin.resources.save')}
                 </button>
               </div>
             </form>

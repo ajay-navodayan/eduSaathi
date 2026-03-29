@@ -1,34 +1,84 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (stored) setUser(JSON.parse(stored));
-    setLoading(false);
-  }, []);
-
-  const login = (userData, token) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
+  const fetchProfile = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id_auth', userId)
+        .maybeSingle(); 
+      
+      if (error) throw error;
+      return data;
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+      return null;
+    }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  useEffect(() => {
+    // 1. Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) {
+        fetchProfile(session.user.id).then(profile => {
+          setUser({ ...session.user, ...profile });
+          setLoading(false);
+        });
+      } else {
+        setLoading(false);
+      }
+    });
+
+    // 2. Listen to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setSession(session);
+      if (session) {
+        setLoading(true); // Enter loading state while fetching profile
+        const profile = await fetchProfile(session.user.id);
+        setUser({ ...session.user, ...profile });
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
+    setSession(null);
+  };
+
+  const value = { 
+    user, 
+    session, 
+    logout, 
+    loading, 
+    isAdmin: user?.role === 'admin' 
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, isAdmin: user?.role === 'admin' }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

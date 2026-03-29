@@ -117,7 +117,7 @@
   box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
 }
 
-.notif-tab[data-cat="neterhat"].active {
+.notif-tab[data-cat="netarhat"].active {
   background: linear-gradient(135deg, #16a34a, #15803d);
   box-shadow: 0 4px 16px rgba(22, 163, 74, 0.3);
 }
@@ -367,7 +367,7 @@
   color: #1e40af;
 }
 
-.notif-category-badge.cat-neterhat {
+.notif-category-badge.cat-netarhat {
   background: #d1fae5;
   color: #065f46;
 }

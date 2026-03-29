@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../supabaseClient';
 import API from '../api';
 import PhotoUpload from '../components/PhotoUpload';
 
@@ -12,7 +13,7 @@ export default function Profile() {
 
   // Forms
   const [profileForm, setProfileForm] = useState({ name: user?.name, photo: '', field: '', designation: '', city: '', category: '', whatsapp: '', phone: '', mentor_type: 'mentor_only' });
-  const [pwdForm, setPwdForm] = useState({ currentPassword: '', newPassword: '' });
+  const [pwdForm, setPwdForm] = useState({ newPassword: '' });
   
   const [profileMsg, setProfileMsg] = useState('');
   const [pwdMsg, setPwdMsg] = useState('');
@@ -57,12 +58,16 @@ export default function Profile() {
 
   const submitPwd = async (e) => {
     e.preventDefault();
+    if (!pwdForm.newPassword) return;
     try {
-      const res = await API.put('/profile/change-password', { userId: user.id, ...pwdForm });
-      setPwdMsg(res.data.message);
-      setPwdForm({ currentPassword: '', newPassword: '' });
+      const { error } = await supabase.auth.updateUser({
+        password: pwdForm.newPassword
+      });
+      if (error) throw error;
+      setPwdMsg('Password updated successfully!');
+      setPwdForm({ newPassword: '' });
     } catch (err) {
-      setPwdMsg(err.response?.data?.error || 'Failed to change password');
+      setPwdMsg(err.message || 'Failed to change password');
     }
   };
 
@@ -163,7 +168,6 @@ export default function Profile() {
         {pwdMsg && <div style={{ padding: '10px', backgroundColor: 'var(--gray-100)', marginBottom: '1rem', borderRadius: '4px', border: '1px solid var(--border)' }}>{pwdMsg}</div>}
         
         <form onSubmit={submitPwd} style={{ display: 'flex', flexDirection: 'column', gap: '15px', maxWidth: '400px' }}>
-          <input type="password" name="currentPassword" placeholder={t('profile.security.current_pwd')} value={pwdForm.currentPassword} onChange={handlePwdChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
           <input type="password" name="newPassword" placeholder={t('profile.security.new_pwd')} value={pwdForm.newPassword} onChange={handlePwdChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
           <button type="submit" style={{ padding: '12px 24px', backgroundColor: '#34a853', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>{t('profile.security.change_btn')}</button>
         </form>

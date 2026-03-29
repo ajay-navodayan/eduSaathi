@@ -205,7 +205,7 @@
       "railway": "🚂 Railway",
       "ssc": "📝 SSC",
       "navodaya": "🏫 Navodaya",
-      "neterhat": "🏔️ Neterhat",
+      "netarhat": "🏔️ Netarhat",
       "scholarship": "🎓 Scholarship"
     },
     "meta": {
@@ -443,6 +443,9 @@
       "medium_hi": "Hindi",
       "medium_en": "English",
       "bulk_mode": "Bulk Mode",
+      "bulk_title": "Bulk Sheet Upload",
+      "bulk_mode_manual": "Manual Bulk Entry (Text)",
+      "bulk_success": "Resources uploaded successfully!",
       "bulk_placeholder": "Book Title, Link (One pair per line)\nExample:\nPhysics Ch 1, https://drive.google.com/...\nChemistry Ch 1, https://drive.google.com/...",
       "bulk_count": "{{count}} books detected",
       "view_file": "View File 🔗",
