@@ -92,8 +92,8 @@ export default function Register() {
           <div className="auth-hero-shape s2"></div>
         </div>
         <div className="auth-hero-content">
-          <div className="auth-logo">🚀</div>
-          <h2>Join EduSaathi</h2>
+          <div className="auth-logo"><img src="/sathsikho-logo.png" alt="SathSikho" className="auth-logo-img" /></div>
+          <h2>Join SathSikho</h2>
           <p>Start your success journey today</p>
           <div className="auth-features">
             <div className="auth-feature">🎓 Connect with Mentors</div>
@@ -106,7 +106,7 @@ export default function Register() {
       <div className="auth-form-panel">
         <div className="auth-form-card">
           <h1 className="auth-title">Create Account</h1>
-          <p className="auth-subtitle">Join thousands of students on EduSaathi</p>
+          <p className="auth-subtitle">Join thousands of students on SathSikho</p>
 
           {error && <div className="alert alert-error">{error}</div>}
           {success && <div className="alert alert-success">{success}</div>}

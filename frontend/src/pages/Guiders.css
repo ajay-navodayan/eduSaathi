@@ -1,12 +1,14 @@
 .guiders-container {
-  padding-top: 2rem;
-  padding-bottom: 4rem;
+  padding: 4rem 1.5rem 6rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 .guiders-search-bar {
   display: flex;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .guiders-search-bar .form-input {
@@ -24,8 +26,8 @@
   padding: 0.55rem 1.25rem;
   border-radius: var(--radius-full);
   border: 2px solid var(--border);
-  background: white;
-  color: var(--gray-600);
+  background: var(--bg-card);
+  color: var(--text-primary);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -42,7 +44,7 @@
   background: var(--primary);
   border-color: var(--primary);
   color: white;
-  box-shadow: 0 4px 12px rgba(26,115,232,0.3);
+  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
 }
 
 .guiders-results-header {

@@ -18,7 +18,7 @@ export default function Notifications() {
       <div className="page-hero">
         <div className="container page-hero-content">
           <h1>📢 Notifications</h1>
-          <p>Stay updated with the latest exam notifications and opportunities</p>
+          <p>Be the first to know about exams and opportunities</p>
         </div>
       </div>
 
