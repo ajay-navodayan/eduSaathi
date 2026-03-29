@@ -19,18 +19,24 @@ export default function GuiderCard({ guider }) {
     <div className="guider-card card">
       <div className="guider-card-header" style={{ background: `linear-gradient(135deg, ${color}22, ${color}11)` }}>
         <img
-          src={guider.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(guider.name)}&background=${color.replace('#','')}&color=fff&size=200`}
+          src={guider.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(guider.name)}&background=${color.replace('#', '')}&color=fff&size=200`}
           alt={guider.name}
           className="guider-avatar"
           onError={(e) => {
             e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(guider.name)}&background=1a73e8&color=fff&size=200`;
           }}
         />
-        {guider.category && (
-          <span className="guider-category-badge" style={{ background: `${color}20`, color: color, borderColor: `${color}40` }}>
-            {guider.category}
-          </span>
-        )}
+        <span 
+          className="guider-category-badge" 
+          style={{ 
+            background: guider.category ? `${color}20` : 'transparent', 
+            color: guider.category ? color : 'transparent', 
+            borderColor: guider.category ? `${color}40` : 'transparent',
+            visibility: guider.category ? 'visible' : 'hidden'
+          }}
+        >
+          {guider.category || '\u00A0'}
+        </span>
       </div>
 
       <div className="guider-card-body">

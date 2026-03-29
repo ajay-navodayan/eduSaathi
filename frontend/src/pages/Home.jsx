@@ -55,19 +55,17 @@ export default function Home() {
           <div className="hero-shape shape-3"></div>
         </div>
         <div className="container hero-content">
-          <div className="hero-badge fade-in-up">
-            <span>🚀</span> India's #1 Student Mentor Platform
-          </div>
+
           <h1 className="hero-title fade-in-up">
-            Connecting Students with<br />
-            <span className="hero-title-accent">Real Mentors</span>
+            Learn, Compete, Succeed with<br />
+            <span className="hero-title-accent">Experts</span>
           </h1>
           <p className="hero-subtitle fade-in-up">
-            Find expert guiders for IIT, NEET, UPSC, Army & more. Your success journey starts here!
+            Learn directly from achievers in Engineering, MBBS, Defence, and beyond personalized for you. Begin now.
           </p>
           <div className="hero-actions fade-in-up">
-            <Link to="/guiders" className="btn btn-accent btn-lg">Find Guider 🎓</Link>
-            <Link to="/resources" className="btn btn-outline-white btn-lg">View Resources 📚</Link>
+            <Link to="/guiders" className="btn btn-accent btn-lg">Find My Mentor</Link>
+            <Link to="/resources" className="btn btn-outline-white btn-lg">Resources for Me</Link>
           </div>
           <div className="hero-stats fade-in-up">
             <div className="hero-stat">
@@ -92,7 +90,7 @@ export default function Home() {
       <section className="search-section">
         <div className="container">
           <div className="search-card">
-            <h2>🔍 Find Your Guider</h2>
+            <h2>🔍 Meet Your Mentor</h2>
             <form className="search-form" onSubmit={handleSearch}>
               <div className="search-inputs">
                 <input
@@ -201,9 +199,9 @@ export default function Home() {
         <div className="container">
           <div className="cta-card">
             <h2>Ready to Start Your Journey?</h2>
-            <p>Join thousands of village students who found their path to success through EduSaathi</p>
+            <p>One platform, endless opportunities start your journey with <b>SathSikho</b></p>
             <div className="flex-center gap-2 mt-3">
-              <Link to="/register" className="btn btn-accent btn-lg">Register Now — It's Free!</Link>
+              <Link to="/register" className="btn btn-accent btn-lg">Register Now</Link>
               <Link to="/guiders" className="btn btn-outline-white btn-lg">Browse Guiders</Link>
             </div>
           </div>

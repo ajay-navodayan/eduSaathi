@@ -1,7 +1,7 @@
 .guider-card {
   display: flex;
   flex-direction: column;
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--border);
@@ -28,7 +28,7 @@
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .guider-category-badge {
@@ -51,21 +51,24 @@
 .guider-name {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--gray-900);
+  color: var(--text-primary);
   margin-bottom: 0.4rem;
+  margin-top: 0.6rem;
+  text-transform: capitalize;
 }
 
 .guider-field,
 .guider-designation,
 .guider-city {
   font-size: 0.85rem;
-  color: var(--gray-500);
+  color: var(--text-muted);
   margin-bottom: 0.2rem;
+  text-transform: capitalize;
 }
 
 .guider-field {
   font-weight: 600;
-  color: var(--gray-700);
+  color: var(--text-secondary);
 }
 
 .guider-card-footer {

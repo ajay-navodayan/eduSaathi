@@ -42,8 +42,8 @@ export default function Login() {
           <div className="auth-hero-shape s2"></div>
         </div>
         <div className="auth-hero-content">
-          <div className="auth-logo">🎓</div>
-          <h2>EduSaathi</h2>
+          <div className="auth-logo"><img src="/sathsikho-logo.png" alt="SathSikho" className="auth-logo-img" /></div>
+          <h2>SathSikho</h2>
           <p>Your gateway to mentors & success</p>
           <div className="auth-features">
             <div className="auth-feature">✅ Free Mentor Connect</div>
@@ -56,7 +56,7 @@ export default function Login() {
       <div className="auth-form-panel">
         <div className="auth-form-card">
           <h1 className="auth-title">Welcome Back!</h1>
-          <p className="auth-subtitle">Login to your EduSaathi account</p>
+          <p className="auth-subtitle">Login to your SathSikho account</p>
 
           {error && <div className="alert alert-error">{error}</div>}
 

@@ -18,7 +18,7 @@ export default function Tutors() {
       <div className="page-hero">
         <div className="container page-hero-content">
           <h1>🏫 Local Tutors</h1>
-          <p>Find experienced local tutors near you for personalized coaching</p>
+          <p>Find Right Tutors Near You.</p>
         </div>
       </div>
 
@@ -76,7 +76,7 @@ export default function Tutors() {
           <div className="empty-state">
             <span className="empty-state-icon">👩‍🏫</span>
             <h3>No tutors listed yet</h3>
-            <p>Contact us to get listed as a tutor on EduSaathi</p>
+            <p>Contact us to get listed as a tutor on SathSikho</p>
           </div>
         )}
       </div>
