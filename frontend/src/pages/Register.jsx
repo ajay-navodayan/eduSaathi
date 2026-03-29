@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+<<<<<<< HEAD
 import { supabase } from '../supabaseClient';
+=======
+import API from '../api';
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
 import PhotoUpload from '../components/PhotoUpload';
 import './Auth.css';
 
@@ -69,6 +73,7 @@ export default function Register() {
       return setError(t('register.form.error_password_length'));
     }
     setLoading(true);
+<<<<<<< HEAD
 
     try {
       // 1. Create User in Supabase Auth
@@ -104,6 +109,20 @@ export default function Register() {
       setTimeout(() => navigate('/login'), 1800);
     } catch (err) {
       setError(err.message || t('register.form.error_default'));
+=======
+    try {
+      await API.post('/auth/register', {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: form.role,
+        ...(form.role === 'guider' ? mentorForm : {})
+      });
+      setSuccess(form.role === 'guider' ? t('register.form.success_mentor') : t('register.form.success_student'));
+      setTimeout(() => navigate('/login'), 1800);
+    } catch (err) {
+      setError(err.response?.data?.error || t('register.form.error_default'));
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
     } finally {
       setLoading(false);
     }

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +11,21 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+=======
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import API from '../api';
+import { useAuth } from '../context/AuthContext';
+import './Auth.css';
+
+export default function Login() {
+  const { t } = useTranslation();
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
   const navigate = useNavigate();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -19,6 +35,7 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
+<<<<<<< HEAD
       const { data, error: authError } = await supabase.auth.signInWithPassword({
         email: form.email,
         password: form.password,
@@ -55,6 +72,21 @@ export default function Login() {
       setError(msg);
       alert('LOGIN HALTED: ' + msg); // Aggressive user-facing debug
       setLoading(false); 
+=======
+      const res = await API.post('/auth/login', form);
+      login(res.data.user, res.data.token);
+      if (res.data.user.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else if (res.data.user.role === 'guider') {
+        navigate('/guider-dashboard');
+      } else {
+        navigate('/');
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || t('login.form.error_default'));
+    } finally {
+      setLoading(false);
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
     }
   };
 
@@ -121,12 +153,15 @@ export default function Login() {
             </button>
           </form>
 
+<<<<<<< HEAD
           <div style={{ textAlign: 'center', marginTop: '1rem' }}>
             <Link to="/forgot-password" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
               Forgot Password?
             </Link>
           </div>
 
+=======
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
           <div className="auth-divider"><span>{t('login.form.or')}</span></div>
 
           <div className="auth-hint">

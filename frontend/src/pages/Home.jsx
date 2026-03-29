@@ -20,7 +20,11 @@ const NOTIF_TABS = [
   { id: 'railway', label: '🚂 Railway' },
   { id: 'ssc', label: '📝 SSC' },
   { id: 'navodaya', label: '🏫 Navodaya' },
+<<<<<<< HEAD
   { id: 'netarhat', label: '🏔️ Netarhat' },
+=======
+  { id: 'neterhat', label: '🏔️ Neterhat' },
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
   { id: 'scholarship', label: '🎓 Scholarship' }
 ];
 

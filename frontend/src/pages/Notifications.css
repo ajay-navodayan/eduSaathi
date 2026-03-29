@@ -117,7 +117,11 @@
   box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
 }
 
+<<<<<<< HEAD
 .notif-tab[data-cat="netarhat"].active {
+=======
+.notif-tab[data-cat="neterhat"].active {
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
   background: linear-gradient(135deg, #16a34a, #15803d);
   box-shadow: 0 4px 16px rgba(22, 163, 74, 0.3);
 }
@@ -367,7 +371,11 @@
   color: #1e40af;
 }
 
+<<<<<<< HEAD
 .notif-category-badge.cat-netarhat {
+=======
+.notif-category-badge.cat-neterhat {
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
   background: #d1fae5;
   color: #065f46;
 }

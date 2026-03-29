@@ -38,16 +38,29 @@ router.put('/update', async (req, res) => {
 
   try {
     // Check if profile was already edited
-    const userRes = await pool.query('SELECT profile_edited, email, role FROM users WHERE id_auth = $1', [userId]);
+    const userRes = await pool.query('SELECT profile_edited, email, role FROM users WHERE id = $1', [userId]);
     if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     
     const { profile_edited, email: userEmail, role } = userRes.rows[0];
-    if (profile_edited) {
+    
+    // One-time edit rule (DOES NOT apply to students)
+    if (role !== 'student' && profile_edited) {
       return res.status(403).json({ error: 'Profile locked. You can only edit your profile once. Contact Admin to make further changes.' });
     }
 
-    // Update Users Table
-    await pool.query('UPDATE users SET name = $1, profile_edited = true WHERE id_auth = $2', [name, userId]);
+    // Update Users Table (Common fields for all roles)
+    await pool.query(
+      `UPDATE users SET 
+        name = $1, 
+        photo = $2, 
+        class_level = $3, 
+        school = $4, 
+        bio = $5, 
+        phone = $6,
+        profile_edited = true 
+       WHERE id = $7`, 
+      [name, photo, req.body.class_level || '', req.body.school || '', req.body.bio || '', phone || '', userId]
+    );
 
     // Upsert into Guiders or Tutors Table
     if (role === 'guider') {
@@ -110,7 +123,10 @@ router.put('/update', async (req, res) => {
       }
     }
 
-    res.json({ message: 'Profile updated and locked successfully.' });
+    const message = role === 'student' 
+      ? 'Profile updated successfully.' 
+      : 'Profile updated and locked successfully.';
+    res.json({ message });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error updating profile' });

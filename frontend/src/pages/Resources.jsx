@@ -44,6 +44,7 @@ export default function Resources() {
     return () => clearTimeout(delayDebounceFn);
   }, [activeCategory, classLevel, searchTerm]);
 
+<<<<<<< HEAD
   // Split resources into NCERT and non-NCERT
   const ncertResources = resources.filter(r => r.category === 'NCERT');
   const otherResources = resources.filter(r => r.category !== 'NCERT');
@@ -52,11 +53,21 @@ export default function Resources() {
   const renderNcertTable = (ncertList) => {
     // Group by class_level
     const classes = [...new Set(ncertList.map(r => r.class_level))].filter(Boolean).sort((a, b) => b - a);
+=======
+  // Grouping logic for NCERT table
+  const renderNcertTable = () => {
+    // Group by class_level
+    const classes = [...new Set(resources.map(r => r.class_level))].filter(Boolean).sort((a, b) => b - a);
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
 
     if (classes.length === 0) return null;
 
     return classes.map(cls => {
+<<<<<<< HEAD
       const classResources = ncertList.filter(r => r.class_level === cls);
+=======
+      const classResources = resources.filter(r => r.class_level === cls);
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
       // Group by subject (extracted from description or title)
       const subjects = [...new Set(classResources.map(r => r.description))];
 
@@ -108,10 +119,13 @@ export default function Resources() {
     });
   };
 
+<<<<<<< HEAD
   const hasResults = resources.length > 0;
   const hasNcert = ncertResources.length > 0;
   const hasOther = otherResources.length > 0;
 
+=======
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
   return (
     <div className="resources-page">
       <div className="page-hero">
@@ -144,7 +158,11 @@ export default function Resources() {
                 className="resource-select"
               >
                 <option value="All">{t('resources.filters.all_categories')}</option>
+<<<<<<< HEAD
                 {CATEGORIES.filter(c => c !== 'All').map(cat => (
+=======
+                {CATEGORIES.filter(c => c !== 'All' && c !== 'Class 10' && c !== 'Class 12').map(cat => (
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
                   <option key={cat} value={cat}>{t(`guiders.categories.${cat}`)}</option>
                 ))}
               </select>
@@ -168,12 +186,59 @@ export default function Resources() {
 
         {loading ? (
           <div className="spinner-container"><div className="spinner"></div></div>
+<<<<<<< HEAD
         ) : !hasResults ? (
+=======
+        ) : resources.length > 0 ? (
+          activeCategory === 'NCERT' ? (
+            <div className="ncert-container">
+              {renderNcertTable() || (
+                <div className="empty-state">
+                  <span className="empty-state-icon">📂</span>
+                  <h3>{t('resources.empty.title')}</h3>
+                  <p>{t('resources.empty.subtitle')}</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="resources-grid">
+              {resources.map((res, i) => (
+                <div
+                  key={res.id}
+                  className="resource-card card fade-in-up"
+                  style={{ animationDelay: `${i * 0.05}s` }}
+                >
+                  <div className="resource-icon">
+                    {CATEGORY_ICONS[res.category] || '📄'}
+                  </div>
+                  <div className="resource-body">
+                    <span className="badge badge-blue resource-cat-badge">{res.category}</span>
+                    <h3 className="resource-title">{res.title}</h3>
+                    {res.description && <p className="resource-desc">{res.description}</p>}
+                    {res.class_level && <span className="resource-class-tag">Class {res.class_level}</span>}
+                  </div>
+                  <div className="resource-footer">
+                    <a
+                      href={res.drive_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-primary btn-sm"
+                    >
+                      {t('resources.card.download')}
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
+        ) : (
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
           <div className="empty-state">
             <span className="empty-state-icon">📂</span>
             <h3>{t('resources.empty.title')}</h3>
             <p>{t('resources.empty.subtitle')}</p>
           </div>
+<<<<<<< HEAD
         ) : (
           <>
             {/* NCERT Section — always shown as grouped table when NCERT books are present */}
@@ -234,6 +299,8 @@ export default function Resources() {
               </div>
             )}
           </>
+=======
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
         )}
       </div>
     </div>

@@ -9,7 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@supabase/supabase-js": "^2.100.1",
+=======
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
     "axios": "^1.6.7",
     "i18next": "^26.0.1",
     "react": "^18.2.0",
@@ -17,8 +20,12 @@
     "react-i18next": "^17.0.1",
     "react-router-dom": "^6.22.1",
     "socket.io-client": "^4.8.3",
+<<<<<<< HEAD
     "websocket": "^1.0.35",
     "xlsx": "^0.18.5"
+=======
+    "websocket": "^1.0.35"
+>>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
   },
   "devDependencies": {
     "@types/react": "^18.2.55",
