@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import API from '../api';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
 export default function Login() {
+  const { t } = useTranslation();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,7 +30,7 @@ export default function Login() {
         navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed. Please try again.');
+      setError(err.response?.data?.error || t('login.form.error_default'));
     } finally {
       setLoading(false);
     }
@@ -43,26 +45,26 @@ export default function Login() {
         </div>
         <div className="auth-hero-content">
           <div className="auth-logo"><img src="/sathsikho-logo.png" alt="SathSikho" className="auth-logo-img" /></div>
-          <h2>SathSikho</h2>
-          <p>Your gateway to mentors & success</p>
+          <h2>{t('login.hero.title')}</h2>
+          <p>{t('login.hero.subtitle')}</p>
           <div className="auth-features">
-            <div className="auth-feature">✅ Free Mentor Connect</div>
-            <div className="auth-feature">✅ Exam Resources</div>
-            <div className="auth-feature">✅ Local Tutors</div>
+            <div className="auth-feature">{t('login.hero.feature1')}</div>
+            <div className="auth-feature">{t('login.hero.feature2')}</div>
+            <div className="auth-feature">{t('login.hero.feature3')}</div>
           </div>
         </div>
       </div>
 
       <div className="auth-form-panel">
         <div className="auth-form-card">
-          <h1 className="auth-title">Welcome Back!</h1>
-          <p className="auth-subtitle">Login to your SathSikho account</p>
+          <h1 className="auth-title">{t('login.form.title')}</h1>
+          <p className="auth-subtitle">{t('login.form.subtitle')}</p>
 
           {error && <div className="alert alert-error">{error}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="form-label" htmlFor="email">Email Address</label>
+              <label className="form-label" htmlFor="email">{t('login.form.email')}</label>
               <input
                 type="email"
                 id="email"
@@ -75,7 +77,7 @@ export default function Login() {
               />
             </div>
             <div className="form-group">
-              <label className="form-label" htmlFor="password">Password</label>
+              <label className="form-label" htmlFor="password">{t('login.form.password')}</label>
               <input
                 type="password"
                 id="password"
@@ -93,18 +95,18 @@ export default function Login() {
               className="btn btn-primary btn-lg w-full"
               disabled={loading}
             >
-              {loading ? 'Logging in...' : 'Login →'}
+              {loading ? t('login.form.btn_loading') : t('login.form.btn_default')}
             </button>
           </form>
 
-          <div className="auth-divider"><span>or</span></div>
+          <div className="auth-divider"><span>{t('login.form.or')}</span></div>
 
           <div className="auth-hint">
             <p>Try admin: <strong>admin@edusaathi.com</strong> / <strong>admin123</strong></p>
           </div>
 
           <p className="auth-switch">
-            Don't have an account? <Link to="/register">Register here</Link>
+            {t('login.form.no_account')} <Link to="/register">{t('login.form.register_link')}</Link>
           </p>
         </div>
       </div>

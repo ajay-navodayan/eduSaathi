@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import API from '../api';
 import GuiderCard from '../components/GuiderCard';
 import './Home.css';
@@ -11,22 +12,35 @@ const CATEGORY_ICONS = {
   'Army': '⚔️', 'Railway': '🚂', 'Matric': '📚', 'Intermediate': '📖'
 };
 
+const NOTIF_TABS = [
+  { id: 'pinned', label: '📌 Pinned' },
+  { id: 'jee', label: '🎯 JEE' },
+  { id: 'neet', label: '🩺 NEET' },
+  { id: 'govt', label: '🏛️ Govt' },
+  { id: 'railway', label: '🚂 Railway' },
+  { id: 'ssc', label: '📝 SSC' },
+  { id: 'navodaya', label: '🏫 Navodaya' },
+  { id: 'neterhat', label: '🏔️ Neterhat' },
+  { id: 'scholarship', label: '🎓 Scholarship' }
+];
+
 export default function Home() {
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState([]);
+  const [activeNotifTab, setActiveNotifTab] = useState('pinned');
+  const [notifLoading, setNotifLoading] = useState(false);
+  
   const [guiders, setGuiders] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Load Guiders once
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchGuiders = async () => {
       try {
-        const [notifRes, guiderRes] = await Promise.all([
-          API.get('/notifications'),
-          API.get('/guiders'),
-        ]);
-        setNotifications(notifRes.data.slice(0, 3));
+        const guiderRes = await API.get('/guiders');
         setGuiders(guiderRes.data.slice(0, 6));
       } catch (err) {
         console.error(err);
@@ -34,8 +48,33 @@ export default function Home() {
         setLoading(false);
       }
     };
-    fetchData();
+    fetchGuiders();
   }, []);
+
+  // Load Notifications on tab change
+  useEffect(() => {
+    let isMounted = true;
+    setNotifLoading(true);
+    const fetchNotifs = async () => {
+      try {
+        let res;
+        if (activeNotifTab === 'pinned') {
+          res = await API.get('/notifications');
+        } else {
+          res = await API.get(`/notifications/ai?category=${activeNotifTab}`);
+        }
+        if (isMounted) {
+          setNotifications(res.data.slice(0, 5)); // Show top 5
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (isMounted) setNotifLoading(false);
+      }
+    };
+    fetchNotifs();
+    return () => { isMounted = false; };
+  }, [activeNotifTab]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -57,30 +96,30 @@ export default function Home() {
         <div className="container hero-content">
 
           <h1 className="hero-title fade-in-up">
-            Learn, Compete, Succeed with<br />
-            <span className="hero-title-accent">Experts</span>
+            {t('home.hero.title_pt1')}<br />
+            <span className="hero-title-accent">{t('home.hero.title_pt2')}</span>
           </h1>
           <p className="hero-subtitle fade-in-up">
-            Learn directly from achievers in Engineering, MBBS, Defence, and beyond personalized for you. Begin now.
+            {t('home.hero.subtitle')}
           </p>
           <div className="hero-actions fade-in-up">
-            <Link to="/guiders" className="btn btn-accent btn-lg">Find My Mentor</Link>
-            <Link to="/resources" className="btn btn-outline-white btn-lg">Resources for Me</Link>
+            <Link to="/guiders" className="btn btn-accent btn-lg">{t('home.hero.find_mentor')}</Link>
+            <Link to="/resources" className="btn btn-outline-white btn-lg">{t('home.hero.resources')}</Link>
           </div>
           <div className="hero-stats fade-in-up">
             <div className="hero-stat">
               <span className="stat-number">500+</span>
-              <span className="stat-label">Students</span>
+              <span className="stat-label">{t('home.hero.stats.students')}</span>
             </div>
             <div className="stat-divider"></div>
             <div className="hero-stat">
               <span className="stat-number">50+</span>
-              <span className="stat-label">Guiders</span>
+              <span className="stat-label">{t('home.hero.stats.guiders')}</span>
             </div>
             <div className="stat-divider"></div>
             <div className="hero-stat">
               <span className="stat-number">7+</span>
-              <span className="stat-label">Exams</span>
+              <span className="stat-label">{t('home.hero.stats.exams')}</span>
             </div>
           </div>
         </div>
@@ -90,13 +129,13 @@ export default function Home() {
       <section className="search-section">
         <div className="container">
           <div className="search-card">
-            <h2>🔍 Meet Your Mentor</h2>
+            <h2>{t('home.search.title')}</h2>
             <form className="search-form" onSubmit={handleSearch}>
               <div className="search-inputs">
                 <input
                   type="text"
                   className="form-input search-input"
-                  placeholder="Search by name, field, or city..."
+                  placeholder={t('home.search.placeholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -105,12 +144,12 @@ export default function Home() {
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                 >
-                  <option value="">All Categories</option>
+                  <option value="">{t('home.search.all_categories')}</option>
                   {CATEGORIES.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
                 </select>
-                <button type="submit" className="btn btn-primary btn-lg">Search</button>
+                <button type="submit" className="btn btn-primary btn-lg">{t('home.search.search_btn')}</button>
               </div>
             </form>
             <div className="category-quick-links">
@@ -128,48 +167,80 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Notifications Banner */}
-      {notifications.length > 0 && (
-        <section className="section" style={{ paddingTop: '0' }}>
-          <div className="container">
-            <div className="section-header">
-              <h2>📢 Latest Notifications</h2>
-              <p>Stay updated with the latest exam news and opportunities</p>
+      {/* Notifications Banner with Tabs */}
+      <section className="section" style={{ paddingTop: '0' }}>
+        <div className="container">
+          <div className="section-header">
+            <h2>{t('home.notifications.title')}</h2>
+            <p>{t('home.notifications.subtitle')}</p>
+          </div>
+          
+          {/* Notifications Tabs */}
+          <div className="home-notif-tabs-wrapper">
+            <div className="home-notif-tabs">
+              {NOTIF_TABS.map(tab => (
+                <button
+                  key={tab.id}
+                  className={`home-notif-tab ${activeNotifTab === tab.id ? 'active' : ''}`}
+                  onClick={() => setActiveNotifTab(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
-            <div className="notifications-list">
-              {notifications.map((notif) => (
+          </div>
+
+          <div className="notifications-list" style={{ minHeight: '300px' }}>
+            {notifLoading ? (
+              <div style={{ textAlign: 'center', padding: '2rem' }}>
+                <div className="spinner"></div><p className="mt-2 text-muted">Loading...</p>
+              </div>
+            ) : notifications.length > 0 ? (
+              notifications.map((notif) => (
                 <a
                   key={notif.id}
-                  href={notif.link || '#'}
+                  href={notif.link || notif.source_url || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="notif-item"
                 >
-                  <div className="notif-dot"></div>
+                  <div className="notif-dot" style={{ backgroundColor: activeNotifTab === 'pinned' ? '#dc2626' : '#2563eb' }}></div>
                   <div className="notif-content">
                     <h4>{notif.title}</h4>
-                    <p>{notif.description}</p>
+                    {/* Add published date to description display for non-pinned categories */}
+                    <p>
+                      {activeNotifTab !== 'pinned' ? `[${notif.published_date || t('home.notifications.new')}] ` : ''}
+                      {notif.description}
+                    </p>
                   </div>
                   <div className="notif-date">
-                    {new Date(notif.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                    {activeNotifTab === 'pinned' 
+                      ? new Date(notif.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+                      : t('home.notifications.link')}
                   </div>
                   <span className="notif-arrow">→</span>
                 </a>
-              ))}
-            </div>
-            <div className="text-center mt-3">
-              <Link to="/notifications" className="btn btn-outline">View All Notifications</Link>
-            </div>
+              ))
+            ) : (
+              <div className="empty-state" style={{ padding: '2rem' }}>
+                <span className="empty-state-icon text-muted">📭</span>
+                <h4>{t('home.notifications.empty', { tab: NOTIF_TABS.find(t => t.id === activeNotifTab)?.label })}</h4>
+              </div>
+            )}
           </div>
-        </section>
-      )}
+          
+          <div className="text-center mt-3">
+            <Link to="/notifications" className="btn btn-outline">{t('home.notifications.view_all')}</Link>
+          </div>
+        </div>
+      </section>
 
       {/* Featured Guiders */}
       <section className="section featured-section">
         <div className="container">
           <div className="section-header">
-            <h2>⭐ Featured Guiders</h2>
-            <p>Connect with successful alumni who cleared top exams</p>
+            <h2>{t('home.featured.title')}</h2>
+            <p>{t('home.featured.subtitle')}</p>
           </div>
           {loading ? (
             <div className="spinner-container"><div className="spinner"></div></div>
@@ -181,14 +252,14 @@ export default function Home() {
                 ))}
               </div>
               <div className="text-center mt-3">
-                <Link to="/guiders" className="btn btn-primary btn-lg">View All Guiders →</Link>
+                <Link to="/guiders" className="btn btn-primary btn-lg">{t('home.featured.view_all')}</Link>
               </div>
             </>
           ) : (
             <div className="empty-state">
               <span className="empty-state-icon">👨‍🏫</span>
-              <h3>No guiders yet</h3>
-              <p>Check back soon!</p>
+              <h3>{t('home.featured.empty_title')}</h3>
+              <p>{t('home.featured.empty_subtitle')}</p>
             </div>
           )}
         </div>
@@ -198,11 +269,11 @@ export default function Home() {
       <section className="cta-section">
         <div className="container">
           <div className="cta-card">
-            <h2>Ready to Start Your Journey?</h2>
-            <p>One platform, endless opportunities start your journey with <b>SathSikho</b></p>
+            <h2>{t('home.cta.title')}</h2>
+            <p>{t('home.cta.subtitle')}</p>
             <div className="flex-center gap-2 mt-3">
-              <Link to="/register" className="btn btn-accent btn-lg">Register Now</Link>
-              <Link to="/guiders" className="btn btn-outline-white btn-lg">Browse Guiders</Link>
+              <Link to="/register" className="btn btn-accent btn-lg">{t('home.cta.register')}</Link>
+              <Link to="/guiders" className="btn btn-outline-white btn-lg">{t('home.cta.browse')}</Link>
             </div>
           </div>
         </div>
