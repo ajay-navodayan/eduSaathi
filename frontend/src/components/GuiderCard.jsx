@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './GuiderCard.css';
 
 const CATEGORY_COLORS = {
@@ -13,6 +14,7 @@ const CATEGORY_COLORS = {
 };
 
 export default function GuiderCard({ guider }) {
+  const { t } = useTranslation();
   const color = CATEGORY_COLORS[guider.category] || CATEGORY_COLORS.default;
 
   return (
@@ -48,7 +50,7 @@ export default function GuiderCard({ guider }) {
 
       <div className="guider-card-footer">
         <Link to={`/guiders/${guider.id}`} className="btn btn-primary btn-sm w-full">
-          View Profile →
+          {t('guiders.card.view_profile')}
         </Link>
       </div>
     </div>

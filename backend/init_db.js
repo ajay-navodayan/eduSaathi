@@ -75,6 +75,23 @@ async function initializeDatabase() {
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
+      CREATE TABLE IF NOT EXISTS ai_notifications (
+        id SERIAL PRIMARY KEY,
+        category TEXT NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        source_url TEXT,
+        published_date TEXT,
+        fetched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(category, title)
+      );
+
+      CREATE TABLE IF NOT EXISTS fetch_log (
+        id SERIAL PRIMARY KEY,
+        category TEXT NOT NULL UNIQUE,
+        last_fetched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `);
     console.log('✅ Tables checked/created.');
 
@@ -106,14 +123,77 @@ async function initializeDatabase() {
     await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS email TEXT UNIQUE");
     await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS phone TEXT");
 
+    await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS phone TEXT");
+    
+    // Resources Migrations
+    await pool.query("ALTER TABLE resources ADD COLUMN IF NOT EXISTS class_level INTEGER");
+    await pool.query("ALTER TABLE resources ADD COLUMN IF NOT EXISTS medium TEXT");
+
     console.log('✅ Columns checked/added.');
 
-    // 3. Clear Dummy Data (Only if requested - let's make it a safe check or comment it)
-    // The user explicitly asked to "remove dummy data", so we can truncate these tables if headers match.
-    // For this one-time task, I will clear them if they contain specific placeholder emails or just truncate.
-    // await pool.query('TRUNCATE guiders, tutors, notifications, resources RESTART IDENTITY CASCADE');
+    // 3. Clear Dummy Data & Seed NCERT (Updated to 2026 - FULL EXPANSION 1-12)
+    await pool.query('TRUNCATE resources RESTART IDENTITY');
     
-    // 4. Seed Default Admin
+    const classPrefixes = {
+      1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 
+      6: 'f', 7: 'g', 8: 'h', 9: 'i', 10: 'j', 
+      11: 'k', 12: 'l'
+    };
+
+    const subjectMap = [
+      // Format: [SubjectName, Code, ClassesArray]
+      ['Mathematics', 'mh', [1,2,3,4,5,6,7,8,9,10,11,12]],
+      ['Science', 'sc', [6,7,8,9,10]],
+      ['English', 'en', [1,2,3,4,5,6,7,8,9,10,11,12]],
+      ['Hindi', 'hn', [1,2,3,4,5,6,7,8,9,10,11,12]],
+      ['EVS', 'ev', [3,4,5]],
+      
+      // Science (11-12)
+      ['Physics', 'ph', [11,12]],
+      ['Chemistry', 'ch', [11,12]],
+      ['Biology', 'bi', [11,12]],
+
+      // Commerce (11-12)
+      ['Accountancy', 'ac', [11,12]],
+      ['Business Studies', 'bs', [11,12]],
+      ['Economics', 'ec', [9,10,11,12]],
+
+      // Arts/Humanities (11-12)
+      ['History', 'hs', [11,12]],
+      ['Geography', 'gy', [11,12]],
+      ['Political Science', 'ps', [11,12]],
+      ['Sociology', 'sy', [11,12]],
+      ['Psychology', 'py', [11,12]],
+
+      // Social Science (6-10 specific codes)
+      ['History', 'ss3', [6,7,8,9,10]],
+      ['Geography', 'ss1', [6,7,8,9,10]],
+      ['Political Science', 'ss4', [6,7,8,9,10]]
+    ];
+
+    console.log('--- 📚 Seeding NCERT Classes 1-12 ---');
+    for (const [subName, subCode, classes] of subjectMap) {
+      for (const cls of classes) {
+        const prefix = classPrefixes[cls];
+        if (!prefix) continue;
+
+        // Add English Version
+        await pool.query(
+          'INSERT INTO resources (title, category, drive_link, description, class_level, medium) VALUES ($1, $2, $3, $4, $5, $6)',
+          [`${subName} (English)`, 'NCERT', `https://ncert.nic.in/textbook/pdf/${prefix}e${subCode}1dd.zip`, `Class ${cls} - ${subName}`, cls, 'english']
+        );
+
+        // Add Hindi Version
+        const hindiName = subName === 'Mathematics' ? 'Ganit' : subName === 'Science' ? 'Vigyan' : subName;
+        await pool.query(
+          'INSERT INTO resources (title, category, drive_link, description, class_level, medium) VALUES ($1, $2, $3, $4, $5, $6)',
+          [`${hindiName} (Hindi)`, 'NCERT', `https://ncert.nic.in/textbook/pdf/${prefix}h${subCode}1dd.zip`, `Class ${cls} - ${subName}`, cls, 'hindi']
+        );
+      }
+    }
+    console.log('✅ NCERT Seeding Complete.');
+    
+    // 4. Seed Default Admin 
     const adminEmail = 'admin@edusaathi.com';
 
     const adminPassword = 'admin123';

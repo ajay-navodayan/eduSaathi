@@ -1,6 +1,8 @@
+import { useTranslation } from 'react-i18next';
 import './Footer.css';
 
 export default function Footer() {
+  const { t } = useTranslation();
   return (
     <footer className="footer">
       <div className="container">
@@ -10,12 +12,12 @@ export default function Footer() {
             <div className="footer-logo-wide">
               <img src="/sathsikho-logo.png" alt="SathSikho" />
             </div>
-            <p className="footer-tagline">Learn Together, Rise Together</p>
+            <p className="footer-tagline">{t('footer.tagline')}</p>
           </div>
 
           {/* Contact & Support */}
           <div className="footer-col" style={{ minWidth: '350px' }}>
-            <h4>Contact & Support</h4>
+            <h4>{t('footer.contact_support')}</h4>
             
             <div className="footer-contact-flex">
               <ul>
@@ -61,7 +63,7 @@ export default function Footer() {
               </div>
               <div className="person-info">
                 <span className="person-name">Nikhil Raj Soni</span>
-                <span className="person-role">Platform Admin</span>
+                <span className="person-role">{t('footer.admin_role')}</span>
               </div>
             </div>
             
@@ -70,8 +72,8 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} SathSikho. All rights reserved.</p>
-          <p>Made with ❤️ for village students of India</p>
+          <p>{t('footer.rights_reserved', { year: new Date().getFullYear() })}</p>
+          <p>{t('footer.made_with_love')}</p>
         </div>
       </div>
     </footer>

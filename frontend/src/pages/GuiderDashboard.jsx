@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import ChatBox from '../components/ChatBox';
 import API from '../api';
 import './ChatApp.css';
 
 export default function GuiderDashboard() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [contacts, setContacts] = useState([]);
   const [activeChat, setActiveChat] = useState(null); // stores { peer_id, name, role }
@@ -33,7 +35,7 @@ export default function GuiderDashboard() {
       {/* LEFT PANE: CONTACTS */}
       <div className="chat-sidebar">
         <div className="chat-sidebar-header">
-          <span>Chats</span>
+          <span>{t('chat.title')}</span>
         </div>
         
         <div className="contact-list">
@@ -41,7 +43,7 @@ export default function GuiderDashboard() {
           <form style={{ padding: '10px 15px', borderBottom: '1px solid #ddd' }} onSubmit={handleStartManualChat}>
              <input 
                type="number" 
-               placeholder="Search or start new chat by ID..." 
+               placeholder={t('chat.search')} 
                value={newChatId}
                onChange={(e) => setNewChatId(e.target.value)}
                style={{ width: '100%', padding: '10px 15px', borderRadius: '8px', border: 'none', backgroundColor: '#f0f2f5', outline: 'none' }}
@@ -49,7 +51,7 @@ export default function GuiderDashboard() {
           </form>
 
           {contacts.length === 0 ? (
-             <p style={{ padding: '20px', textAlign: 'center', color: '#666' }}>No recent chats found.</p>
+             <p style={{ padding: '20px', textAlign: 'center', color: '#666' }}>{t('chat.no_chats')}</p>
           ) : (
              contacts.map(c => {
                // Generate random appealing color for dummy avatar
@@ -68,7 +70,7 @@ export default function GuiderDashboard() {
                    </div>
                    <div className="contact-info">
                      <div className="contact-name">{c.name || `User ${c.peer_id}`}</div>
-                     <div className="contact-role" style={{ textTransform: 'capitalize' }}>{c.role || 'New User'}</div>
+                     <div className="contact-role" style={{ textTransform: 'capitalize' }}>{c.role || t('chat.new_user')}</div>
                    </div>
                  </div>
                )
@@ -95,9 +97,9 @@ export default function GuiderDashboard() {
           </>
         ) : (
           <div className="empty-chat">
-            <h2 style={{ fontWeight: '300', color: '#41525d', marginBottom: '10px' }}>EduSaathi Web Connect</h2>
-            <p>Send and receive messages without keeping your phone online.</p>
-            <p style={{ fontSize: '0.9rem', marginTop: '5px' }}>Select a chat from the left menu to start messaging.</p>
+            <h2 style={{ fontWeight: '300', color: '#41525d', marginBottom: '10px' }}>{t('chat.web_connect')}</h2>
+            <p>{t('chat.subtitle')}</p>
+            <p style={{ fontSize: '0.9rem', marginTop: '5px' }}>{t('chat.select_chat')}</p>
           </div>
         )}
       </div>
