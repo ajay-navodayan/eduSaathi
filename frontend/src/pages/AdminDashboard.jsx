@@ -5,6 +5,9 @@ import { useAuth } from '../context/AuthContext';
 import API from '../api';
 import PhotoUpload from '../components/PhotoUpload';
 
+const RESOURCE_CATEGORIES = ['NCERT', 'JEE', 'NEET', 'UPSC', 'SSC', 'Railway', 'Navodaya', 'Netarhat', 'Sainik School', 'Army'];
+const CLASS_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
 export default function AdminDashboard() {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -26,8 +29,10 @@ export default function AdminDashboard() {
   const [recentAiNotifs, setRecentAiNotifs] = useState([]);
 
   const [resources, setResources] = useState([]);
-  const [resourceForm, setResourceForm] = useState({ title: '', category: 'All', drive_link: '', description: '' });
+  const [resourceForm, setResourceForm] = useState({ title: '', category: 'NCERT', drive_link: '', description: '', class_level: '', medium: 'hindi' });
   const [resourceMsg, setResourceMsg] = useState('');
+  const [bulkMode, setBulkMode] = useState(false);
+  const [bulkText, setBulkText] = useState('');
 
   const [manualNotifs, setManualNotifs] = useState([]);
   const [manualNotifForm, setManualNotifForm] = useState({ title: '', description: '', link: '' });
@@ -182,13 +187,33 @@ export default function AdminDashboard() {
 
   const handleResourceSubmit = async (e) => {
     e.preventDefault();
+    setResourceMsg('');
     try {
-      await API.post('/resources', resourceForm);
-      setResourceMsg('Resource added successfully!');
-      setResourceForm({ title: '', category: 'All', drive_link: '', description: '' });
+      if (bulkMode) {
+        // Parse bulkText: "Title, Link" per line
+        const lines = bulkText.split('\n').filter(line => line.trim().includes(','));
+        const batch = lines.map(line => {
+          const [title, link] = line.split(',').map(s => s.trim());
+          return {
+            ...resourceForm,
+            title,
+            drive_link: link
+          };
+        });
+
+        if (batch.length === 0) return setResourceMsg('No valid lines found. Use format: Title, Link');
+        
+        await API.post('/resources/bulk', { resources: batch });
+        setResourceMsg(t('admin.resources.bulk_count', { count: batch.length }) + ' added successfully!');
+        setBulkText('');
+      } else {
+        await API.post('/resources', resourceForm);
+        setResourceMsg('Resource added successfully!');
+        setResourceForm({ ...resourceForm, title: '', drive_link: '' });
+      }
       fetchData();
     } catch(err) {
-      setResourceMsg('Failed to add resource.');
+      setResourceMsg('Failed to add resource(s).');
     }
   };
 
@@ -642,29 +667,93 @@ export default function AdminDashboard() {
             <p>{t('admin.resources.subtitle')}</p>
             {resourceMsg && <div style={{ padding: '10px', backgroundColor: resourceMsg.includes('Failed') ? '#fce8e6' : '#d4edda', color: resourceMsg.includes('Failed') ? '#d93025' : '#155724', borderRadius: '4px', marginBottom: '15px' }}>{resourceMsg}</div>}
             
-            <form onSubmit={handleResourceSubmit} style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', backgroundColor: 'var(--bg-card)', padding: '20px', borderRadius: '8px', border: '1px solid var(--border)', marginBottom: '30px' }}>
-              <div style={{ flex: '1 1 200px' }}>
-                <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>{t('admin.resources.material_title')}</label>
-                <input type="text" placeholder="e.g. UPSC Prelims 2023 Paper" value={resourceForm.title} onChange={(e) => setResourceForm({...resourceForm, title: e.target.value})} required style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)' }} />
+            <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <input 
+                type="checkbox" 
+                id="bulkMode" 
+                checked={bulkMode} 
+                onChange={(e) => setBulkMode(e.target.checked)} 
+                style={{ width: '20px', height: '20px' }}
+              />
+              <label htmlFor="bulkMode" style={{ fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer' }}>
+                🚀 {t('admin.resources.bulk_mode')}
+              </label>
+            </div>
+
+            <form onSubmit={handleResourceSubmit} style={{ backgroundColor: 'var(--bg-card)', padding: '20px', borderRadius: '8px', border: '1px solid var(--border)', marginBottom: '30px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>{t('admin.resources.category')}</label>
+                  <select 
+                    value={resourceForm.category} 
+                    onChange={(e) => setResourceForm({...resourceForm, category: e.target.value})} 
+                    style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)' }}
+                  >
+                    {RESOURCE_CATEGORIES.map(cat => (
+                       <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>{t('admin.resources.class_level')}</label>
+                  <select 
+                    value={resourceForm.class_level} 
+                    onChange={(e) => setResourceForm({...resourceForm, class_level: e.target.value})} 
+                    style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)' }}
+                  >
+                    <option value="">N/A</option>
+                    {CLASS_LEVELS.map(num => (
+                       <option key={num} value={num}>Class {num}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>{t('admin.resources.medium_label')}</label>
+                  <select 
+                    value={resourceForm.medium} 
+                    onChange={(e) => setResourceForm({...resourceForm, medium: e.target.value})} 
+                    style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)' }}
+                  >
+                    <option value="hindi">{t('admin.resources.medium_hi')}</option>
+                    <option value="english">{t('admin.resources.medium_en')}</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>{t('admin.resources.description')}</label>
+                  <input type="text" placeholder="e.g. NCERT Textbooks / Solutions" value={resourceForm.description} onChange={(e) => setResourceForm({...resourceForm, description: e.target.value})} style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                </div>
               </div>
-              <div style={{ flex: '1 1 150px' }}>
-                <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>{t('admin.resources.category')}</label>
-                <select value={resourceForm.category} onChange={(e) => setResourceForm({...resourceForm, category: e.target.value})} style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)' }}>
-                  {['All', 'IIT', 'NEET', 'UPSC', 'Railway', 'Army', 'Matric', 'Intermediate'].map(cat => (
-                     <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
-              <div style={{ flex: '1 1 200px' }}>
-                <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>{t('admin.resources.drive_link')}</label>
-                <input type="url" placeholder="https://drive.google.com/..." value={resourceForm.drive_link} onChange={(e) => setResourceForm({...resourceForm, drive_link: e.target.value})} required style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)' }} />
-              </div>
-              <div style={{ flex: '1 1 100%' }}>
-                <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>{t('admin.resources.description')}</label>
-                <textarea placeholder="E.g. Full answer key and question paper included" value={resourceForm.description} onChange={(e) => setResourceForm({...resourceForm, description: e.target.value})} style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)', minHeight: '60px' }} />
-              </div>
-              <div style={{ flex: '1 1 100%', textAlign: 'right' }}>
-                <button type="submit" style={{ padding: '10px 24px', backgroundColor: '#1a73e8', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 600 }}>{t('admin.resources.save')}</button>
+
+              {bulkMode ? (
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>{t('admin.resources.bulk_mode')}</label>
+                  <textarea 
+                    placeholder={t('admin.resources.bulk_placeholder')}
+                    value={bulkText}
+                    onChange={(e) => setBulkText(e.target.value)}
+                    style={{ width: '100%', minHeight: '150px', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)', fontFamily: 'monospace' }}
+                  />
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '5px' }}>
+                    {t('admin.resources.bulk_count', { count: bulkText.split('\n').filter(l => l.trim().includes(',')).length })}
+                  </p>
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>{t('admin.resources.material_title')}</label>
+                    <input type="text" placeholder="e.g. Physics Ch 1" value={resourceForm.title} onChange={(e) => setResourceForm({...resourceForm, title: e.target.value})} required style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>{t('admin.resources.drive_link')}</label>
+                    <input type="url" placeholder="https://drive.google.com/..." value={resourceForm.drive_link} onChange={(e) => setResourceForm({...resourceForm, drive_link: e.target.value})} required style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                  </div>
+                </div>
+              )}
+
+              <div style={{ textAlign: 'right', marginTop: '20px' }}>
+                <button type="submit" style={{ padding: '12px 30px', backgroundColor: '#1a73e8', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 600, fontSize: '1rem' }}>
+                  {bulkMode ? t('admin.broadcast.btn_save') : t('admin.resources.save')}
+                </button>
               </div>
             </form>
 
@@ -675,6 +764,8 @@ export default function AdminDashboard() {
                   <tr style={{ backgroundColor: 'var(--gray-100)', textAlign: 'left' }}>
                     <th style={{ padding: '12px', borderBottom: '1px solid #ccc' }}>{t('admin.resources.table.title')}</th>
                     <th style={{ padding: '12px', borderBottom: '1px solid #ccc' }}>{t('admin.resources.table.category')}</th>
+                    <th style={{ padding: '12px', borderBottom: '1px solid #ccc' }}>{t('admin.resources.table.class')}</th>
+                    <th style={{ padding: '12px', borderBottom: '1px solid #ccc' }}>{t('admin.resources.table.medium')}</th>
                     <th style={{ padding: '12px', borderBottom: '1px solid #ccc' }}>{t('admin.resources.table.link')}</th>
                     <th style={{ padding: '12px', borderBottom: '1px solid #ccc' }}>{t('admin.resources.table.action')}</th>
                   </tr>
@@ -688,6 +779,12 @@ export default function AdminDashboard() {
                       </td>
                       <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>
                          <span style={{ padding: '2px 8px', backgroundColor: '#e8f0fe', borderRadius: '12px' }}>{res.category}</span>
+                      </td>
+                      <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>
+                         {res.class_level ? `Class ${res.class_level}` : '-'}
+                      </td>
+                      <td style={{ padding: '12px', borderBottom: '1px solid #eee', textTransform: 'capitalize' }}>
+                         {res.medium || '-'}
                       </td>
                       <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>
                         <a href={res.drive_link} target="_blank" rel="noopener noreferrer" style={{ color: '#1a73e8', textDecoration: 'none' }}>{t('admin.resources.view_file')}</a>

@@ -101,7 +101,7 @@ async function initializeDatabase() {
     await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS rejection_reason TEXT");
     // Add 'profile_edited' if missing
     await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_edited BOOLEAN DEFAULT false");
-    
+
     // Guiders Migrations
     await pool.query("ALTER TABLE guiders ADD COLUMN IF NOT EXISTS tenth_board TEXT");
     await pool.query("ALTER TABLE guiders ADD COLUMN IF NOT EXISTS twelfth_board TEXT");
@@ -124,7 +124,7 @@ async function initializeDatabase() {
     await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS phone TEXT");
 
     await pool.query("ALTER TABLE tutors ADD COLUMN IF NOT EXISTS phone TEXT");
-    
+
     // Resources Migrations
     await pool.query("ALTER TABLE resources ADD COLUMN IF NOT EXISTS class_level INTEGER");
     await pool.query("ALTER TABLE resources ADD COLUMN IF NOT EXISTS medium TEXT");
@@ -133,42 +133,42 @@ async function initializeDatabase() {
 
     // 3. Clear Dummy Data & Seed NCERT (Updated to 2026 - FULL EXPANSION 1-12)
     await pool.query('TRUNCATE resources RESTART IDENTITY');
-    
+
     const classPrefixes = {
-      1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 
-      6: 'f', 7: 'g', 8: 'h', 9: 'i', 10: 'j', 
+      1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e',
+      6: 'f', 7: 'g', 8: 'h', 9: 'i', 10: 'j',
       11: 'k', 12: 'l'
     };
 
     const subjectMap = [
       // Format: [SubjectName, Code, ClassesArray]
-      ['Mathematics', 'mh', [1,2,3,4,5,6,7,8,9,10,11,12]],
-      ['Science', 'sc', [6,7,8,9,10]],
-      ['English', 'en', [1,2,3,4,5,6,7,8,9,10,11,12]],
-      ['Hindi', 'hn', [1,2,3,4,5,6,7,8,9,10,11,12]],
-      ['EVS', 'ev', [3,4,5]],
-      
+      ['Mathematics', 'mh', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+      ['Science', 'sc', [6, 7, 8, 9, 10]],
+      ['English', 'en', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+      ['Hindi', 'hn', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+      ['EVS', 'ev', [3, 4, 5]],
+
       // Science (11-12)
-      ['Physics', 'ph', [11,12]],
-      ['Chemistry', 'ch', [11,12]],
-      ['Biology', 'bi', [11,12]],
+      ['Physics', 'ph', [11, 12]],
+      ['Chemistry', 'ch', [11, 12]],
+      ['Biology', 'bi', [11, 12]],
 
       // Commerce (11-12)
-      ['Accountancy', 'ac', [11,12]],
-      ['Business Studies', 'bs', [11,12]],
-      ['Economics', 'ec', [9,10,11,12]],
+      ['Accountancy', 'ac', [11, 12]],
+      ['Business Studies', 'bs', [11, 12]],
+      ['Economics', 'ec', [9, 10, 11, 12]],
 
       // Arts/Humanities (11-12)
-      ['History', 'hs', [11,12]],
-      ['Geography', 'gy', [11,12]],
-      ['Political Science', 'ps', [11,12]],
-      ['Sociology', 'sy', [11,12]],
-      ['Psychology', 'py', [11,12]],
+      ['History', 'hs', [11, 12]],
+      ['Geography', 'gy', [11, 12]],
+      ['Political Science', 'ps', [11, 12]],
+      ['Sociology', 'sy', [11, 12]],
+      ['Psychology', 'py', [11, 12]],
 
       // Social Science (6-10 specific codes)
-      ['History', 'ss3', [6,7,8,9,10]],
-      ['Geography', 'ss1', [6,7,8,9,10]],
-      ['Political Science', 'ss4', [6,7,8,9,10]]
+      ['History', 'ss3', [6, 7, 8, 9, 10]],
+      ['Geography', 'ss1', [6, 7, 8, 9, 10]],
+      ['Political Science', 'ss4', [6, 7, 8, 9, 10]]
     ];
 
     console.log('--- 📚 Seeding NCERT Classes 1-12 ---');
@@ -192,7 +192,7 @@ async function initializeDatabase() {
       }
     }
     console.log('✅ NCERT Seeding Complete.');
-    
+
     // 4. Seed Default Admin 
     const adminEmail = 'admin@edusaathi.com';
 

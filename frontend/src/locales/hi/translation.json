@@ -160,14 +160,18 @@
     },
     "categories": {
       "All": "सभी",
-      "Matric": "मैट्रिक",
-      "Intermediate": "इंटरमीडिएट",
+      "Class 10": "कक्षा 10",
+      "Class 12": "कक्षा 12",
+      "NCERT": "NCERT",
+      "JEE": "JEE",
       "NEET": "NEET",
-      "IIT": "IIT",
-      "Railway": "रेलवे",
-      "Army": "रेलवे",
       "UPSC": "UPSC",
-      "NCERT": "NCERT"
+      "SSC": "SSC",
+      "Railway": "रेलवे",
+      "Navodaya": "नवोदय",
+      "Netarhat": "नेतरहाट",
+      "Sainik School": "सैनिक स्कूल",
+      "Army": "सेना"
     },
     "card": {
       "view_profile": "प्रोफ़ाइल देखें →"
@@ -234,6 +238,13 @@
       "subject": "विषय",
       "english_medium": "अंग्रेजी माध्यम",
       "hindi_medium": "हिन्दी माध्यम"
+    },
+    "filters": {
+      "search_placeholder": "पुस्तकों का नाम या विवरण खोजें...",
+      "all_categories": "सभी श्रेणियां",
+      "all_classes": "सभी कक्षाएं",
+      "select_class": "कक्षा चुनें",
+      "select_category": "श्रेणी चुनें"
     }
   },
   "chat": {
@@ -423,8 +434,17 @@
         "title": "शीर्षक",
         "category": "श्रेणी",
         "link": "लिंक",
-        "action": "कार्रवाई"
+        "action": "कार्रवाई",
+        "class": "कक्षा",
+        "medium": "माध्यम"
       },
+      "class_level": "कक्षा स्तर (जैसे 10, 12)",
+      "medium_label": "माध्यम",
+      "medium_hi": "हिन्दी",
+      "medium_en": "अंग्रेजी",
+      "bulk_mode": "बल्क (Bulk) मोड",
+      "bulk_placeholder": "किताब का नाम, लिंक (एक पंक्ति में एक)\nउदाहरण:\nPhysics Ch 1, https://drive.google.com/...\nChemistry Ch 1, https://drive.google.com/...",
+      "bulk_count": "{{count}} किताबें खोजी गईं",
       "view_file": "फ़ाइल देखें 🔗",
       "delete": "हटाएं",
       "empty": "स्पष्ट रूप से अभी तक कोई संसाधन अपलोड नहीं किया गया है।"
