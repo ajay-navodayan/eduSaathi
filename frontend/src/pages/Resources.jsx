@@ -3,43 +3,54 @@ import { useTranslation } from 'react-i18next';
 import API from '../api';
 import './Resources.css';
 
-const CATEGORIES = ['All', 'NCERT', 'Matric', 'Intermediate', 'IIT', 'NEET', 'UPSC', 'Railway', 'Army'];
+const CATEGORIES = ['All', 'Class 10', 'Class 12', 'NCERT', 'JEE', 'NEET', 'UPSC', 'SSC', 'Railway', 'Navodaya', 'Netarhat', 'Sainik School', 'Army'];
 
 const CATEGORY_ICONS = {
-  'NCERT': '📚', 'IIT': '🔬', 'NEET': '🩺', 'UPSC': '🏛️',
-  'Army': '⚔️', 'Railway': '🚂', 'Matric': '📖',
-  'Intermediate': '📝', 'All': '📦'
+  'Class 10': '📖', 'Class 12': '📝', 'NCERT': '📚', 'JEE': '🚀', 'NEET': '🩺', 
+  'UPSC': '🏛️', 'SSC': '💼', 'Railway': '🚂', 'Navodaya': '🏫', 
+  'Netarhat': '🏔️', 'Sainik School': '🛡️', 'Army': '⚔️', 'All': '📦'
 };
 
 export default function Resources() {
   const { t } = useTranslation();
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // States for search and filters
+  const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const [classLevel, setClassLevel] = useState('All');
 
-  const fetchResources = (cat) => {
+  const fetchResources = () => {
     setLoading(true);
-    const params = cat !== 'All' ? { category: cat } : {};
+    let params = {};
+    
+    if (activeCategory !== 'All') params.category = activeCategory;
+    if (classLevel !== 'All') params.class_level = classLevel;
+    if (searchTerm) params.q = searchTerm;
+    
     API.get('/resources', { params })
       .then(res => setResources(res.data))
       .catch(console.error)
       .finally(() => setLoading(false));
   };
 
+  // Fetch when filters change
   useEffect(() => {
-    fetchResources('All');
-  }, []);
+    const delayDebounceFn = setTimeout(() => {
+      fetchResources();
+    }, 500); // 500ms debounce for search
 
-  const handleCategoryChange = (cat) => {
-    setActiveCategory(cat);
-    fetchResources(cat);
-  };
+    return () => clearTimeout(delayDebounceFn);
+  }, [activeCategory, classLevel, searchTerm]);
 
   // Grouping logic for NCERT table
   const renderNcertTable = () => {
     // Group by class_level
-    const classes = [...new Set(resources.map(r => r.class_level))].sort((a, b) => b - a);
-    
+    const classes = [...new Set(resources.map(r => r.class_level))].filter(Boolean).sort((a, b) => b - a);
+
+    if (classes.length === 0) return null;
+
     return classes.map(cls => {
       const classResources = resources.filter(r => r.class_level === cls);
       // Group by subject (extracted from description or title)
@@ -61,9 +72,9 @@ export default function Resources() {
                 {subjects.map(sub => {
                   const eng = classResources.find(r => r.description === sub && r.medium === 'english');
                   const hi = classResources.find(r => r.description === sub && r.medium === 'hindi');
-                  
+
                   // Clean subject name (remove "Class X - " prefix)
-                  const cleanSubject = sub.replace(/Class \d+ - /, '');
+                  const cleanSubject = sub ? sub.replace(/Class \d+ - /, '') : 'Resource';
 
                   return (
                     <tr key={sub}>
@@ -94,7 +105,7 @@ export default function Resources() {
   };
 
   return (
-    <div>
+    <div className="resources-page">
       <div className="page-hero">
         <div className="container page-hero-content">
           <h1>{t('resources.hero.title')}</h1>
@@ -103,18 +114,48 @@ export default function Resources() {
       </div>
 
       <div className="container resources-container">
-        {/* Category Filters */}
-        <div className="resources-categories">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              className={`resource-cat-btn ${activeCategory === cat ? 'active' : ''}`}
-              onClick={() => handleCategoryChange(cat)}
-            >
-              <span>{CATEGORY_ICONS[cat]}</span>
-              <span>{t(`guiders.categories.${cat}`)}</span>
-            </button>
-          ))}
+        {/* Search & Filters */}
+        <div className="resources-filter-box card">
+          <div className="search-input-wrapper">
+            <span className="search-icon">🔍</span>
+            <input 
+              type="text" 
+              placeholder={t('resources.filters.search_placeholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="resource-search-input"
+            />
+          </div>
+
+          <div className="filters-row">
+            <div className="filter-group">
+              <label>{t('resources.filters.select_category')}</label>
+              <select 
+                value={activeCategory} 
+                onChange={(e) => setActiveCategory(e.target.value)}
+                className="resource-select"
+              >
+                <option value="All">{t('resources.filters.all_categories')}</option>
+                {CATEGORIES.filter(c => c !== 'All' && c !== 'Class 10' && c !== 'Class 12').map(cat => (
+                  <option key={cat} value={cat}>{t(`guiders.categories.${cat}`)}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>{t('resources.filters.select_class')}</label>
+              <select 
+                value={classLevel} 
+                onChange={(e) => setClassLevel(e.target.value)}
+                className="resource-select"
+              >
+                <option value="All">{t('resources.filters.all_classes')}</option>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(num => (
+                  <option key={num} value={num}>Class {num}</option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
         {loading ? (
@@ -122,7 +163,13 @@ export default function Resources() {
         ) : resources.length > 0 ? (
           activeCategory === 'NCERT' ? (
             <div className="ncert-container">
-              {renderNcertTable()}
+              {renderNcertTable() || (
+                <div className="empty-state">
+                  <span className="empty-state-icon">📂</span>
+                  <h3>{t('resources.empty.title')}</h3>
+                  <p>{t('resources.empty.subtitle')}</p>
+                </div>
+              )}
             </div>
           ) : (
             <div className="resources-grid">
@@ -139,6 +186,7 @@ export default function Resources() {
                     <span className="badge badge-blue resource-cat-badge">{res.category}</span>
                     <h3 className="resource-title">{res.title}</h3>
                     {res.description && <p className="resource-desc">{res.description}</p>}
+                    {res.class_level && <span className="resource-class-tag">Class {res.class_level}</span>}
                   </div>
                   <div className="resource-footer">
                     <a
