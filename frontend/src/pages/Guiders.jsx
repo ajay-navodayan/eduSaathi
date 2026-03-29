@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import API from '../api';
 import GuiderCard from '../components/GuiderCard';
 import './Guiders.css';
@@ -7,6 +8,7 @@ import './Guiders.css';
 const CATEGORIES = ['All', 'Matric', 'Intermediate', 'NEET', 'IIT', 'Railway', 'Army', 'UPSC'];
 
 export default function Guiders() {
+  const { t } = useTranslation();
   const [guiders, setGuiders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -54,8 +56,8 @@ export default function Guiders() {
     <div>
       <div className="page-hero">
         <div className="container page-hero-content">
-          <h1>🎓 Our Guiders</h1>
-          <p>Find mentors who cracked the top exams and can guide you to success</p>
+          <h1>{t('guiders.hero.title')}</h1>
+          <p>{t('guiders.hero.subtitle')}</p>
         </div>
       </div>
 
@@ -65,11 +67,11 @@ export default function Guiders() {
           <input
             type="text"
             className="form-input"
-            placeholder="Search guiders by name, city, or field..."
+            placeholder={t('guiders.search.placeholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button type="submit" className="btn btn-primary">Search</button>
+          <button type="submit" className="btn btn-primary">{t('guiders.search.button')}</button>
         </form>
 
         {/* Category Filters */}
@@ -80,14 +82,14 @@ export default function Guiders() {
               className={`filter-btn ${activeCategory === cat ? 'active' : ''}`}
               onClick={() => handleCategoryChange(cat)}
             >
-              {cat}
+              {t(`guiders.categories.${cat}`)}
             </button>
           ))}
         </div>
 
         {/* Results */}
         <div className="guiders-results-header">
-          <span>{loading ? '...' : `${guiders.length} guider${guiders.length !== 1 ? 's' : ''} found`}</span>
+          <span>{loading ? t('guiders.results.loading') : (guiders.length === 1 ? t('guiders.results.found_singular', { count: 1 }) : t('guiders.results.found_plural', { count: guiders.length }))}</span>
         </div>
 
         {loading ? (
@@ -101,8 +103,8 @@ export default function Guiders() {
         ) : (
           <div className="empty-state">
             <span className="empty-state-icon">🔍</span>
-            <h3>No guiders found</h3>
-            <p>Try changing your search or category filter</p>
+            <h3>{t('guiders.empty.title')}</h3>
+            <p>{t('guiders.empty.subtitle')}</p>
           </div>
         )}
       </div>
