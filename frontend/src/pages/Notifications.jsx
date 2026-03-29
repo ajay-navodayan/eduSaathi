@@ -4,11 +4,7 @@ import API from '../api';
 import './Notifications.css';
 
 const TABS_KEYS = [
-<<<<<<< HEAD
   'pinned', 'govt', 'jee', 'neet', 'railway', 'ssc', 'navodaya', 'netarhat', 'scholarship'
-=======
-  'pinned', 'govt', 'jee', 'neet', 'railway', 'ssc', 'navodaya', 'neterhat', 'scholarship'
->>>>>>> d5d48d2dfac1a94118cf672257d4981630c16517
 ];
 
 export default function Notifications() {
