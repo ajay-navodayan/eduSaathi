@@ -1,20 +1,56 @@
-tarting due to changes...
-[nodemon] starting `node server.js`
-C:\Users\rk170\Desktop\eduSaathi\backend\node_modules\@supabase\supabase-js\dist\index.cjs:146
-        if (!trimmedUrl) throw new Error("supabaseUrl is required.");
-                         ^
+services:
+  # 1. Backend Web Service
+  - type: web
+    name: sathsikho-api
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: sathsikho
+          envVarKey: RENDER_EXTERNAL_URL
+      # Manual Sync: These must be added in the Render Dashboard
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
 
-Error: supabaseUrl is required.
-    at validateSupabaseUrl (C:\Users\rk170\Desktop\eduSaathi\backend\node_modules\@supabase\supabase-js\dist\index.cjs:146:25)
-    at new SupabaseClient (C:\Users\rk170\Desktop\eduSaathi\backend\node_modules\@supabase\supabase-js\dist\index.cjs:362:19)
-    at createClient (C:\Users\rk170\Desktop\eduSaathi\backend\node_modules\@supabase\supabase-js\dist\index.cjs:582:9)
-    at Object.<anonymous> (C:\Users\rk170\Desktop\eduSaathi\backend\middleware\auth.js:7:18)
-    at Module._compile (node:internal/modules/cjs/loader:1761:14)
-    at Object..js (node:internal/modules/cjs/loader:1893:10)
-    at Module.load (node:internal/modules/cjs/loader:1481:32)
-    at Module._load (node:internal/modules/cjs/loader:1300:12)
-    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
-    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
-
-Node.js v24.11.1
-[nodemon] app crashed - waiting for file changes before starting...
+  # 2. Frontend Static Site
+  - type: web
+    name: sathsikho
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: sathsikho-api
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
