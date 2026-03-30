@@ -3,7 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import { io } from 'socket.io-client';
 import API from '../api';
 
-const socket = io('http://localhost:5000');
+const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const socket = io(SOCKET_URL);
 
 export default function ChatBox({ peerId }) {
   const { user } = useAuth();
