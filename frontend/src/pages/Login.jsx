@@ -129,10 +129,6 @@ export default function Login() {
 
           <div className="auth-divider"><span>{t('login.form.or')}</span></div>
 
-          <div className="auth-hint">
-            <p>Try admin: <strong>admin@edusaathi.com</strong> / <strong>admin123</strong></p>
-          </div>
-
           <p className="auth-switch">
             {t('login.form.no_account')} <Link to="/register">{t('login.form.register_link')}</Link>
           </p>
