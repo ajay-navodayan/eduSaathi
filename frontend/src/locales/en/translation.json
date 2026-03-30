@@ -292,8 +292,25 @@
       "desc": "Update your password to keep your account secure.",
       "current_pwd": "Current Password",
       "new_pwd": "New Password",
+      "confirm_pwd": "Confirm New Password",
       "change_btn": "Change Password"
     }
+  },
+  "reset_password": {
+    "title": "Set New Password",
+    "subtitle": "Enter your new password below.",
+    "new_pwd": "New Password",
+    "confirm_pwd": "Confirm New Password",
+    "update_btn": "Update Password",
+    "updating_btn": "Updating...",
+    "success": "Password updated successfully! Redirecting to login...",
+    "error_length": "Password must be at least 6 characters.",
+    "error_match": "Passwords do not match.",
+    "verifying": "Verifying reset link...",
+    "invalid_title": "Invalid or Expired Link",
+    "invalid_subtitle": "This password reset link is invalid or has expired. Please request a new one.",
+    "request_new": "Request New Link",
+    "back_login": "← Back to Login"
   },
   "guider_profile": {
     "not_found": "Guider not found",

@@ -44,25 +44,26 @@ export default function GuiderProfile() {
       </div>
 
       <div className="container profile-container">
-        <div className="profile-layout">
+        <div className="profile-grid">
           {/* Left Panel */}
-          <div className="profile-left">
-            <div className="profile-card card">
-              <div className="profile-avatar-wrapper">
+          <div className="profile-info-card">
+            <div className="glass-card">
+              <div className="avatar-container">
                 <img
                   src={guider.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(guider.name)}&background=1a73e8&color=fff&size=300`}
                   alt={guider.name}
-                  className="profile-avatar"
+                  className="main-avatar"
                   onError={(e) => {
                     e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(guider.name)}&background=1a73e8&color=fff&size=300`;
                   }}
                 />
               </div>
-              <h2 className="profile-name">{guider.name}</h2>
+              <h2 className="display-name">{guider.name}</h2>
               {guider.category && (
-                <span className="badge badge-blue profile-category">{guider.category}</span>
+                <div className="category-pill">{guider.category}</div>
               )}
-              <p className="profile-field">🎯 {guider.field}</p>
+              <div className="category-pill" style={{marginTop: '-10px', background: '#fef3c7', color: '#92400e'}}>🎯 {guider.field}</div>
+
               {guider.designation && <p className="profile-designation">🏛️ {guider.designation}</p>}
               {guider.city && <p className="profile-city">📍 {guider.city}</p>}
               {guider.mentor_type && (
@@ -102,21 +103,21 @@ export default function GuiderProfile() {
           </div>
 
           {/* Right Panel */}
-          <div className="profile-right">
+          <div className="profile-content">
             {/* Academic Details */}
-            <div className="profile-section card">
-              <h3>{t('guider_profile.academic.title')}</h3>
-              <div className="academic-grid">
+            <div className="glass-card">
+              <h3 className="section-title">{t('guider_profile.academic.title')}</h3>
+              <div className="stats-row">
                 {guider.tenth_marks && (
-                  <div className="academic-item">
-                    <span className="academic-label">{t('guider_profile.academic.tenth')}</span>
-                    <span className="academic-value">{guider.tenth_marks}</span>
+                  <div className="stat-card">
+                    <span className="stat-label">{t('guider_profile.academic.tenth')}</span>
+                    <span className="stat-value">{guider.tenth_marks}</span>
                   </div>
                 )}
                 {guider.twelfth_marks && (
-                  <div className="academic-item">
-                    <span className="academic-label">{t('guider_profile.academic.twelfth')}</span>
-                    <span className="academic-value">{guider.twelfth_marks}</span>
+                  <div className="stat-card">
+                    <span className="stat-label">{t('guider_profile.academic.twelfth')}</span>
+                    <span className="stat-value">{guider.twelfth_marks}</span>
                   </div>
                 )}
               </div>
@@ -124,22 +125,19 @@ export default function GuiderProfile() {
 
             {/* Achievements */}
             {guider.achievements && (
-              <div className="profile-section card">
-                <h3>{t('guider_profile.achievements')}</h3>
-                <div className="achievements-list">
+              <div className="glass-card">
+                <h3 className="section-title">{t('guider_profile.achievements')}</h3>
+                <div className="pills-container">
                   {guider.achievements.split(',').map((ach, i) => (
-                    <div key={i} className="achievement-item">
-                      <span className="achievement-bullet">★</span>
-                      <span>{ach.trim()}</span>
-                    </div>
+                    <span key={i} className="achievement-pill">{ach.trim()}</span>
                   ))}
                 </div>
               </div>
             )}
 
             {/* Exam Tips */}
-            <div className="profile-section card inspiration-card">
-              <h3>{t('guider_profile.tips.title')}</h3>
+            <div className="glass-card highlight-section">
+              <h3 className="section-title">{t('guider_profile.tips.title')}</h3>
               <p>
                 {t('guider_profile.tips.desc', { name: guider.name, field: guider.field })}
                 {' '}{t('guider_profile.tips.desc_sub')}
@@ -151,11 +149,11 @@ export default function GuiderProfile() {
             </div>
 
             {/* Live Chat */}
-            <div className="profile-section card" style={{ marginTop: '20px' }}>
+            <div className="glass-card chat-section">
               {guider.user_id ? (
                 <ChatBox peerId={guider.user_id} peerName={guider.name} />
               ) : (
-                <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
+                <div className="chat-placeholder">
                   <p>{t('guider_profile.chat_unavailable')}</p>
                 </div>
               )}

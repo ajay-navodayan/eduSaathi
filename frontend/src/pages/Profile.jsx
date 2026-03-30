@@ -17,16 +17,27 @@ export default function Profile() {
     category: '', whatsapp: '', phone: '', mentor_type: 'mentor_only',
     class_level: '', school: '', bio: ''
   });
-  const [pwdForm, setPwdForm] = useState({ currentPassword: '', newPassword: '' });
+  const [pwdForm, setPwdForm] = useState({ newPassword: '', confirmPassword: '' });
   
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [pwdLoading, setPwdLoading] = useState(false);
   const [profileMsg, setProfileMsg] = useState('');
+  const [profileError, setProfileError] = useState('');
   const [pwdMsg, setPwdMsg] = useState('');
+  const [pwdError, setPwdError] = useState('');
 
   const handleProfileChange = (e) => setProfileForm({ ...profileForm, [e.target.name]: e.target.value });
   const handlePwdChange = (e) => setPwdForm({ ...pwdForm, [e.target.name]: e.target.value });
 
+
   const fetchProfile = async () => {
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
+    
     try {
+      console.log("Fetching profile for ID:", user.id);
       const res = await API.get(`/profile/me/${user.id}`);
       setProfileData(res.data);
       // Initialize form with existing data
@@ -52,34 +63,61 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    if (user?.id) fetchProfile();
+    // If user is clearly missing, stop loading
+    if (!user) {
+      const timer = setTimeout(() => setLoading(false), 2000);
+      return () => clearTimeout(timer);
+    }
+    
+    // Note: session user.id is UUID, profile merged ID is integer. 
+    // We allow both for the initial fetch call as backend should handle it.
+    fetchProfile();
   }, [user]);
+
 
   const submitProfile = async (e) => {
     e.preventDefault();
+    setProfileLoading(true);
+    setProfileMsg('');
+    setProfileError('');
     try {
       const res = await API.put('/profile/update', { userId: user.id, ...profileForm });
       setProfileMsg(res.data.message);
       fetchProfile(); // Refresh to show readonly view
     } catch (err) {
-      setProfileMsg(err.response?.data?.error || 'Failed to update profile');
+      setProfileError(err.response?.data?.error || 'Failed to update profile');
+    } finally {
+      setProfileLoading(false);
     }
   };
 
   const submitPwd = async (e) => {
     e.preventDefault();
     if (!pwdForm.newPassword) return;
+    if (pwdForm.newPassword !== pwdForm.confirmPassword) {
+      setPwdError(t('reset_password.error_match'));
+      return;
+    }
+    
+    setPwdLoading(true);
+    setPwdMsg('');
+    setPwdError('');
+    
     try {
       const { error } = await supabase.auth.updateUser({
         password: pwdForm.newPassword
       });
       if (error) throw error;
-      setPwdMsg('Password updated successfully!');
-      setPwdForm({ newPassword: '' });
+      setPwdMsg(t('reset_password.success'));
+      setPwdForm({ newPassword: '', confirmPassword: '' });
     } catch (err) {
-      setPwdMsg(err.message || 'Failed to change password');
+      setPwdError(err.message || 'Failed to change password');
+    } finally {
+      setPwdLoading(false);
     }
   };
+
+
 
   if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>{t('profile.loading')}</div>;
 
@@ -146,7 +184,8 @@ export default function Profile() {
                 {t('profile.edit_warning')}
               </div>
             )}
-            {profileMsg && <div style={{ padding: '10px', backgroundColor: 'var(--gray-100)', marginBottom: '1rem', borderRadius: '4px', border: '1px solid var(--border)' }}>{profileMsg}</div>}
+            {profileMsg && <div className="alert alert-success">{profileMsg}</div>}
+            {profileError && <div className="alert alert-error">{profileError}</div>}
             
             <form onSubmit={submitProfile} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
               {/* Photo upload — spans full width, centered */}
@@ -187,7 +226,21 @@ export default function Profile() {
               )}
               
               <div style={{ gridColumn: '1 / -1', marginTop: '10px' }}>
-                <button type="submit" style={{ padding: '12px 24px', backgroundColor: '#1a73e8', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>{t('profile.save_btn')}</button>
+                <button 
+                  type="submit" 
+                  disabled={profileLoading}
+                  style={{ 
+                    padding: '12px 24px', 
+                    backgroundColor: profileLoading ? '#99bbee' : '#1a73e8', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '6px', 
+                    cursor: profileLoading ? 'not-allowed' : 'pointer', 
+                    fontWeight: 'bold' 
+                  }}
+                >
+                  {profileLoading ? 'Saving...' : t('profile.save_btn')}
+                </button>
               </div>
             </form>
           </>
@@ -198,14 +251,32 @@ export default function Profile() {
         <h2>{t('profile.security.title')}</h2>
         <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>{t('profile.security.desc')}</p>
         
-        {pwdMsg && <div style={{ padding: '10px', backgroundColor: 'var(--gray-100)', marginBottom: '1rem', borderRadius: '4px', border: '1px solid var(--border)' }}>{pwdMsg}</div>}
+        {pwdMsg && <div className="alert alert-success">{pwdMsg}</div>}
+        {pwdError && <div className="alert alert-error">{pwdError}</div>}
         
         <form onSubmit={submitPwd} style={{ display: 'flex', flexDirection: 'column', gap: '15px', maxWidth: '400px' }}>
-          <input type="password" name="currentPassword" placeholder={t('profile.security.current_pwd')} value={pwdForm.currentPassword} onChange={handlePwdChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
           <input type="password" name="newPassword" placeholder={t('profile.security.new_pwd')} value={pwdForm.newPassword} onChange={handlePwdChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
-          <button type="submit" style={{ padding: '12px 24px', backgroundColor: '#34a853', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>{t('profile.security.change_btn')}</button>
+          <input type="password" name="confirmPassword" placeholder={t('profile.security.confirm_pwd')} value={pwdForm.confirmPassword} onChange={handlePwdChange} required style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} />
+          <button 
+            type="submit" 
+            disabled={pwdLoading}
+            style={{ 
+              padding: '12px 24px', 
+              backgroundColor: pwdLoading ? '#99ccaa' : '#34a853', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '6px', 
+              cursor: pwdLoading ? 'not-allowed' : 'pointer', 
+              fontWeight: 'bold',
+              transition: 'all 0.3s ease'
+            }}
+          >
+            {pwdLoading ? 'Changing...' : t('profile.security.change_btn')}
+          </button>
         </form>
       </div>
+
+
 
     </div>
   );

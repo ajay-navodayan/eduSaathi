@@ -2,25 +2,25 @@
   display: flex;
   height: calc(100vh - 70px);
   width: 100%;
-  border-top: 1px solid #ddd;
-  background-color: white;
+  border-top: 1px solid var(--border);
+  background-color: var(--bg-card);
   overflow: hidden;
 }
 
 .chat-sidebar {
   width: 350px;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  background-color: #fff;
+  background-color: var(--bg-card);
 }
 
 .chat-sidebar-header {
   padding: 16px;
-  background-color: #f0f2f5;
+  background-color: var(--gray-100);
   font-weight: 600;
-  color: #111b21;
-  border-bottom: 1px solid #ddd;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -35,24 +35,24 @@
   display: flex;
   align-items: center;
   padding: 12px 15px;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid var(--border);
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .contact-item:hover {
-  background-color: #f5f6f6;
+  background-color: var(--gray-50);
 }
 
 .contact-item.active {
-  background-color: #f0f2f5;
+  background-color: var(--gray-100);
 }
 
 .contact-avatar {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background-color: #dfe5e7;
+  background-color: var(--gray-200);
   margin-right: 15px;
   display: flex;
   align-items: center;
@@ -69,20 +69,20 @@
 
 .contact-name {
   font-weight: 500;
-  color: #111b21;
+  color: var(--text-primary);
   margin-bottom: 4px;
 }
 
 .contact-role {
   font-size: 0.8rem;
-  color: #667781;
+  color: var(--text-muted);
 }
 
 .chat-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #efeae2;
+  background-color: var(--gray-100);
   background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
   background-repeat: repeat;
   background-size: 400px;
@@ -91,10 +91,10 @@
 
 .chat-header {
   padding: 12px 20px;
-  background-color: #f0f2f5;
+  background-color: var(--gray-100);
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--border);
   z-index: 10;
 }
 
@@ -104,7 +104,23 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #667781;
+  color: var(--text-muted);
   text-align: center;
-  background-color: #f0f2f5;
+  background-color: var(--gray-100);
+}
+
+/* Dark mode: hide the WhatsApp-style wallpaper */
+html[data-theme='dark'] .chat-main {
+  background-image: none;
+  background-color: var(--bg-page);
+  opacity: 1;
+}
+
+html[data-theme='dark'] .chat-header {
+  background-color: var(--bg-card);
+  border-color: var(--border);
+}
+
+html[data-theme='dark'] .empty-chat {
+  background-color: var(--bg-page);
 }

@@ -3,28 +3,38 @@ const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcryptjs');
 
-// GET /me/:id (where :id is the Supabase UUID)
+// GET /me/:id (Supports both internal integer ID and Supabase UUID)
 router.get('/me/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const userRes = await pool.query('SELECT id, name, email, role, profile_edited FROM users WHERE id_auth = $1', [id]);
+    let userRes;
+    
+    // Check if ID is likely a UUID (Supabase ID) or an integer
+    if (isNaN(Number(id))) {
+      // It's a string, likely UUID
+      userRes = await pool.query('SELECT id, name, email, role, profile_edited FROM users WHERE id_auth = $1', [id]);
+    } else {
+      // It's an integer
+      userRes = await pool.query('SELECT id, name, email, role, profile_edited FROM users WHERE id = $1', [Number(id)]);
+    }
+
     if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     const user = userRes.rows[0];
 
     let profileData = {};
-    if (user.role === 'guider') {
-      const gRes = await pool.query('SELECT photo, field, designation, city, category, tenth_marks, tenth_board, twelfth_marks, twelfth_board, achievements, linkedin, whatsapp, phone, mentor_type FROM guiders WHERE email = $1', [user.email]);
-      if (gRes.rows.length > 0) profileData = gRes.rows[0];
-    } else if (user.role === 'tutor') {
-      const tRes = await pool.query('SELECT photo, field, designation, city, tenth_marks, tenth_board, twelfth_marks, twelfth_board, achievements, linkedin, whatsapp, phone FROM tutors WHERE email = $1', [user.email]);
-      if (tRes.rows.length > 0) profileData = tRes.rows[0];
+    if (user.role === 'guider' || user.role === 'tutor') {
+      const table = user.role === 'guider' ? 'guiders' : 'tutors';
+      const pRes = await pool.query(`SELECT * FROM ${table} WHERE email = $1`, [user.email]);
+      if (pRes.rows.length > 0) profileData = pRes.rows[0];
     }
+    
     res.json({ ...user, ...profileData });
   } catch (err) {
-    console.error(err);
+    console.error("Profile fetch error:", err);
     res.status(500).json({ error: 'Server error fetching profile data' });
   }
 });
+
 
 // Helper to check one-time edit rule
 router.put('/update', async (req, res) => {
@@ -130,33 +140,6 @@ router.put('/update', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error updating profile' });
-  }
-});
-
-router.put('/change-password', async (req, res) => {
-  const { userId, currentPassword, newPassword } = req.body;
-
-  if (!userId || !currentPassword || !newPassword) {
-    return res.status(400).json({ error: 'Missing fields' });
-  }
-
-  try {
-    const userRes = await pool.query('SELECT password FROM users WHERE id = $1', [userId]);
-    if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
-
-    const user = userRes.rows[0];
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ error: 'Incorrect current password' });
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, userId]);
-
-    res.json({ message: 'Password changed successfully' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error changing password' });
   }
 });
 

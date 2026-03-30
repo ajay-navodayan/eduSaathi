@@ -42,22 +42,23 @@ export default function TutorProfile() {
       </div>
 
       <div className="container profile-container">
-        <div className="profile-layout">
+        <div className="profile-grid">
           {/* Left Panel */}
-          <div className="profile-left">
-            <div className="profile-card card">
-              <div className="profile-avatar-wrapper">
+          <div className="profile-info-card">
+            <div className="glass-card">
+              <div className="avatar-container">
                 <img
                   src={tutor.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(tutor.name)}&background=1a73e8&color=fff&size=300`}
                   alt={tutor.name}
-                  className="profile-avatar"
+                  className="main-avatar"
                   onError={(e) => {
                     e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(tutor.name)}&background=1a73e8&color=fff&size=300`;
                   }}
                 />
               </div>
-              <h2 className="profile-name">{tutor.name}</h2>
-              <p className="profile-field">🎯 {tutor.field || tutor.subject}</p>
+              <h2 className="display-name">{tutor.name}</h2>
+              <div className="category-pill">🎯 {tutor.field || tutor.subject}</div>
+
               {tutor.designation && <p className="profile-designation">🏛️ {tutor.designation}</p>}
               {tutor.city && <p className="profile-city">📍 {tutor.city}</p>}
 
@@ -104,21 +105,21 @@ export default function TutorProfile() {
           </div>
 
           {/* Right Panel */}
-          <div className="profile-right">
+          <div className="profile-content">
             {/* Academic Details */}
-            <div className="profile-section card">
-              <h3>📚 Academic Details</h3>
-              <div className="academic-grid">
+            <div className="glass-card">
+              <h3 className="section-title">📚 Academic Details</h3>
+              <div className="stats-row">
                 {tutor.tenth_marks && (
-                  <div className="academic-item">
-                    <span className="academic-label">10th Marks {tutor.tenth_board && `(${tutor.tenth_board})`}</span>
-                    <span className="academic-value">{tutor.tenth_marks}</span>
+                  <div className="stat-card">
+                    <span className="stat-label">10th Marks {tutor.tenth_board && `(${tutor.tenth_board})`}</span>
+                    <span className="stat-value">{tutor.tenth_marks}</span>
                   </div>
                 )}
                 {tutor.twelfth_marks && (
-                  <div className="academic-item">
-                    <span className="academic-label">12th Marks {tutor.twelfth_board && `(${tutor.twelfth_board})`}</span>
-                    <span className="academic-value">{tutor.twelfth_marks}</span>
+                  <div className="stat-card">
+                    <span className="stat-label">12th Marks {tutor.twelfth_board && `(${tutor.twelfth_board})`}</span>
+                    <span className="stat-value">{tutor.twelfth_marks}</span>
                   </div>
                 )}
               </div>
@@ -126,22 +127,19 @@ export default function TutorProfile() {
 
             {/* Achievements */}
             {tutor.achievements && (
-              <div className="profile-section card">
-                <h3>🏆 Achievements</h3>
-                <div className="achievements-list">
+              <div className="glass-card">
+                <h3 className="section-title">🏆 Achievements</h3>
+                <div className="pills-container">
                   {tutor.achievements.split(',').map((ach, i) => (
-                    <div key={i} className="achievement-item">
-                      <span className="achievement-bullet">★</span>
-                      <span>{ach.trim()}</span>
-                    </div>
+                    <span key={i} className="achievement-pill">{ach.trim()}</span>
                   ))}
                 </div>
               </div>
             )}
 
             {/* Exam Tips */}
-            <div className="profile-section card inspiration-card">
-              <h3>💡 For Students</h3>
+            <div className="glass-card highlight-section">
+              <h3 className="section-title">💡 For Students</h3>
               <p>
                 Reach out to <strong>{tutor.name}</strong> for coaching on {tutor.field || tutor.subject}.
                 They have the experience and knowledge to help you excel in your studies.
@@ -153,11 +151,11 @@ export default function TutorProfile() {
             </div>
 
             {/* Live Chat */}
-            <div className="profile-section card" style={{ marginTop: '20px' }}>
+            <div className="glass-card chat-section">
               {tutor.user_id ? (
                 <ChatBox peerId={tutor.user_id} peerName={tutor.name} />
               ) : (
-                <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
+                <div className="chat-placeholder">
                   <p>💬 Chat is unavailable because this Tutor hasn't registered a user account yet.</p>
                 </div>
               )}

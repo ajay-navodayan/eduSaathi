@@ -98,6 +98,9 @@ export default function Navbar() {
               {user.role === 'guider' && (
                 <NavLink to="/guider-dashboard" className="btn btn-sm btn-outline" onClick={() => setMenuOpen(false)}>{t('nav.chat_dashboard')}</NavLink>
               )}
+              {user.role === 'tutor' && (
+                <NavLink to="/tutor-dashboard" className="btn btn-sm btn-outline" onClick={() => setMenuOpen(false)}>{t('nav.chat_dashboard')}</NavLink>
+              )}
               <button className="btn btn-sm btn-accent" onClick={handleLogout}>{t('nav.logout')}</button>
             </div>
           ) : (

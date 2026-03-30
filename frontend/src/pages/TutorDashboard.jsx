@@ -5,7 +5,7 @@ import ChatBox from '../components/ChatBox';
 import API from '../api';
 import './ChatApp.css';
 
-export default function GuiderDashboard() {
+export default function TutorDashboard() {
   const { user } = useAuth();
   const myMessagingId = user?.id; // Use local database Integer ID
   const { t } = useTranslation();
@@ -16,7 +16,7 @@ export default function GuiderDashboard() {
 
   useEffect(() => {
     if (myMessagingId) {
-      // Use the UUID/id_auth consistently for all messaging features
+      // Use the integer ID consistently for all messaging features
       API.get(`/messages/conversations/${myMessagingId}`)
         .then(res => setContacts(res.data))
         .catch(err => console.error("Failed to load contacts", err));

@@ -39,16 +39,27 @@ export function AuthProvider({ children }) {
     });
 
     // 2. Listen to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth Event:", event, !!session);
       setSession(session);
+      
       if (session) {
-        setLoading(true); // Enter loading state while fetching profile
-        const profile = await fetchProfile(session.user.id);
-        setUser({ ...session.user, ...profile });
+        // Refresh profile on sign in or metadata update
+        if (!user || event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+          setLoading(true);
+          try {
+            const profile = await fetchProfile(session.user.id);
+            setUser({ ...session.user, ...profile });
+          } catch (err) {
+            console.error("Auth profile fetch error:", err);
+          } finally {
+            setLoading(false);
+          }
+        }
       } else {
         setUser(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();

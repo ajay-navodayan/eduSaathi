@@ -11,7 +11,8 @@ export default function ChatBox({ peerId }) {
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef(null);
 
-  const myMessagingId = user?.id_auth || user?.id; // Use UUID if available, fallback to legacy ID
+  const myMessagingId = user?.id; // Local DB integer ID (messages table uses INTEGER PKs)
+
 
   useEffect(() => {
     if (!myMessagingId || !peerId) return;
