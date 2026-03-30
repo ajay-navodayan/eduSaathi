@@ -2,13 +2,34 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// GET /api/messages/:userId
-// Fetch all messages for the authenticated user, potentially filtered by a specific peer.
-// In a real app, this should just return the user's specific conversation.
-// Let's implement getting messages between the logged-in user and another user.
+// GET /api/messages/conversations/:userId
+// IMPORTANT: Must be declared BEFORE GET /:peerId to prevent Express routing conflicts
+router.get('/conversations/:userId', async (req, res) => {
+  const { userId } = req.params;
+  try {
+    // Use UNION instead of CASE WHEN to avoid pg driver syntax issues
+    const query = `
+      SELECT DISTINCT u.id as peer_id, u.name, u.role
+      FROM messages m
+      JOIN users u ON u.id = m.receiver_id
+      WHERE m.sender_id = $1
+      UNION
+      SELECT DISTINCT u.id as peer_id, u.name, u.role
+      FROM messages m
+      JOIN users u ON u.id = m.sender_id
+      WHERE m.receiver_id = $1
+    `;
+    const result = await pool.query(query, [Number(userId)]);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error fetching conversations' });
+  }
+});
+
+// GET /api/messages/:peerId?userId=xxx
+// Fetch all messages between logged-in user and a specific peer
 router.get('/:peerId', async (req, res) => {
-  // To protect this, we should use the auth middleware, but we pass auth manually for now, or just send userId as query param.
-  // We'll use query params for simplicity: ?userId=xxx
   const { peerId } = req.params;
   const { userId } = req.query;
 
@@ -22,7 +43,7 @@ router.get('/:peerId', async (req, res) => {
        WHERE (sender_id = $1 AND receiver_id = $2) 
           OR (sender_id = $2 AND receiver_id = $1)
        ORDER BY created_at ASC`,
-      [userId, peerId]
+      [Number(userId), Number(peerId)]
     );
     res.json(result.rows);
   } catch (err) {
@@ -42,33 +63,12 @@ router.post('/', async (req, res) => {
   try {
     const result = await pool.query(
       'INSERT INTO messages (sender_id, receiver_id, content) VALUES ($1, $2, $3) RETURNING *',
-      [sender_id, receiver_id, content]
+      [Number(sender_id), Number(receiver_id), content]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error saving message' });
-  }
-});
-
-// GET /api/messages/conversations/:userId
-// Fetch distinct contacts a user has messaged
-router.get('/conversations/:userId', async (req, res) => {
-  const { userId } = req.params;
-  try {
-    const query = `
-      SELECT DISTINCT
-        CASE WHEN m.sender_id = $1 THEN m.receiver_id ELSE m.sender_id END as peer_id,
-        u.name, u.role
-      FROM messages m
-      LEFT JOIN users u ON u.id = CASE WHEN m.sender_id = $1 THEN m.receiver_id ELSE m.sender_id END
-      WHERE m.sender_id = $1 OR m.receiver_id = $1
-    `;
-    const result = await pool.query(query, [userId]);
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error fetching conversations' });
   }
 });
 

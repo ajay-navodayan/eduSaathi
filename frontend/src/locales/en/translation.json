@@ -1,0 +1,479 @@
+{
+  "nav": {
+    "login": "Login",
+    "register": "Register",
+    "dashboard": "Dashboard",
+    "home": "Home",
+    "guiders": "Guiders",
+    "tutors": "Tutors",
+    "resources": "Resources",
+    "notifications": "Notifications",
+    "admin": "Admin",
+    "chat_dashboard": "Chat Dashboard",
+    "logout": "Logout",
+    "dark_mode": "Dark",
+    "light_mode": "Light",
+    "updates": "Updates",
+    "view_all_notifs": "View All Notifications"
+  },
+  "home": {
+    "hero": {
+      "title_pt1": "Learn, Compete, Succeed with",
+      "title_pt2": "Experts",
+      "subtitle": "Learn directly from achievers in Engineering, MBBS, Defence, and beyond personalized for you. Begin now.",
+      "find_mentor": "Find My Mentor",
+      "resources": "Resources for Me",
+      "stats": {
+        "students": "Students",
+        "guiders": "Guiders",
+        "exams": "Exams"
+      }
+    },
+    "search": {
+      "title": "🔍 Meet Your Mentor",
+      "placeholder": "Search by name, field, or city...",
+      "all_categories": "All Categories",
+      "search_btn": "Search"
+    },
+    "notifications": {
+      "title": "📢 Latest Notifications",
+      "subtitle": "Stay updated with the latest exam news and opportunities",
+      "view_all": "View All & Search →",
+      "empty": "No {{tab}} updates right now",
+      "new": "New",
+      "link": "🔗 Link"
+    },
+    "featured": {
+      "title": "⭐ Featured Guiders",
+      "subtitle": "Connect with successful alumni who cleared top exams",
+      "view_all": "View All Guiders →",
+      "empty_title": "No guiders yet",
+      "empty_subtitle": "Check back soon!"
+    },
+    "cta": {
+      "title": "Ready to Start Your Journey?",
+      "subtitle": "One platform, endless opportunities start your journey with SathSikho",
+      "register": "Register Now",
+      "browse": "Browse Guiders"
+    }
+  },
+  "footer": {
+    "tagline": "Learn Together, Rise Together",
+    "contact_support": "Contact & Support",
+    "admin_role": "Platform Admin",
+    "rights_reserved": "© {{year}} SathSikho. All rights reserved.",
+    "made_with_love": "Made with ❤️ for village students of India"
+  },
+  "login": {
+    "hero": {
+      "title": "SathSikho",
+      "subtitle": "Your gateway to mentors & success",
+      "feature1": "✅ Free Mentor Connect",
+      "feature2": "✅ Exam Resources",
+      "feature3": "✅ Local Tutors"
+    },
+    "form": {
+      "title": "Welcome Back!",
+      "subtitle": "Login to your SathSikho account",
+      "email": "Email Address",
+      "password": "Password",
+      "btn_loading": "Logging in...",
+      "btn_default": "Login →",
+      "or": "or",
+      "no_account": "Don't have an account?",
+      "register_link": "Register here",
+      "error_default": "Login failed. Please try again."
+    }
+  },
+  "register": {
+    "hero": {
+      "title": "Join SathSikho",
+      "subtitle": "Start your success journey today",
+      "feature1": "🎓 Connect with Mentors",
+      "feature2": "📚 Access Free Resources",
+      "feature3": "🏫 Find Local Tutors"
+    },
+    "form": {
+      "title": "Create Account",
+      "subtitle": "Join thousands of students on SathSikho",
+      "name": "Full Name",
+      "name_ph": "Your full name",
+      "email": "Email Address",
+      "email_ph": "you@example.com",
+      "password": "Password",
+      "password_ph": "At least 6 characters",
+      "confirm": "Confirm Password",
+      "confirm_ph": "Repeat password",
+      "register_as": "I am registering as a:",
+      "role_student": "Student",
+      "role_guider": "Guider/Mentor",
+      "continue_btn": "Continue to Mentor Form →",
+      "register_btn": "Register Free →",
+      "register_loading": "Creating Account...",
+      "mentor_title": "Mentor Profile Details",
+      "mentor_subtitle": "Add your professional details exactly as they should appear publicly.",
+      "field_ph": "Field (e.g. UPSC, JEE)",
+      "designation_ph": "Designation",
+      "city_ph": "Current City",
+      "category_ph": "Category (e.g. UPSC/NEET)",
+      "tenth_marks_ph": "10th Percentage",
+      "tenth_board_ph": "10th Board",
+      "twelfth_marks_ph": "12th Percentage",
+      "twelfth_board_ph": "12th Board",
+      "linkedin_ph": "LinkedIn URL",
+      "phone_ph": "Phone Number",
+      "whatsapp_ph": "WhatsApp Number",
+      "achievements_ph": "Achievements (comma separated)",
+      "mentor_type": "Mentor Type",
+      "mentor_only": "Mentor Only",
+      "tutor_mentor": "Tutor + Mentor",
+      "back_btn": "← Back",
+      "submit_mentor_btn": "Submit Mentor Registration →",
+      "submit_mentor_loading": "Submitting Mentor Profile...",
+      "already_have_account": "Already have an account?",
+      "login_link": "Login here",
+      "error_basic_details": "Please fill all basic details before continuing.",
+      "error_passwords_match": "Passwords do not match",
+      "error_password_length": "Password must be at least 6 characters",
+      "success_mentor": "Mentor profile submitted! Redirecting to login...",
+      "success_student": "Account created! Redirecting to login...",
+      "error_default": "Registration failed. Please try again."
+    }
+  },
+  "guiders": {
+    "hero": {
+      "title": "🎓 Our Guiders",
+      "subtitle": "Find mentors who cracked the top exams and can guide you to success"
+    },
+    "search": {
+      "placeholder": "Search guiders by name, city, or field...",
+      "button": "Search"
+    },
+    "results": {
+      "loading": "...",
+      "found_plural": "{{count}} guiders found",
+      "found_singular": "{{count}} guider found"
+    },
+    "empty": {
+      "title": "No guiders found",
+      "subtitle": "Try changing your search or category filter"
+    },
+    "categories": {
+      "All": "All",
+      "Class 10": "Class 10",
+      "Class 12": "Class 12",
+      "NCERT": "NCERT",
+      "JEE": "JEE",
+      "NEET": "NEET",
+      "UPSC": "UPSC",
+      "SSC": "SSC",
+      "Railway": "Railway",
+      "Navodaya": "Navodaya",
+      "Netarhat": "Netarhat",
+      "Sainik School": "Sainik School",
+      "Army": "Army",
+      "Doctor": "Doctor",
+      "Engineer": "Engineer",
+      "Defence": "Defence",
+      "Post Office": "Post Office",
+      "CA": "CA",
+      "Bsc nursing": "B.Sc Nursing"
+    },
+    "card": {
+      "view_profile": "View Profile →"
+    }
+  },
+  "tutors": {
+    "hero": {
+      "title": "🏫 Local Tutors",
+      "subtitle": "Find Right Tutors Near You."
+    },
+    "card": {
+      "experience": "{{exp}} experience",
+      "contact": "📞 Contact",
+      "whatsapp": "💬 WhatsApp"
+    },
+    "empty": {
+      "title": "No tutors listed yet",
+      "subtitle": "Contact us to get listed as a tutor on SathSikho"
+    }
+  },
+  "notifications": {
+    "hero": {
+      "title": "📢 Notifications",
+      "subtitle": "Be the first to know about exams and opportunities"
+    },
+    "tabs": {
+      "pinned": "📌 Pinned",
+      "govt": "🏛️ Govt",
+      "jee": "🎯 JEE",
+      "neet": "🩺 NEET",
+      "railway": "🚂 Railway",
+      "ssc": "📝 SSC",
+      "navodaya": "🏫 Navodaya",
+      "netarhat": "🏔️ Netarhat",
+      "scholarship": "🎓 Scholarship"
+    },
+    "meta": {
+      "updates": "{{tab}} Updates",
+      "auto_updated": "Auto-updated:"
+    },
+    "card": {
+      "handpicked": "★ Handpicked",
+      "official_site": "Official Site →"
+    },
+    "empty": {
+      "title": "No {{tab}} notifications yet",
+      "subtitle": "Check back later or explore other categories."
+    }
+  },
+  "resources": {
+    "hero": {
+      "title": "📚 Study Resources",
+      "subtitle": "All your study material, free in one place."
+    },
+    "card": {
+      "download": "📥 Download"
+    },
+    "empty": {
+      "title": "No resources in this category",
+      "subtitle": "Check back soon or select another category"
+    },
+    "ncert": {
+      "class_title": "Class {{class}} Textbooks",
+      "subject": "Subject",
+      "english_medium": "English Medium",
+      "hindi_medium": "Hindi Medium"
+    },
+    "filters": {
+      "search_placeholder": "Search books by name or description...",
+      "all_categories": "All Categories",
+      "all_classes": "All Classes",
+      "select_class": "Select Class",
+      "select_category": "Select Category"
+    }
+  },
+  "chat": {
+    "title": "Chats",
+    "search": "Search or start new chat by ID...",
+    "no_chats": "No recent chats found.",
+    "new_user": "New User",
+    "web_connect": "EduSaathi Web Connect",
+    "subtitle": "Send and receive messages without keeping your phone online.",
+    "select_chat": "Select a chat from the left menu to start messaging."
+  },
+  "profile": {
+    "loading": "Loading profile...",
+    "title": "Account Settings",
+    "user_profile": "User Profile",
+    "user_desc": "View and manage your personal demographics.",
+    "secured": "Profile Secured ✅",
+    "locked_badge": "Locked (Read-Only)",
+    "name_label": "Name:",
+    "email_label": "Email:",
+    "role_label": "Role:",
+    "field_label": "Field:",
+    "designation_label": "Designation:",
+    "location_label": "Location:",
+    "category_label": "Category:",
+    "mentor_type_label": "Mentor Type:",
+    "type_tutor_mentor": "Tutor + Mentor",
+    "type_mentor_only": "Mentor Only",
+    "phone_label": "Phone:",
+    "whatsapp_label": "WhatsApp:",
+    "locked_notice": "* To change any of your locked demographic data, please contact the Administration.",
+    "edit_warning": "Notice: You can only edit your profile details once. Please make sure the data is accurate before saving.",
+    "placeholders": {
+      "name": "Name",
+      "field": "Field (e.g. UPSC)",
+      "designation": "Designation",
+      "city": "City",
+      "category": "Category",
+      "whatsapp": "WhatsApp Number",
+      "phone": "Phone Number"
+    },
+    "save_btn": "Save Profile Details Permanently",
+    "security": {
+      "title": "Security Settings",
+      "desc": "Update your password to keep your account secure.",
+      "current_pwd": "Current Password",
+      "new_pwd": "New Password",
+      "confirm_pwd": "Confirm New Password",
+      "change_btn": "Change Password"
+    }
+  },
+  "reset_password": {
+    "title": "Set New Password",
+    "subtitle": "Enter your new password below.",
+    "new_pwd": "New Password",
+    "confirm_pwd": "Confirm New Password",
+    "update_btn": "Update Password",
+    "updating_btn": "Updating...",
+    "success": "Password updated successfully! Redirecting to login...",
+    "error_length": "Password must be at least 6 characters.",
+    "error_match": "Passwords do not match.",
+    "verifying": "Verifying reset link...",
+    "invalid_title": "Invalid or Expired Link",
+    "invalid_subtitle": "This password reset link is invalid or has expired. Please request a new one.",
+    "request_new": "Request New Link",
+    "back_login": "← Back to Login"
+  },
+  "guider_profile": {
+    "not_found": "Guider not found",
+    "back": "← Back to Guiders",
+    "title": "Guider Profile",
+    "mentor_type": {
+      "tutor_mentor": "Tutor + Mentor",
+      "mentor_only": "Mentor Only"
+    },
+    "contact": {
+      "whatsapp": "💬 WhatsApp",
+      "email": "✉️ Email",
+      "call": "📞 Call"
+    },
+    "academic": {
+      "title": "📚 Academic Details",
+      "tenth": "10th Marks",
+      "twelfth": "12th Marks"
+    },
+    "achievements": "🏆 Achievements",
+    "tips": {
+      "title": "💡 For Students",
+      "desc": "Reach out to {{name}} for guidance on {{field}}.",
+      "desc_sub": "They have first-hand experience and can help you plan your preparation strategy.",
+      "note": "Contact them via WhatsApp or Email for the fastest response."
+    },
+    "chat_unavailable": "💬 Chat is unavailable because this Guider hasn't registered a user account yet."
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "welcome": "Welcome, Admin {{name}}!",
+    "tabs": {
+      "pending": "Pending Approvals",
+      "users": "Manage Users",
+      "tutor": "Add Tutor",
+      "ai": "AI Notifications",
+      "resources": "Study Materials",
+      "broadcast": "Broadcast News"
+    },
+    "pending": {
+      "title": "Pending Approvals",
+      "loading": "Loading...",
+      "empty": "No users waiting for approval.",
+      "view_profile": "View Full Profile",
+      "approve": "Approve",
+      "reject": "Reject",
+      "field": "Field:",
+      "designation": "Designation:",
+      "city": "City:",
+      "category": "Category:",
+      "mentor_type": "Mentor Type:",
+      "phone": "Phone:",
+      "whatsapp": "WhatsApp:",
+      "linkedin": "LinkedIn:",
+      "tenth_marks": "10th %:",
+      "tenth_board": "10th Board:",
+      "twelfth_marks": "12th %:",
+      "twelfth_board": "12th Board:",
+      "achievements": "Achievements:",
+      "profile_review": "Pending Profile Review",
+      "rejection_reason": "Rejection Reason (if rejecting)",
+      "rejection_placeholder": "Write clear reason so user can correct and reapply.",
+      "close": "Close",
+      "approve_user": "Approve User",
+      "reject_user": "Reject User"
+    },
+    "users": {
+      "title": "Manage All Users & Detailed Profiles",
+      "force_edit": "Force Edit User Profile",
+      "full_name": "Full Name",
+      "photo": "Profile Photo",
+      "unlock_profile": "Unlock profile to let user edit it again",
+      "force_update": "Force Update Profile",
+      "cancel": "Cancel",
+      "table": {
+        "user": "User",
+        "role": "Role",
+        "field_city": "Field/City",
+        "contact_info": "Contact Info",
+        "lock": "Lock",
+        "action": "Action",
+        "locked": "Locked",
+        "open": "Open",
+        "edit": "Edit"
+      }
+    },
+    "tutor": {
+      "title": "Add New Tutor",
+      "subtitle": "Fill in the professional details to create a tutor profile and guest user account.",
+      "email": "Email Address",
+      "subject": "Subject/Field",
+      "create": "Create tutor Profile"
+    },
+    "ai": {
+      "title": "Manage AI Notification Engine",
+      "subtitle": "Trigger Google Gemini to fetch the latest notifications for specific exam categories immediately.",
+      "review_title": "Review Recent AI Notifications",
+      "review_desc": "If an AI-generated notification is unusual, inaccurate, or outdated, you can delete it permanently from here.",
+      "table": {
+        "category": "Exam Category",
+        "timestamp": "Last Fetched Timestamp",
+        "action": "Manual Action",
+        "title": "Title",
+        "date": "Date"
+      },
+      "never": "Never",
+      "syncing": "Syncing...",
+      "force_sync": "Force Sync Gemini Now",
+      "empty": "No AI categories loaded. Wait for the server cron or check API key.",
+      "no_recent": "No recent AI notifications found in database."
+    },
+    "broadcast": {
+      "title": "Broadcast Manual Notification",
+      "subtitle": "Manually create important announcements that stay 'Pinned' at the top of the Notifications page for all users.",
+      "form_title": "Notification Title",
+      "form_desc": "Announcement Description",
+      "form_link": "Official Link (Optional)",
+      "btn_save": "Broadcast Now 🚀",
+      "active_title": "Active Manual Broadcasts",
+      "table": {
+        "title": "Title",
+        "date": "Created Date",
+        "link": "Link",
+        "action": "Action"
+      },
+      "delete_confirm": "Are you sure you want to delete this broadcast? It will be removed for all users."
+    },
+    "resources": {
+      "title": "Upload Study Materials",
+      "subtitle": "Provide Direct Drive links to syllabus, past papers, or notes for students to download on the Resources page.",
+      "material_title": "Material Title",
+      "category": "Category",
+      "drive_link": "Direct Drive Link",
+      "description": "Description (Optional)",
+      "save": "Save Resource ✅",
+      "active_materials": "Active Study Materials",
+      "table": {
+        "title": "Title",
+        "category": "Category",
+        "link": "Link",
+        "action": "Action",
+        "class": "Class",
+        "medium": "Medium"
+      },
+      "class_level": "Class Level (e.g. 10, 12)",
+      "medium_label": "Medium",
+      "medium_hi": "Hindi",
+      "medium_en": "English",
+      "bulk_mode": "Bulk Mode",
+      "bulk_title": "Bulk Sheet Upload",
+      "bulk_mode_manual": "Manual Bulk Entry (Text)",
+      "bulk_success": "Resources uploaded successfully!",
+      "bulk_placeholder": "Book Title, Link (One pair per line)\nExample:\nPhysics Ch 1, https://drive.google.com/...\nChemistry Ch 1, https://drive.google.com/...",
+      "bulk_count": "{{count}} books detected",
+      "view_file": "View File 🔗",
+      "delete": "Delete",
+      "empty": "No resources explicitly uploaded yet."
+    }
+  }
+}

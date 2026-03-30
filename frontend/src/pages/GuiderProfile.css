@@ -164,6 +164,73 @@
   background: #0f172a;
 }
 
+/* Contact Buttons (Profile Pages) */
+.contact-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+
+.contact-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.contact-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.contact-btn.whatsapp-btn {
+  background: #25d366;
+  color: white;
+}
+
+.contact-btn.whatsapp-btn:hover {
+  background: #16a34a;
+  color: white;
+}
+
+.contact-btn.email-btn {
+  background: #1e293b;
+  color: white;
+}
+
+.contact-btn.email-btn:hover {
+  background: #0f172a;
+  color: white;
+}
+
+.contact-btn.phone-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+}
+
+.contact-btn.phone-btn:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  color: white;
+}
+
+.contact-btn.linkedin-btn {
+  background: linear-gradient(135deg, #0077b5, #005a8c);
+  color: white;
+}
+
+.contact-btn.linkedin-btn:hover {
+  background: linear-gradient(135deg, #005a8c, #004a75);
+  color: white;
+}
+
 /* Content Area Styling */
 .profile-content {
   display: flex;
@@ -284,4 +351,103 @@
   .stats-row {
     grid-template-columns: 1fr;
   }
+}
+
+/* ---- Dark Mode Support ---- */
+html[data-theme='dark'] .profile-page {
+  background: var(--bg-page);
+}
+
+html[data-theme='dark'] .glass-card {
+  background: rgba(20, 29, 49, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme='dark'] .display-name {
+  color: var(--text-primary);
+}
+
+html[data-theme='dark'] .category-pill {
+  background: rgba(26, 115, 232, 0.15);
+  color: #7db4f5;
+}
+
+html[data-theme='dark'] .meta-item {
+  color: var(--text-secondary);
+}
+
+html[data-theme='dark'] .section-title {
+  color: var(--text-primary);
+}
+
+html[data-theme='dark'] .stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme='dark'] .stat-label {
+  color: var(--text-muted);
+}
+
+html[data-theme='dark'] .stat-value {
+  color: var(--text-primary);
+}
+
+html[data-theme='dark'] .achievement-pill {
+  background: rgba(254, 243, 199, 0.1);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.2);
+}
+
+html[data-theme='dark'] .highlight-section {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(20, 29, 49, 0.8) 100%);
+}
+
+html[data-theme='dark'] .highlight-section p {
+  color: var(--text-secondary);
+}
+
+html[data-theme='dark'] .chat-wrapper {
+  background: var(--bg-card);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme='dark'] .chat-placeholder {
+  color: var(--text-muted);
+}
+
+html[data-theme='dark'] .action-btn.wa-btn {
+  background: #16a34a;
+}
+
+html[data-theme='dark'] .action-btn.email-btn {
+  background: #334155;
+}
+
+html[data-theme='dark'] .profile-designation,
+html[data-theme='dark'] .profile-city {
+  color: var(--text-secondary);
+}
+
+html[data-theme='dark'] .contact-btn {
+  color: white;
+}
+
+html[data-theme='dark'] .contact-btn.whatsapp-btn {
+  background: #16a34a;
+}
+
+html[data-theme='dark'] .contact-btn.email-btn {
+  background: #334155;
+}
+
+html[data-theme='dark'] .contact-btn.phone-btn {
+  background: #2563eb;
+  color: white;
+}
+
+html[data-theme='dark'] .contact-btn.linkedin-btn {
+  background: #1d4ed8;
+  color: white;
 }

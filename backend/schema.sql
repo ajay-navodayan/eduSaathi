@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
     password TEXT NOT NULL,
     role TEXT DEFAULT 'student',
     status TEXT DEFAULT 'approved',
+    rejection_reason TEXT,
     profile_edited BOOLEAN DEFAULT false,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -34,6 +35,7 @@ CREATE TABLE IF NOT EXISTS guiders (
     whatsapp TEXT,
     email TEXT UNIQUE,
     phone TEXT,
+    mentor_type TEXT DEFAULT 'mentor_only',
     contact TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

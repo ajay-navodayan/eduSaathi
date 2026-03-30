@@ -14,8 +14,11 @@ import TutorProfile from './pages/TutorProfile';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import GuiderDashboard from './pages/GuiderDashboard';
+import TutorDashboard from './pages/TutorDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Profile from './pages/Profile';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -32,6 +35,8 @@ function App() {
               <Route path="/tutors" element={<Tutors />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               
               <Route element={<ProtectedRoute />}>
                 <Route path="/profile" element={<Profile />} />
@@ -39,6 +44,7 @@ function App() {
                 <Route path="/tutors/:id" element={<TutorProfile />} />
                 <Route path="/resources" element={<Resources />} />
                 <Route path="/guider-dashboard" element={<GuiderDashboard />} />
+                <Route path="/tutor-dashboard" element={<TutorDashboard />} />
                 <Route path="/admin-dashboard" element={<AdminDashboard />} />
               </Route>
             </Routes>

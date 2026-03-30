@@ -2,59 +2,113 @@
   padding: 2rem 1.5rem 4rem;
 }
 
-.resources-categories {
+.resources-filter-box {
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-  margin-bottom: 2.5rem;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
 }
 
-.resource-cat-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.6rem 1.25rem;
-  border-radius: var(--radius-full);
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-400);
+  font-size: 1.2rem;
+}
+
+.resource-search-input {
+  width: 100%;
+  padding: 0.8rem 1rem 0.8rem 3rem;
+  border-radius: var(--radius-md);
   border: 2px solid var(--border);
-  background: white;
-  color: var(--gray-600);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 1rem;
   transition: var(--transition-fast);
   font-family: var(--font-body);
 }
 
-.resource-cat-btn:hover {
+.resource-search-input:focus {
+  outline: none;
   border-color: var(--primary);
-  color: var(--primary);
-  transform: translateY(-2px);
+  box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1);
 }
 
-.resource-cat-btn.active {
-  background: var(--primary);
+.filters-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.resource-select {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.resource-select:focus {
+  outline: none;
   border-color: var(--primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(26,115,232,0.3);
+}
+
+@media (max-width: 600px) {
+  .filters-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 .resources-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .resource-card {
   display: flex;
   flex-direction: column;
-  padding: 0;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
   overflow: hidden;
+  transition: var(--transition);
 }
 
 .resource-icon {
   font-size: 2.5rem;
-  background: linear-gradient(135deg, var(--blue-50), var(--orange-50));
+  background: linear-gradient(135deg, var(--blue-50), var(--gray-100));
   padding: 1.5rem;
   display: flex;
   align-items: center;
@@ -65,6 +119,7 @@
 .resource-body {
   padding: 1.25rem;
   flex: 1;
+  text-align: center;
 }
 
 .resource-cat-badge {
@@ -85,6 +140,17 @@
   line-height: 1.6;
 }
 
+.resource-class-tag {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: rgba(26, 115, 232, 0.1);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-sm);
+}
+
 .resource-footer {
   padding: 1rem 1.25rem;
   border-top: 1px solid var(--border);
@@ -99,4 +165,163 @@
   .resources-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* \ud83d\udcb1 NCERT Table Styles */
+.ncert-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  margin-top: 1rem;
+}
+
+.ncert-class-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  animation: fadeInUp 0.5s ease both;
+}
+
+.ncert-class-title {
+  background: linear-gradient(135deg, var(--blue-600), var(--blue-800));
+  color: white;
+  margin: 0;
+  padding: 1.25rem 2rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ncert-class-title::before {
+  content: '\ud83d\udcd6';
+  font-size: 1.5rem;
+}
+
+.ncert-table-wrapper {
+  overflow-x: auto;
+  padding: 1.5rem;
+}
+
+.ncert-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: var(--font-body);
+}
+
+.ncert-table th {
+  padding: 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border);
+}
+
+.ncert-table td {
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.ncert-table tr:last-child td {
+  border-bottom: none;
+}
+
+.subject-name {
+  font-weight: 700;
+  color: var(--gray-800);
+  font-size: 1rem;
+}
+
+.ncert-down-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-size: 0.825rem;
+  font-weight: 700;
+  transition: var(--transition-fast);
+  width: 140px;
+  justify-content: center;
+}
+
+.ncert-down-btn.eng {
+  background: rgba(26, 115, 232, 0.1);
+  color: var(--primary);
+  border: 1.5px solid rgba(26, 115, 232, 0.2);
+}
+
+.ncert-down-btn.hi {
+  background: rgba(255, 109, 0, 0.1);
+  color: var(--accent);
+  border: 1.5px solid rgba(255, 109, 0, 0.2);
+}
+
+.ncert-down-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.ncert-down-btn.eng:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.ncert-down-btn.hi:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.not-available {
+  color: var(--gray-400);
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+.down-icon {
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .ncert-table-wrapper {
+    padding: 0.75rem;
+  }
+  
+  .ncert-table td, .ncert-table th {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .ncert-down-btn {
+    width: auto;
+    padding: 0.5rem;
+  }
+}
+
+.section-heading {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--gray-800);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--blue-100);
+}
+
+.section-heading span {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
