@@ -42,6 +42,10 @@ export default function AdminDashboard() {
   const [manualNotifForm, setManualNotifForm] = useState({ title: '', description: '', link: '' });
   const [manualNotifMsg, setManualNotifMsg] = useState('');
 
+  const [passwordForm, setPasswordForm] = useState({ oldPassword: '', newPassword: '', confirmPassword: '' });
+  const [passwordMsg, setPasswordMsg] = useState('');
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
   const [editingUserId, setEditingUserId] = useState(null);
   const [selectedPendingUser, setSelectedPendingUser] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -197,6 +201,28 @@ export default function AdminDashboard() {
       fetchData();
     } catch {
       setManualNotifMsg('Failed to broadcast.');
+    }
+  };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      return setPasswordMsg('New passwords do not match!');
+    }
+    setPasswordLoading(true);
+    setPasswordMsg('');
+    try {
+      const res = await API.put('/admin/change-password', {
+        userId: user.id,
+        oldPassword: passwordForm.oldPassword,
+        newPassword: passwordForm.newPassword
+      });
+      setPasswordMsg(res.data.message || 'Password updated successfully!');
+      setPasswordForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (err) {
+      setPasswordMsg(err.response?.data?.error || 'Failed to update password.');
+    } finally {
+      setPasswordLoading(false);
     }
   };
 
@@ -385,9 +411,10 @@ export default function AdminDashboard() {
         <button style={tabStyle('pending')} onClick={() => setActiveTab('pending')}>{t('admin.tabs.pending')}</button>
         <button style={tabStyle('users')} onClick={() => setActiveTab('users')}>{t('admin.tabs.users')}</button>
         <button style={tabStyle('tutor')} onClick={() => setActiveTab('tutor')}>{t('admin.tabs.tutor')}</button>
-        <button style={tabStyle('ai')} onClick={() => setActiveTab('ai')}>{t('admin.tabs.ai')}</button>
-        <button style={tabStyle('broadcast')} onClick={() => setActiveTab('broadcast')}>{t('admin.tabs.broadcast')}</button>
-        <button style={tabStyle('resources')} onClick={() => setActiveTab('resources')}>{t('admin.tabs.resources')}</button>
+        <button style={tabStyle('ai')} onClick={() => setActiveTab('ai')}>{t('admin.tabs.ai') || 'AI Alerts'}</button>
+        <button style={tabStyle('broadcast')} onClick={() => setActiveTab('broadcast')}>{t('admin.tabs.broadcast') || 'Broadcasts'}</button>
+        <button style={tabStyle('resources')} onClick={() => setActiveTab('resources')}>{t('admin.tabs.resources') || 'Resources'}</button>
+        <button style={tabStyle('settings')} onClick={() => setActiveTab('settings')}>Settings</button>
       </div>
 
       <div style={{ padding: '20px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderTop: 'none' }}>
@@ -1145,6 +1172,63 @@ export default function AdminDashboard() {
                   <button onClick={() => setSelectedUser(null)} style={{ padding: '8px 16px', backgroundColor: '#eee', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Close</button>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* SETTINGS TAB */}
+        {activeTab === 'settings' && (
+          <div>
+            <h2>Admin Settings</h2>
+            <p>Manage your administrative account preferences.</p>
+
+            <div style={{ maxWidth: '500px', backgroundColor: 'var(--bg-card)', padding: '25px', borderRadius: '8px', border: '1px solid var(--border)', marginTop: '20px' }}>
+              <h3 style={{ marginTop: 0, borderBottom: '1px solid var(--border)', paddingBottom: '10px' }}>Change Password</h3>
+              {passwordMsg && <div style={{ padding: '10px', backgroundColor: passwordMsg.includes('Failed') || passwordMsg.includes('match') || passwordMsg.includes('error') || passwordMsg.includes('Incorrect') ? '#fce8e6' : '#d4edda', color: passwordMsg.includes('Failed') || passwordMsg.includes('match') || passwordMsg.includes('error') || passwordMsg.includes('Incorrect') ? '#d93025' : '#155724', borderRadius: '4px', marginBottom: '15px' }}>{passwordMsg}</div>}
+              
+              <form onSubmit={handlePasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>Current Password</label>
+                  <input 
+                    type="password" 
+                    required 
+                    value={passwordForm.oldPassword} 
+                    onChange={(e) => setPasswordForm({ ...passwordForm, oldPassword: e.target.value })}
+                    style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)' }} 
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>New Password</label>
+                  <input 
+                    type="password" 
+                    required 
+                    minLength="6"
+                    value={passwordForm.newPassword} 
+                    onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                    style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)' }} 
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, marginBottom: '5px' }}>Confirm New Password</label>
+                  <input 
+                    type="password" 
+                    required 
+                    minLength="6"
+                    value={passwordForm.confirmPassword} 
+                    onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                    style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid var(--border)' }} 
+                  />
+                </div>
+                <div style={{ marginTop: '10px' }}>
+                  <button 
+                    type="submit" 
+                    disabled={passwordLoading}
+                    style={{ padding: '12px 24px', backgroundColor: '#1a73e8', color: 'white', border: 'none', borderRadius: '4px', cursor: passwordLoading ? 'not-allowed' : 'pointer', fontWeight: 'bold', width: '100%', opacity: passwordLoading ? 0.7 : 1 }}
+                  >
+                    {passwordLoading ? 'Updating...' : 'Update Password'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

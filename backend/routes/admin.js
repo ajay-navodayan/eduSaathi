@@ -1,6 +1,37 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const bcrypt = require('bcryptjs');
+
+// Change Admin Password
+router.put('/change-password', async (req, res) => {
+  const { userId, oldPassword, newPassword } = req.body;
+  if (!userId || !oldPassword || !newPassword) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+    const userRes = await pool.query('SELECT * FROM users WHERE id = $1 AND role = $2', [userId, 'admin']);
+    if (userRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Admin not found or unauthorized' });
+    }
+
+    const user = userRes.rows[0];
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Incorrect old password' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashed, userId]);
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    console.error('Password Change Error:', err);
+    res.status(500).json({ error: 'Server error changing password' });
+  }
+});
 
 // Get all pending users
 router.get('/pending-users', async (req, res) => {
