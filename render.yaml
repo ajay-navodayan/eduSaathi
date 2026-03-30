@@ -1,16 +1,15 @@
-services:
-  # 1. PostgreSQL Database
-  - type: database
-    name: edusaathi-db
+databases:
+  - name: edusaathi-db
     plan: free
-    region: singapore
+    region: oregon
 
-  # 2. Backend Web Service
+services:
+  # 1. Backend Web Service
   - type: web
     name: edusaathi-backend
     runtime: node
     plan: free
-    region: singapore
+    region: oregon
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
@@ -41,12 +40,10 @@ services:
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
 
-  # 3. Frontend Static Site
+  # 2. Frontend Static Site
   - type: web
     name: edusaathi-frontend
     runtime: static
-    plan: free
-    region: singapore
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
