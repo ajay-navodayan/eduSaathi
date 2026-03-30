@@ -194,8 +194,7 @@ async function initializeDatabase() {
       ALTER TABLE resources ADD COLUMN IF NOT EXISTS class_level INTEGER;
       ALTER TABLE resources ADD COLUMN IF NOT EXISTS medium TEXT;
 
-      -- Support UUIDs for messaging (Clean recreate since table is empty and has lingering integer foreign keys)
-      DROP TABLE IF EXISTS public.messages CASCADE;
+      -- Support UUIDs for messaging (removed lingering drop to ensure messages table persists)
     `);
     console.log('✅ Column migrations applied.');
 
