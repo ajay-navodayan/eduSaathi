@@ -1,7 +1,7 @@
 databases:
   - name: edusaathi-db
     plan: free
-    region: singapore
+    region: oregon
 
 services:
   # 1. Backend Web Service
@@ -9,7 +9,7 @@ services:
     name: edusaathi-backend
     runtime: node
     plan: free
-    region: singapore
+    region: oregon
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
@@ -44,7 +44,6 @@ services:
   - type: web
     name: edusaathi-frontend
     runtime: static
-    plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
