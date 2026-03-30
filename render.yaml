@@ -1,7 +1,7 @@
 services:
   # 1. Backend Web Service
   - type: web
-    name: edusaathi-api
+    name: sathsikho-api
     runtime: node
     plan: free
     region: oregon
@@ -17,7 +17,7 @@ services:
       - key: FRONTEND_URL
         fromService:
           type: web
-          name: edusaathi
+          name: sathsikho
           envVarKey: RENDER_EXTERNAL_URL
       # Manual Sync: These must be added in the Render Dashboard
       - key: DATABASE_URL
@@ -35,7 +35,7 @@ services:
 
   # 2. Frontend Static Site
   - type: web
-    name: edusaathi
+    name: sathsikho
     runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
@@ -48,7 +48,7 @@ services:
       - key: VITE_API_URL
         fromService:
           type: web
-          name: edusaathi-api
+          name: sathsikho-api
           envVarKey: RENDER_EXTERNAL_URL
       - key: VITE_SUPABASE_URL
         sync: false
