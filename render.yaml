@@ -1,3 +1,8 @@
+databases:
+  - name: edusaathi-db
+    plan: free
+    region: oregon
+
 services:
   # 1. Backend Web Service
   - type: web
