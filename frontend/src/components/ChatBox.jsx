@@ -26,6 +26,13 @@ export default function ChatBox({ peerId }) {
       try {
         const res = await API.get(`/messages/${peerId}?userId=${myMessagingId}`);
         setMessages(res.data);
+
+        // Mark incoming messages as read
+        const unreadIncoming = res.data.some(m => String(m.sender_id) === String(peerId) && !m.is_read);
+        if (unreadIncoming) {
+          await API.put('/messages/mark-read', { sender_id: peerId, receiver_id: myMessagingId });
+          socket.emit('message_read', { sender_id: peerId, receiver_id: myMessagingId });
+        }
       } catch (err) {
         console.error('Failed to load chat history:', err);
       }
@@ -42,13 +49,30 @@ export default function ChatBox({ peerId }) {
       if ((incomingSender === currentPeer && incomingReceiver === currentMe) || 
           (incomingSender === currentMe && incomingReceiver === currentPeer)) {
         setMessages((prev) => [...prev, msgData]);
+
+        // If it's from the peer, automatically mark it as read since we have the chat open!
+        if (incomingSender === currentPeer) {
+          API.put('/messages/mark-read', { sender_id: peerId, receiver_id: myMessagingId }).catch(console.error);
+          socket.emit('message_read', { sender_id: peerId, receiver_id: myMessagingId });
+        }
+      }
+    };
+
+    const handleMessageRead = ({ sender_id, receiver_id }) => {
+      // If the peer is notifying us they read OUR messages
+      if (String(sender_id) === String(myMessagingId) && String(receiver_id) === String(peerId)) {
+        setMessages((prev) => prev.map(m => 
+          String(m.sender_id) === String(myMessagingId) ? { ...m, is_read: true } : m
+        ));
       }
     };
 
     socket.on('receive_message', handleReceiveMessage);
+    socket.on('message_read', handleMessageRead);
 
     return () => {
       socket.off('receive_message', handleReceiveMessage);
+      socket.off('message_read', handleMessageRead);
     };
   }, [myMessagingId, peerId]);
 
@@ -107,8 +131,13 @@ export default function ChatBox({ peerId }) {
               <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-primary)', lineHeight: '19px', wordWrap: 'break-word' }}>
                 {m.content}
               </p>
-              <span style={{ fontSize: '0.65rem', color: 'rgba(0,0,0,0.45)', float: 'right', margin: '-10px 0 -5px 10px', alignSelf: 'flex-end', paddingTop: '10px' }}>
+              <span style={{ fontSize: '0.65rem', color: 'rgba(0,0,0,0.45)', float: 'right', margin: '-10px 0 -5px 10px', alignSelf: 'flex-end', paddingTop: '10px', display: 'flex', alignItems: 'center', gap: '3px' }}>
                 {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {isMine && (
+                  <span style={{ color: m.is_read ? '#53bdeb' : 'rgba(0,0,0,0.3)', fontWeight: 'bold' }}>
+                    {m.is_read ? '✓✓' : '✓'}
+                  </span>
+                )}
               </span>
             </div>
           );

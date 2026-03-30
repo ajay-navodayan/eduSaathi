@@ -195,6 +195,7 @@ async function initializeDatabase() {
       ALTER TABLE resources ADD COLUMN IF NOT EXISTS medium TEXT;
 
       -- Support UUIDs for messaging (removed lingering drop to ensure messages table persists)
+      ALTER TABLE messages ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT false;
     `);
     console.log('✅ Column migrations applied.');
 
