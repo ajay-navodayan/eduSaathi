@@ -26,25 +26,24 @@ export default function Login() {
 
       if (authError) throw authError;
 
-      if (!data?.user) {
-        throw new Error('No user data returned from authentication.');
+      if (!data || !data.user || !data.user.id) {
+        throw new Error('No user data returned from authentication. Please verify your email.');
       }
 
-      // Fetch role directly to determine redirect path
+      // Manually fetch the user's role here so we don't depend on Context timing
       const { data: profile, error: profileError } = await supabase
         .from('users')
         .select('role')
         .eq('id_auth', data.user.id)
         .maybeSingle();
 
-      if (profileError) console.error('Profile fetch error:', profileError);
-      
-      const role = profile?.role || 'student';
+      const redirectRole = profileError || !profile ? 'student' : profile.role;
 
-      // Use window.location.href to ensure a clean state post-login
-      if (role === 'admin') {
+      // Perform a hard redirect to forcefully load the dashboard.
+      // This wipes out any React state "hanging" bugs and initializes the session securely.
+      if (redirectRole === 'admin') {
         window.location.href = '/admin-dashboard';
-      } else if (role === 'guider') {
+      } else if (redirectRole === 'guider') {
         window.location.href = '/guider-dashboard';
       } else {
         window.location.href = '/';
@@ -52,7 +51,9 @@ export default function Login() {
 
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.message || t('login.form.error_default'));
+      const msg = err.message || t('login.form.error_default') || String(err);
+      setError(msg);
+      alert('LOGIN HALTED: ' + msg); // Aggressive user-facing debug
       setLoading(false);
     }
   };

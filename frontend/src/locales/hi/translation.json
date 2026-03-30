@@ -171,7 +171,13 @@
       "Navodaya": "नवोदय",
       "Netarhat": "नेतरहाट",
       "Sainik School": "सैनिक स्कूल",
-      "Army": "सेना"
+      "Army": "सेना",
+      "Doctor": "डॉक्टर",
+      "Engineer": "इंजीनियर",
+      "Defence": "रक्षा",
+      "Post Office": "डाकघर",
+      "CA": "CA",
+      "Bsc nursing": "B.Sc नर्सिंग"
     },
     "card": {
       "view_profile": "प्रोफ़ाइल देखें →"

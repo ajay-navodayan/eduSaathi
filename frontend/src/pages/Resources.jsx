@@ -6,8 +6,8 @@ import './Resources.css';
 const CATEGORIES = ['All', 'Class 10', 'Class 12', 'NCERT', 'JEE', 'NEET', 'UPSC', 'SSC', 'Railway', 'Navodaya', 'Netarhat', 'Sainik School', 'Army'];
 
 const CATEGORY_ICONS = {
-  'Class 10': '📖', 'Class 12': '📝', 'NCERT': '📚', 'JEE': '🚀', 'NEET': '🩺', 
-  'UPSC': '🏛️', 'SSC': '💼', 'Railway': '🚂', 'Navodaya': '🏫', 
+  'Class 10': '📖', 'Class 12': '📝', 'NCERT': '📚', 'JEE': '🚀', 'NEET': '🩺',
+  'UPSC': '🏛️', 'SSC': '💼', 'Railway': '🚂', 'Navodaya': '🏫',
   'Netarhat': '🏔️', 'Sainik School': '🛡️', 'Army': '⚔️', 'All': '📦'
 };
 
@@ -15,20 +15,57 @@ export default function Resources() {
   const { t } = useTranslation();
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // States for search and filters
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [classLevel, setClassLevel] = useState('All');
 
+  const getDirectDownloadLink = (url) => {
+    if (!url) return '';
+    if (url.includes('drive.google.com')) {
+      const fileIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+      if (fileIdMatch && fileIdMatch[1]) {
+        return `https://drive.google.com/uc?export=download&id=${fileIdMatch[1]}`;
+      }
+    }
+    return url;
+  };
+
+  const getFilenameFromUrl = (url, fallbackTitle) => {
+    if (!url) return fallbackTitle || 'resource';
+    // Extract filename from NCERT or similar direct links
+    const parts = url.split('/');
+    const lastPart = parts[parts.length - 1];
+    if (lastPart && (lastPart.includes('.') || lastPart.length > 5)) {
+      return lastPart.split('?')[0];
+    }
+    return fallbackTitle ? `${fallbackTitle.replace(/\s+/g, '_')}` : 'resource';
+  };
+
+  const handleDownload = (e, url, filename) => {
+    // For direct links (like NCERT ZIPs), just let them happen without custom logic if they work
+    if (!url.includes('drive.google.com')) return;
+
+    // For Drive links, we can try to force a cleaner download experience
+    e.preventDefault();
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename || 'resource';
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => document.body.removeChild(link), 1000);
+  };
+
   const fetchResources = () => {
     setLoading(true);
     let params = {};
-    
+
     if (activeCategory !== 'All') params.category = activeCategory;
     if (classLevel !== 'All') params.class_level = classLevel;
     if (searchTerm) params.q = searchTerm;
-    
+
     API.get('/resources', { params })
       .then(res => setResources(res.data))
       .catch(console.error)
@@ -85,14 +122,22 @@ export default function Resources() {
                       <td className="subject-name">{cleanSubject}</td>
                       <td>
                         {eng ? (
-                          <a href={eng.drive_link} target="_blank" rel="noopener noreferrer" className="ncert-down-btn eng">
+                          <a 
+                            href={getDirectDownloadLink(eng.drive_link)} 
+                            onClick={(e) => handleDownload(e, getDirectDownloadLink(eng.drive_link), `${sub}_English`)}
+                            className="ncert-down-btn eng"
+                          >
                             <span className="down-icon">⬇️</span> English
                           </a>
                         ) : <span className="not-available">-</span>}
                       </td>
                       <td>
                         {hi ? (
-                          <a href={hi.drive_link} target="_blank" rel="noopener noreferrer" className="ncert-down-btn hi">
+                          <a 
+                            href={getDirectDownloadLink(hi.drive_link)} 
+                            onClick={(e) => handleDownload(e, getDirectDownloadLink(hi.drive_link), `${sub}_Hindi`)}
+                            className="ncert-down-btn hi"
+                          >
                             <span className="down-icon">⬇️</span> हिन्दी
                           </a>
                         ) : <span className="not-available">-</span>}
@@ -126,8 +171,8 @@ export default function Resources() {
         <div className="resources-filter-box card">
           <div className="search-input-wrapper">
             <span className="search-icon">🔍</span>
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder={t('resources.filters.search_placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -138,8 +183,8 @@ export default function Resources() {
           <div className="filters-row">
             <div className="filter-group">
               <label>{t('resources.filters.select_category')}</label>
-              <select 
-                value={activeCategory} 
+              <select
+                value={activeCategory}
                 onChange={(e) => setActiveCategory(e.target.value)}
                 className="resource-select"
               >
@@ -152,8 +197,8 @@ export default function Resources() {
 
             <div className="filter-group">
               <label>{t('resources.filters.select_class')}</label>
-              <select 
-                value={classLevel} 
+              <select
+                value={classLevel}
                 onChange={(e) => setClassLevel(e.target.value)}
                 className="resource-select"
               >
@@ -220,9 +265,8 @@ export default function Resources() {
                       </div>
                       <div className="resource-footer">
                         <a
-                          href={res.drive_link}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          href={getDirectDownloadLink(res.drive_link)}
+                          onClick={(e) => handleDownload(e, getDirectDownloadLink(res.drive_link), res.title)}
                           className="btn btn-primary btn-sm"
                         >
                           {t('resources.card.download')}

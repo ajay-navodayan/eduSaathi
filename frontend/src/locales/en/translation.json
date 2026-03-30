@@ -171,7 +171,13 @@
       "Navodaya": "Navodaya",
       "Netarhat": "Netarhat",
       "Sainik School": "Sainik School",
-      "Army": "Army"
+      "Army": "Army",
+      "Doctor": "Doctor",
+      "Engineer": "Engineer",
+      "Defence": "Defence",
+      "Post Office": "Post Office",
+      "CA": "CA",
+      "Bsc nursing": "B.Sc Nursing"
     },
     "card": {
       "view_profile": "View Profile →"
