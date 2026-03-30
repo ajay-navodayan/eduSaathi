@@ -6,7 +6,12 @@ const jwt = require('jsonwebtoken');
 
 // POST /register
 router.post('/register', async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const {
+    name, email, password, role,
+    photo, field, designation, city, category,
+    tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+    achievements, linkedin, whatsapp, phone, mentor_type
+  } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const assignedRole = role || 'student';
@@ -15,6 +20,39 @@ router.post('/register', async (req, res) => {
       'INSERT INTO users (name, email, password, role, status) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, email, role, status',
       [name, email, hashedPassword, assignedRole, status]
     );
+
+    if (assignedRole === 'guider') {
+      await pool.query(
+        `INSERT INTO guiders (
+          name, email, photo, field, designation, city, category,
+          tenth_marks, tenth_board, twelfth_marks, twelfth_board,
+          achievements, linkedin, whatsapp, phone, mentor_type
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+        ON CONFLICT (email) DO UPDATE SET
+          name = EXCLUDED.name,
+          photo = EXCLUDED.photo,
+          field = EXCLUDED.field,
+          designation = EXCLUDED.designation,
+          city = EXCLUDED.city,
+          category = EXCLUDED.category,
+          tenth_marks = EXCLUDED.tenth_marks,
+          tenth_board = EXCLUDED.tenth_board,
+          twelfth_marks = EXCLUDED.twelfth_marks,
+          twelfth_board = EXCLUDED.twelfth_board,
+          achievements = EXCLUDED.achievements,
+          linkedin = EXCLUDED.linkedin,
+          whatsapp = EXCLUDED.whatsapp,
+          phone = EXCLUDED.phone,
+          mentor_type = EXCLUDED.mentor_type`,
+        [
+          name, email, photo || null, field || null, designation || null, city || null, category || null,
+          tenth_marks || null, tenth_board || null, twelfth_marks || null, twelfth_board || null,
+          achievements || null, linkedin || null, whatsapp || null, phone || null,
+          mentor_type || 'mentor_only'
+        ]
+      );
+    }
+
     res.status(201).json({ message: 'User registered successfully', user: result.rows[0] });
   } catch (err) {
     if (err.code === '23505') {
@@ -36,6 +74,10 @@ router.post('/login', async (req, res) => {
     const user = result.rows[0];
     if (user.status === 'pending') {
       return res.status(403).json({ error: 'Your account is pending Admin approval.' });
+    }
+    if (user.status === 'rejected') {
+      const reason = user.rejection_reason ? ` Reason: ${user.rejection_reason}` : '';
+      return res.status(403).json({ error: `Your verification was rejected.${reason}` });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {

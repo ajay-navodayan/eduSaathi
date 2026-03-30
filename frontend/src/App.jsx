@@ -16,6 +16,7 @@ import Register from './pages/Register';
 import GuiderDashboard from './pages/GuiderDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Profile from './pages/Profile';
+import ForgotPassword from './pages/ForgotPassword';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
               <Route path="/tutors" element={<Tutors />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               
               <Route element={<ProtectedRoute />}>
                 <Route path="/profile" element={<Profile />} />

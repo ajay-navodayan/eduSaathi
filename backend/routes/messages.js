@@ -59,9 +59,9 @@ router.get('/conversations/:userId', async (req, res) => {
     const query = `
       SELECT DISTINCT
         CASE WHEN m.sender_id = $1 THEN m.receiver_id ELSE m.sender_id END as peer_id,
-        u.name, u.role
+        u.name, u.role, u.id_auth
       FROM messages m
-      LEFT JOIN users u ON u.id = CASE WHEN m.sender_id = $1 THEN m.receiver_id ELSE m.sender_id END
+      LEFT JOIN users u ON u.id_auth = CASE WHEN m.sender_id = $1 THEN m.receiver_id ELSE m.sender_id END
       WHERE m.sender_id = $1 OR m.receiver_id = $1
     `;
     const result = await pool.query(query, [userId]);

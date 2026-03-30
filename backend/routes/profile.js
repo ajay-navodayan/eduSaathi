@@ -3,17 +3,17 @@ const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcryptjs');
 
-// GET /me/:id
+// GET /me/:id (where :id is the Supabase UUID)
 router.get('/me/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const userRes = await pool.query('SELECT id, name, email, role, profile_edited FROM users WHERE id = $1', [id]);
+    const userRes = await pool.query('SELECT id, name, email, role, profile_edited FROM users WHERE id_auth = $1', [id]);
     if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     const user = userRes.rows[0];
 
     let profileData = {};
     if (user.role === 'guider') {
-      const gRes = await pool.query('SELECT photo, field, designation, city, category, tenth_marks, tenth_board, twelfth_marks, twelfth_board, achievements, linkedin, whatsapp, phone FROM guiders WHERE email = $1', [user.email]);
+      const gRes = await pool.query('SELECT photo, field, designation, city, category, tenth_marks, tenth_board, twelfth_marks, twelfth_board, achievements, linkedin, whatsapp, phone, mentor_type FROM guiders WHERE email = $1', [user.email]);
       if (gRes.rows.length > 0) profileData = gRes.rows[0];
     } else if (user.role === 'tutor') {
       const tRes = await pool.query('SELECT photo, field, designation, city, tenth_marks, tenth_board, twelfth_marks, twelfth_board, achievements, linkedin, whatsapp, phone FROM tutors WHERE email = $1', [user.email]);
@@ -31,7 +31,7 @@ router.put('/update', async (req, res) => {
   const { 
     userId, name, photo, field, designation, city, category, 
     tenth_marks, tenth_board, twelfth_marks, twelfth_board,
-    achievements, linkedin, whatsapp, phone 
+    achievements, linkedin, whatsapp, phone, mentor_type
   } = req.body;
   
   if (!userId) return res.status(400).json({ error: 'Missing userId' });
@@ -42,12 +42,25 @@ router.put('/update', async (req, res) => {
     if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     
     const { profile_edited, email: userEmail, role } = userRes.rows[0];
-    if (profile_edited) {
+    
+    // One-time edit rule (DOES NOT apply to students)
+    if (role !== 'student' && profile_edited) {
       return res.status(403).json({ error: 'Profile locked. You can only edit your profile once. Contact Admin to make further changes.' });
     }
 
-    // Update Users Table
-    await pool.query('UPDATE users SET name = $1, profile_edited = true WHERE id = $2', [name, userId]);
+    // Update Users Table (Common fields for all roles)
+    await pool.query(
+      `UPDATE users SET 
+        name = $1, 
+        photo = $2, 
+        class_level = $3, 
+        school = $4, 
+        bio = $5, 
+        phone = $6,
+        profile_edited = true 
+       WHERE id = $7`, 
+      [name, photo, req.body.class_level || '', req.body.school || '', req.body.bio || '', phone || '', userId]
+    );
 
     // Upsert into Guiders or Tutors Table
     if (role === 'guider') {
@@ -57,12 +70,12 @@ router.put('/update', async (req, res) => {
           `UPDATE guiders SET 
             name=$1, photo=$2, field=$3, designation=$4, city=$5, category=$6, 
             tenth_marks=$7, tenth_board=$8, twelfth_marks=$9, twelfth_board=$10,
-            achievements=$11, linkedin=$12, whatsapp=$13, phone=$14 
-           WHERE email=$15`,
+            achievements=$11, linkedin=$12, whatsapp=$13, phone=$14, mentor_type=$15
+           WHERE email=$16`,
           [
             name, photo, field, designation, city, category, 
             tenth_marks, tenth_board, twelfth_marks, twelfth_board,
-            achievements, linkedin, whatsapp, phone, userEmail
+            achievements, linkedin, whatsapp, phone, mentor_type || 'mentor_only', userEmail
           ]
         );
       } else {
@@ -70,12 +83,12 @@ router.put('/update', async (req, res) => {
           `INSERT INTO guiders (
             name, email, photo, field, designation, city, category, 
             tenth_marks, tenth_board, twelfth_marks, twelfth_board,
-            achievements, linkedin, whatsapp, phone
-          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
+            achievements, linkedin, whatsapp, phone, mentor_type
+          ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
           [
             name, userEmail, photo, field, designation, city, category, 
             tenth_marks, tenth_board, twelfth_marks, twelfth_board,
-            achievements, linkedin, whatsapp, phone
+            achievements, linkedin, whatsapp, phone, mentor_type || 'mentor_only'
           ]
         );
       }
@@ -110,7 +123,10 @@ router.put('/update', async (req, res) => {
       }
     }
 
-    res.json({ message: 'Profile updated and locked successfully.' });
+    const message = role === 'student' 
+      ? 'Profile updated successfully.' 
+      : 'Profile updated and locked successfully.';
+    res.json({ message });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error updating profile' });

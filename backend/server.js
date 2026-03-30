@@ -71,6 +71,7 @@ io.on('connection', (socket) => {
 });
 
 const initializeDatabase = require('./init_db');
+const { startNotificationFetcher } = require('./notificationFetcher');
 
 const PORT = process.env.PORT || 5000;
 
@@ -82,6 +83,9 @@ const startServer = async () => {
     server.listen(PORT, () => {
       console.log(`🚀 EduSaathi Server running on port ${PORT}`);
     });
+
+    // Start AI notification fetcher (runs every hour)
+    startNotificationFetcher();
   } catch (err) {
     console.error('❌ Failed to start server:', err);
   }

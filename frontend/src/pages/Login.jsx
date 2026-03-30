@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import API from '../api';
+import { useTranslation } from 'react-i18next';
+import { supabase } from '../supabaseClient';
 import { useAuth } from '../context/AuthContext';
-import './Auth.css';
 
 export default function Login() {
+  const { t } = useTranslation();
+  const { user } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -18,18 +19,41 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      const res = await API.post('/auth/login', form);
-      login(res.data.user, res.data.token);
-      if (res.data.user.role === 'admin') {
-        navigate('/admin-dashboard');
-      } else if (res.data.user.role === 'guider') {
-        navigate('/guider-dashboard');
-      } else {
-        navigate('/');
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: form.email,
+        password: form.password,
+      });
+
+      if (authError) throw authError;
+
+      if (!data || !data.user || !data.user.id) {
+        throw new Error('No user data returned from authentication. Please verify your email.');
       }
+
+      // Manually fetch the user's role here so we don't depend on Context timing
+      const { data: profile, error: profileError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id_auth', data.user.id)
+        .maybeSingle();
+
+      const redirectRole = profileError || !profile ? 'student' : profile.role;
+
+      // Perform a hard redirect to forcefully load the dashboard.
+      // This wipes out any React state "hanging" bugs and initializes the session securely.
+      if (redirectRole === 'admin') {
+        window.location.href = '/admin-dashboard';
+      } else if (redirectRole === 'guider') {
+        window.location.href = '/guider-dashboard';
+      } else {
+        window.location.href = '/';
+      }
+
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed. Please try again.');
-    } finally {
+      console.error('Login error:', err);
+      const msg = err.message || t('login.form.error_default') || String(err);
+      setError(msg);
+      alert('LOGIN HALTED: ' + msg); // Aggressive user-facing debug
       setLoading(false);
     }
   };
@@ -42,27 +66,27 @@ export default function Login() {
           <div className="auth-hero-shape s2"></div>
         </div>
         <div className="auth-hero-content">
-          <div className="auth-logo">🎓</div>
-          <h2>EduSaathi</h2>
-          <p>Your gateway to mentors & success</p>
+          <div className="auth-logo"><img src="/sathsikho-logo.png" alt="SathSikho" className="auth-logo-img" /></div>
+          <h2>{t('login.hero.title')}</h2>
+          <p>{t('login.hero.subtitle')}</p>
           <div className="auth-features">
-            <div className="auth-feature">✅ Free Mentor Connect</div>
-            <div className="auth-feature">✅ Exam Resources</div>
-            <div className="auth-feature">✅ Local Tutors</div>
+            <div className="auth-feature">{t('login.hero.feature1')}</div>
+            <div className="auth-feature">{t('login.hero.feature2')}</div>
+            <div className="auth-feature">{t('login.hero.feature3')}</div>
           </div>
         </div>
       </div>
 
       <div className="auth-form-panel">
         <div className="auth-form-card">
-          <h1 className="auth-title">Welcome Back!</h1>
-          <p className="auth-subtitle">Login to your EduSaathi account</p>
+          <h1 className="auth-title">{t('login.form.title')}</h1>
+          <p className="auth-subtitle">{t('login.form.subtitle')}</p>
 
           {error && <div className="alert alert-error">{error}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="form-label" htmlFor="email">Email Address</label>
+              <label className="form-label" htmlFor="email">{t('login.form.email')}</label>
               <input
                 type="email"
                 id="email"
@@ -75,7 +99,7 @@ export default function Login() {
               />
             </div>
             <div className="form-group">
-              <label className="form-label" htmlFor="password">Password</label>
+              <label className="form-label" htmlFor="password">{t('login.form.password')}</label>
               <input
                 type="password"
                 id="password"
@@ -93,18 +117,24 @@ export default function Login() {
               className="btn btn-primary btn-lg w-full"
               disabled={loading}
             >
-              {loading ? 'Logging in...' : 'Login →'}
+              {loading ? t('login.form.btn_loading') : t('login.form.btn_default')}
             </button>
           </form>
 
-          <div className="auth-divider"><span>or</span></div>
+          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <Link to="/forgot-password" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+              Forgot Password?
+            </Link>
+          </div>
+
+          <div className="auth-divider"><span>{t('login.form.or')}</span></div>
 
           <div className="auth-hint">
             <p>Try admin: <strong>admin@edusaathi.com</strong> / <strong>admin123</strong></p>
           </div>
 
           <p className="auth-switch">
-            Don't have an account? <Link to="/register">Register here</Link>
+            {t('login.form.no_account')} <Link to="/register">{t('login.form.register_link')}</Link>
           </p>
         </div>
       </div>

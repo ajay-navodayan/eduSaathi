@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import API from '../api';
 import './Tutors.css';
 
 export default function Tutors() {
+  const { t } = useTranslation();
   const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,8 +19,8 @@ export default function Tutors() {
     <div>
       <div className="page-hero">
         <div className="container page-hero-content">
-          <h1>🏫 Local Tutors</h1>
-          <p>Find experienced local tutors near you for personalized coaching</p>
+          <h1>{t('tutors.hero.title')}</h1>
+          <p>{t('tutors.hero.subtitle')}</p>
         </div>
       </div>
 
@@ -51,29 +52,23 @@ export default function Tutors() {
                   )}
                   {tutor.experience && (
                     <div className="tutor-exp">
-                      <span>⏱️</span> {tutor.experience} experience
+                      <span>⏱️</span> {t('tutors.card.experience', { exp: tutor.experience })}
                     </div>
                   )}
                 </div>
                 {tutor.contact && (
-                  <div className="tutor-footer" style={{ flexDirection: 'column', gap: '8px' }}>
-                    <Link to={`/tutors/${tutor.id}`} className="btn btn-primary btn-sm w-full" style={{ textAlign: 'center' }}>
-                      View Profile →
-                    </Link>
-                    <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
-                      <a href={`tel:${tutor.contact}`} className="btn btn-outline btn-sm" style={{ flex: 1, padding: '5px' }}>
-                        📞 Call
-                      </a>
-                      <a
-                        href={`https://wa.me/${tutor.contact.replace(/\D/g, '')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-sm whatsapp-green"
-                        style={{ flex: 1, padding: '5px' }}
-                      >
-                        💬 WhatsApp
-                      </a>
-                    </div>
+                  <div className="tutor-footer">
+                    <a href={`tel:${tutor.contact}`} className="btn btn-primary btn-sm">
+                      {t('tutors.card.contact')}
+                    </a>
+                    <a
+                      href={`https://wa.me/${tutor.contact.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm whatsapp-green"
+                    >
+                      {t('tutors.card.whatsapp')}
+                    </a>
                   </div>
                 )}
               </div>
@@ -82,8 +77,8 @@ export default function Tutors() {
         ) : (
           <div className="empty-state">
             <span className="empty-state-icon">👩‍🏫</span>
-            <h3>No tutors listed yet</h3>
-            <p>Contact us to get listed as a tutor on EduSaathi</p>
+            <h3>{t('tutors.empty.title')}</h3>
+            <p>{t('tutors.empty.subtitle')}</p>
           </div>
         )}
       </div>
